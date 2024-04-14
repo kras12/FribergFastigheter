@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "BulkImageDownloader": {
+      "commandName": "Project"
+    }
+  }
+}
