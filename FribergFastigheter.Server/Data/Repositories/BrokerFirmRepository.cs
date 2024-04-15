@@ -1,0 +1,67 @@
+﻿using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheterApi.Data.DatabaseContexts;
+using FribergFastigheterApi.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace FribergFastigheter.Server.Data.Repositories
+{
+    /// <summary>
+	/// Repository for BrokerFirms
+	/// </summary>
+	/// <!-- Author: Marcus -->
+	/// <!-- Co Authors: -->
+
+    public class BrokerFirmRepository : IBrokerFirmRepository
+    {
+        #region Fields
+
+        private readonly ApplicationDbContext applicationDbContext;
+
+        #endregion
+
+        #region Constructors
+
+        public BrokerFirmRepository(ApplicationDbContext applicationDbContext)
+        {
+            this.applicationDbContext = applicationDbContext;
+        }
+
+        #endregion
+
+        #region Methods
+
+        public async Task AddAsync(BrokerFirm brokerFirm)
+        {
+            await applicationDbContext.BrokerFirms.AddAsync(brokerFirm);
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(BrokerFirm brokerFirm)
+        {
+            applicationDbContext.BrokerFirms.Remove(brokerFirm);
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(BrokerFirm brokerFirm)
+        {
+            foreach (var broker in brokerFirm.Brokers)
+            {
+                applicationDbContext.Brokers.Attach(broker);
+            }
+            applicationDbContext.Update(brokerFirm);
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id)
+        {
+            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).FirstOrDefaultAsync(b => b.BrokerFirmId == id);
+        }
+
+        public async Task<List<BrokerFirm>> GetAllBrokerFirmsAsync()
+        {
+            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).ToListAsync();
+        }
+
+        #endregion
+    }
+}
