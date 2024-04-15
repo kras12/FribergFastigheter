@@ -24,7 +24,6 @@ namespace FribergFastigheter.Data.Entities
         /// </summary>
         public double? AncillaryArea { get; set; }
 
-		// TODO - Fixa typer senare
 		/// <summary>
 		/// The broker of the housing object.
 		/// </summary>
