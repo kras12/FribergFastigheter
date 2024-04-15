@@ -19,6 +19,7 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Data\Repositories\" />
+    <Folder Include="Files\MockData\Images\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,12 @@
     <None Update="Files\MunicipalitiesNames.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Files\Mockdata\Images\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
