@@ -1,5 +1,8 @@
 
 using FribergFastigheter.HelperClasses;
+using FribergFastigheter.Server.AutoMapper;
+using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +26,12 @@ namespace FribergFastigheter
 			// DB Context
 			builder.Services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
+
+			// Repositories
+			builder.Services.AddTransient<IHousingRepository, HousingRepository>();
+
+            // Auto Mapper
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 			var app = builder.Build();
 
