@@ -124,7 +124,9 @@ namespace FribergFastigheter.HelperClasses
 							if (!newHousing.BrokerFirm.Brokers.Any(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
 								&& x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
 							{
-								newHousing.BrokerFirm.Brokers.Add(new Broker(parsedBrokerFirstName, parsedBrokerLastName, newHousing.BrokerFirm));
+								string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower().Replace(" ", "")}.se";
+								string phoneNumber = $"070-{new Random().Next(1_000_000, 2_000_000)}";
+								newHousing.BrokerFirm.Brokers.Add(new Broker(parsedBrokerFirstName, parsedBrokerLastName, email, phoneNumber, newHousing.BrokerFirm));
 							}
 
 							newHousing.Broker = brokerFirms[parsedBrokerFirmName].Brokers.First(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)

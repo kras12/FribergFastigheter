@@ -61,7 +61,7 @@ namespace FribergFastigheter
 		[Conditional("DEBUG")]
         private static void WriteSeedImageUrlsToOutputFolder()
         {
-			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "HousingSeedData.json");
+			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
 			var imageUrls = SeedDataHelper.GetHousingImagePathsFromJsonFile(seedFile);
             string debugFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DebugOutput");
 
@@ -76,7 +76,8 @@ namespace FribergFastigheter
 		[Conditional("DEBUG")]
 		private static void SeedMockData(ApplicationDbContext context)
 		{
-			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "HousingSeedData.json");
+            // Database
+			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
 			var seedData = SeedDataHelper.GetHousingSeedDataFromJsonFile(seedFile);
 
             var housingCategories = context.HousingCategories.ToDictionary(x => x.CategoryName);
@@ -90,6 +91,19 @@ namespace FribergFastigheter
             }
 
             context.SaveChanges();
+
+            // Images
+            foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
+            {
+                string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
+
+				if (!Directory.Exists(destinationFolder))
+                {
+                    Directory.CreateDirectory(destinationFolder);
+                }
+
+                File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
+            }
 		}
 	}    
 }
