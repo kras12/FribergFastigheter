@@ -54,6 +54,16 @@ namespace FribergFastigheterApi.Data.Entities
 		public List<Broker> Brokers { get; set; } = new();
 
 		/// <summary>
+		/// The description of the broker firm. 
+		/// </summary>
+		public string Description { get; set; } = "";
+
+		/// <summary>
+		/// The file name of the logotype.
+		/// </summary>
+		public Image? Logotype { get; set; }
+
+		/// <summary>
 		/// The name of the broker firm.
 		/// </summary>
 		public string Name { get; set; } = "";

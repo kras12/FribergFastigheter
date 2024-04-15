@@ -25,8 +25,10 @@ namespace FribergFastigheterApi.Data.Entities
 		/// </summary>
 		/// <param name="firstName">The first name of the broker.</param>
 		/// <param name="lastName">The last name of the broker.</param>
+		/// <param name="email">The email of the broker.</param>
+		/// <param name="phoneNumber">The phonenumber of the broker.</param>
 		/// <exception cref="ArgumentException"></exception>
-		public Broker(string firstName, string lastName, BrokerFirm brokerFirm)
+		public Broker(string firstName, string lastName, string email, string phoneNumber, BrokerFirm brokerFirm)
 		{
 			#region Checks
 
@@ -40,6 +42,16 @@ namespace FribergFastigheterApi.Data.Entities
 				throw new ArgumentException($"The value of parameter '{nameof(lastName)}' can't be null or empty.", nameof(lastName));
 			}
 
+			if (string.IsNullOrEmpty(email))
+			{
+				throw new ArgumentException($"The value of parameter '{nameof(email)}' can't be null or empty.", nameof(email));
+			}
+
+			if (string.IsNullOrEmpty(phoneNumber))
+			{
+				throw new ArgumentException($"The value of parameter '{nameof(phoneNumber)}' can't be null or empty.", nameof(phoneNumber));
+			}
+
 			if (brokerFirm == null)
 			{
 				throw new ArgumentNullException(nameof(brokerFirm), $"The value of parameter '{nameof(brokerFirm)}' can't be null.");
@@ -49,6 +61,8 @@ namespace FribergFastigheterApi.Data.Entities
 
 			FirstName = firstName;
 			LastName = lastName;
+			Email = email;
+			PhoneNumber = phoneNumber;
 			BrokerFirm = brokerFirm;
 		}
 
@@ -71,12 +85,31 @@ namespace FribergFastigheterApi.Data.Entities
 		/// <summary>
 		/// The first name of the broker.
 		/// </summary>
+		[Required]
 		public string FirstName { get; set; } = "";
 
 		/// <summary>
 		/// The last name of the broker.
 		/// </summary>
+		[Required]
 		public string LastName { get; set; } = "";
+
+		/// <summary>
+		/// The email of the broker.
+		/// </summary>
+		[Required]
+		public string Email { get; set; } = "";
+
+		/// <summary>
+		/// The phone number of the broker.
+		/// </summary>
+		[Required]
+		public string PhoneNumber { get; set; } = "";
+
+		/// <summary>
+		/// The broker profile image.
+		/// </summary>
+		public Image? ProfileImage { get; set; } = null;
 
 		#endregion
 	}
