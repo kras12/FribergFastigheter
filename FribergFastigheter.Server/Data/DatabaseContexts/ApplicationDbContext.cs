@@ -13,7 +13,7 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 	/// The database context for the application.
 	/// </summary>
 	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
+	/// <!-- Co Authors: Marcus -->
 	public class ApplicationDbContext : DbContext
 	{
 		#region Constructors
@@ -102,6 +102,11 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 				.OnDelete(DeleteBehavior.Restrict);
 
 			AddEntitySeeds(modelBuilder);
+
+			modelBuilder.Entity<BrokerFirm>()
+				.HasMany(x => x.Brokers)
+				.WithOne(x => x.BrokerFirm)
+				.OnDelete(DeleteBehavior.Cascade);	
 		}
 
 		/// <summary>
@@ -128,6 +133,8 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 			modelBuilder.Entity<Municipality>()
 				.HasData(seedMunicipalities);
 		}
+
+
 
 		#endregion
 	}
