@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace FribergFastigheter.Server.Controllers
 {
 	/// <summary>
-	/// An API controller for searching housing objects.
+	/// An API controller for the search housings API.
 	/// </summary>
-	[Route("api/[controller]")]
-	[ApiController]
 	/// <!-- Author: Marcus, Jimmie -->
 	/// <!-- Co Authors: -->
+	[Route("api/Search/Housing")]
+	[ApiController]
 	public class SearchHousingController : ControllerBase
 	{
 
