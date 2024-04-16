@@ -68,9 +68,9 @@ namespace FribergFastigheter.Server.Data.Repositories
 				.FirstOrDefaultAsync(b => b.HousingId == id);
         }
 
-		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: Jimmie  -->
-		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId)
+		/// <!-- Author: Marcus, Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null)
         {
             var query = applicationDbContext.Housings
                 .Include(x => x.Broker)
@@ -85,7 +85,12 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.Municipality.MunicipalityId == municipalityId);
             }
 
-            return await query.ToListAsync();
+			if (brokerId != null)
+			{
+				query = query.Where(x => x.Broker.BrokerId == brokerId);
+			}
+
+			return await query.ToListAsync();
         }
 
         #endregion

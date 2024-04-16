@@ -13,7 +13,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
     {
         Task AddAsync(Housing housing);
         Task DeleteAsync(Housing housing);
-        Task<List<Housing>> GetAllHousingAsync(int? housingCategoryId);
+        Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null);
         Task<Housing?> GetHousingByIdAsync(int id);
         Task UpdateAsync(Housing housing);
     }
