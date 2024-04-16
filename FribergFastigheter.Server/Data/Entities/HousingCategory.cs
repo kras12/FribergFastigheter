@@ -9,13 +9,21 @@ namespace FribergFastigheterApi.Data.Entities
 	/// <!-- Co Authors: -->
 	public class HousingCategory
 	{
-		#region Constructors
+        #region Constructors
 
 		/// <summary>
-		/// Constructor.
+		/// Constructor
 		/// </summary>
-		/// <param name="categoryName">The name of the category.</param>
-		public HousingCategory(string categoryName)
+        public HousingCategory()
+        {
+            
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="categoryName">The name of the category.</param>
+        public HousingCategory(string categoryName)
 		{
 			if (string.IsNullOrEmpty(categoryName)) 
 			{ 
