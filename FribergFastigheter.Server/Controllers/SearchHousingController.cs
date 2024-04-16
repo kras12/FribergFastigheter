@@ -14,7 +14,7 @@ namespace FribergFastigheter.Server.Controllers
 	/// </summary>
 	[Route("api/[controller]")]
 	[ApiController]
-	/// <!-- Author: Marcus -->
+	/// <!-- Author: Marcus, Jimmie -->
 	/// <!-- Co Authors: -->
 	public class SearchHousingController : ControllerBase
 	{
@@ -23,15 +23,17 @@ namespace FribergFastigheter.Server.Controllers
 
 		private readonly IHousingRepository _housingRepo;
 		private readonly IMapper _mapper;
+		private readonly IConfiguration _configuration;
 
 		#endregion
 
 		#region Constructors
 
-		public SearchHousingController(IHousingRepository housingRepo, IMapper mapper)
+		public SearchHousingController(IHousingRepository housingRepo, IMapper mapper, IConfiguration configuration)
 		{
 			_housingRepo = housingRepo;
 			_mapper = mapper;
+			_configuration = configuration;
 		}
 
 		#endregion
@@ -50,8 +52,13 @@ namespace FribergFastigheter.Server.Controllers
 		[ProducesResponseType<Housing>(StatusCodes.Status200OK)]
 		public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null)
 		{
-			return Ok((await _housingRepo.GetAllHousingAsync(municipalityId))
-				.Select(x => _mapper.Map<HousingDto>(x)).ToList());
+			var housings = (await _housingRepo.GetAllHousingAsync(municipalityId))
+				.Select(x => _mapper.Map<HousingDto>(x))
+				.ToList();
+
+			housings.ForEach(x => x.Images = x.Images.Select(y => y = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{y}").ToList());
+
+			return Ok(housings);
 		}
 
 		#endregion
