@@ -122,7 +122,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="brokerId">The ID of the broker associated with the new housing.</param>
         /// <param name="housingDto">The serialized DTO object.</param>
         [HttpPost]
-        public async Task<ActionResult> Post([Required] int brokerId, [FromBody] HousingDto housingDto)
+        public async Task<ActionResult> Post([FromBody] CreateHousingDto housingDto)
         {
             var newHousing = _mapper.Map<Housing>(housingDto);
 
@@ -139,7 +139,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="brokerId">The ID of the broker associated with the new housing.</param>
         /// <param name="housingDto">The serialized DTO object.</param>
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, [Required] int brokerId, [FromBody] UpdateHousingDto housingDto)
+        public async Task<ActionResult> Put(int id, [FromBody] UpdateHousingDto housingDto)
         {
             if (id != housingDto.HousingId)
             {
