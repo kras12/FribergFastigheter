@@ -8,14 +8,14 @@ using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace FribergFastigheter.Server.Controllers.Broker
+namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 {
     /// <summary>
     /// An API controller for the broker search housings API.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    [Route("api/Broker/Housing")]
+    [Route("api/BrokerFirm/Housing")]
     [ApiController]
     public class BrokerHousingController : ControllerBase
     {
