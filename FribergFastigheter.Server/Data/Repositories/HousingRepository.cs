@@ -10,7 +10,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 	/// Repository for Housings
 	/// </summary>
 	/// <!-- Author: Marcus -->
-	/// <!-- Co Authors: -->
+	/// <!-- Co Authors: Jimmie -->
 
     public class HousingRepository : IHousingRepository
     {
@@ -64,7 +64,8 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Include(x => x.BrokerFirm)
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
-                .FirstOrDefaultAsync(b => b.HousingId == id);
+				.Include(x => x.Images)
+				.FirstOrDefaultAsync(b => b.HousingId == id);
         }
 
 		/// <!-- Author: Marcus -->
@@ -76,6 +77,7 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Include(x => x.BrokerFirm)
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
+                .Include(x => x.Images)
                 .AsQueryable();
 
             if (municipalityId != null)
