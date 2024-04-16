@@ -12,9 +12,10 @@ namespace FribergFastigheter.Server.Data.Interfaces
 	public interface IHousingRepository
     {
         Task AddAsync(Housing housing);
-        Task DeleteAsync(Housing housing);
-        Task<List<Housing>> GetAllHousingAsync(int? housingCategoryId);
-        Task<Housing?> GetHousingByIdAsync(int id);
+		Task DeleteAsync(int housingId);
+		Task DeleteAsync(Housing housing);
+        Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null);
+        Task<Housing?> GetHousingByIdAsync(int id, int? brokerId = null);
         Task UpdateAsync(Housing housing);
     }
 }

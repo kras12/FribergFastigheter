@@ -41,7 +41,12 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Housing housing)
+		public Task DeleteAsync(int housingId)
+		{
+            return DeleteAsync(new Housing() { HousingId = housingId });
+		}
+
+		public async Task DeleteAsync(Housing housing)
         {
             applicationDbContext.Housings.Remove(housing);
             await applicationDbContext.SaveChangesAsync();
@@ -57,20 +62,30 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task<Housing?> GetHousingByIdAsync(int id)
+		/// <!-- Author: Marcus, Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<Housing?> GetHousingByIdAsync(int id, int? brokerId = null)
         {
-            return await applicationDbContext.Housings
+            var query = applicationDbContext.Housings
                 .Include(x => x.Broker)
                 .Include(x => x.BrokerFirm)
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
-				.Include(x => x.Images)
-				.FirstOrDefaultAsync(b => b.HousingId == id);
-        }
+                .Include(x => x.Images)
+                .Where(x => x.HousingId == id)
+                .AsQueryable();
 
-		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: Jimmie  -->
-		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId)
+			if (brokerId != null)
+			{
+				query = query.Where(x => x.Broker.BrokerId == brokerId);
+			}
+
+			return await query.FirstOrDefaultAsync();
+		}
+
+		/// <!-- Author: Marcus, Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null)
         {
             var query = applicationDbContext.Housings
                 .Include(x => x.Broker)
@@ -85,7 +100,12 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.Municipality.MunicipalityId == municipalityId);
             }
 
-            return await query.ToListAsync();
+			if (brokerId != null)
+			{
+				query = query.Where(x => x.Broker.BrokerId == brokerId);
+			}
+
+			return await query.ToListAsync();
         }
 
         #endregion
