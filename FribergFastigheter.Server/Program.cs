@@ -31,7 +31,7 @@ namespace FribergFastigheter
 			builder.Services.AddTransient<IHousingRepository, HousingRepository>();
 
             // Auto Mapper
-            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+            builder.Services.AddAutoMapper(typeof(EntityToDtoAutoMapperProfile), typeof(DtoToEntityAutoMapperProfile));
 
 			var app = builder.Build();
 
