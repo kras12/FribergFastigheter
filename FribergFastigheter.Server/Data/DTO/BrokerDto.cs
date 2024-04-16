@@ -23,15 +23,19 @@ namespace FribergFastigheter.Server.Data.DTO
 		public int BrokerId { get; set; }
 
 		/// <summary>
-		/// The full name of the broker.
-		/// </summary>
-		public string FullName { get; set; } = "";
-
-		/// <summary>
 		/// The email of the broker.
 		/// </summary>
 		public string Email { get; set; } = "";
 
+		/// <summary>
+		/// The first name of the broker.
+		/// </summary>
+		public string FirstName { get; set; } = "";
+
+		/// <summary>
+		/// The last name of the broker.
+		/// </summary>
+		public string LastName { get; set; } = "";
 		/// <summary>
 		/// The phone number of the broker.
 		/// </summary>
