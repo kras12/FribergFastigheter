@@ -6,7 +6,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
     /// Interface for BrokerFirmRepository
     /// </summary>
     /// <!-- Author: Marcus -->
-    /// <!-- Co Authors: -->
+    /// <!-- Co Authors: Jimmie -->
     /// 
 
     public interface IBrokerFirmRepository
@@ -16,5 +16,6 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task<List<BrokerFirm>> GetAllBrokerFirmsAsync();
         Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id);
         Task UpdateAsync(BrokerFirm brokerFirm);
+        Task<int> BrokerCount(int brokerFirmId);
     }
 }

@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using FribergFastigheter.Server.Data.DTO;
+using FribergFastigheter.Server.Data.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +13,68 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 	[ApiController]
 	public class HousingBrokerController : ControllerBase
 	{
-		// GET: api/<HousingBrokerController>
-		[HttpGet]
-		public IEnumerable<string> Get()
+		#region Fields
+
+		/// <summary>
+		/// The injected configuration properties.
+		/// </summary>
+		private readonly IConfiguration _configuration;
+
+		/// <summary>
+		/// The injected broker repository.
+		/// </summary>
+		private readonly IBrokerRepository _brokerRepository;
+
+		/// <summary>
+		/// The injected Auto Mapper.
+		/// </summary>
+		private readonly IMapper _mapper;
+
+		#endregion
+
+		#region Constructors
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="brokerRepository">The injected broker repository.</param>
+		/// <param name="mapper">The injected Auto Mapper.</param>
+		/// <param name="configuration">The injected configuration properties.</param>
+		public HousingBrokerController(IBrokerRepository brokerRepository, IMapper mapper, IConfiguration configuration)
 		{
-			return new string[] { "value1", "value2" };
+			_brokerRepository = brokerRepository;
+			_mapper = mapper;
+			_configuration = configuration;
 		}
 
-		// GET api/<HousingBrokerController>/5
-		[HttpGet("{id}")]
-		public string Get(int id)
+		#endregion
+
+		#region ApiEndpoints
+
+		/// <summary>
+		/// An API endpoint for fetching a broker.
+		/// </summary>
+		/// <param name="id">The ID of the broker to fetch.</param>
+		/// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		[HttpGet("{id:int}")]
+		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
+		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById(int id)
 		{
-			return "value";
+			var broker = await _brokerRepository.GetBrokerByIdAsync(id);
+
+			if (broker == null)
+			{
+				return NotFound();
+			}
+
+			var result = _mapper.Map<BrokerDto>(broker);
+			result.ProfileImage = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{result.ProfileImage}";
+
+			return Ok(result);
 		}
 
-		// POST api/<HousingBrokerController>
-		[HttpPost]
-		public void Post([FromBody] string value)
-		{
-		}
-
-		// PUT api/<HousingBrokerController>/5
-		[HttpPut("{id}")]
-		public void Put(int id, [FromBody] string value)
-		{
-		}
-
-		// DELETE api/<HousingBrokerController>/5
-		[HttpDelete("{id}")]
-		public void Delete(int id)
-		{
-		}
+		#endregion
 	}
 }
