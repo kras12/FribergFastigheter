@@ -4,14 +4,16 @@ using FribergFastigheter.Server.Data.DTO;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 {
     /// <summary>
-    /// An API controller for the broker search housings API.
+    /// An API controller for the broker firm housings API.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
@@ -65,17 +67,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		[HttpDelete("{id:int}")]
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(int id, [Required] int brokerFirmId)
         {
-            var housing = await _housingRepository.GetHousingByIdAsync(id);
-
             if (!await _housingRepository.Exists(id))
             {
-                return NotFound();
+                return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't exists."));
             }
             else if (!await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
 			{
-                return BadRequest();
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
             }            
 
             await _housingRepository.DeleteAsync(id);
@@ -95,7 +97,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<HousingDto>>> Get([Required] int brokerFirmId, int? brokerId, int? municipalityId = null)
         {
-            var housings = (await _housingRepository.GetAllHousingAsync(municipalityId, brokerId, brokerFirmId))
+			var housings = (await _housingRepository.GetAllHousingAsync(municipalityId, brokerId, brokerFirmId))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
@@ -114,7 +116,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [HttpGet("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<HousingDto>>> GetById(int id, [Required] int brokerFirmId)
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult<IEnumerable<HousingDto>>> GetById(int id, [Required] int brokerFirmId)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(id);
 
@@ -124,8 +127,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
             else if (housing.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
-                return BadRequest();
-            }
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
+			}
 
             var result = _mapper.Map<HousingDto>(housing);
             result.Images = result.Images.Select(x => x = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{x}").ToList();
@@ -138,12 +141,16 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// </summary>
 		/// param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
 		/// <param name="housingDto">The serialized DTO object.</param>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
 		[HttpPost]
-        public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateHousingDto housingDto)
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateHousingDto housingDto)
         {
 			if (brokerFirmId != housingDto.BrokerFirmId)
 			{
-				return BadRequest();
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted housing object."));
 			}
 
 			var newHousing = _mapper.Map<Housing>(housingDto);
@@ -157,17 +164,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// <param name="id">The ID of the housing object to update.</param>
 		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
 		/// <param name="housingDto">The serialized DTO object.</param>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
 		[HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, [Required] int brokerFirmId, [FromBody] UpdateHousingDto housingDto)
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult> Put(int id, [Required] int brokerFirmId, [FromBody] UpdateHousingDto housingDto)
         {
-            if (id != housingDto.HousingId)
+            if (id != housingDto.HousingId || !await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
-                return BadRequest();
-            }
-            else if (!(await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId)))
-            {
-                return BadRequest();
-            }
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
+			}
 
             await _housingRepository.UpdateAsync(_mapper.Map<Housing>(housingDto));
             return Ok();

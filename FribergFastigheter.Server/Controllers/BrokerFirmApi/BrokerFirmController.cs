@@ -6,11 +6,17 @@ using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FribergFastigheter.Server.Controllers.BrokerApi
 {
+	/// <summary>
+	/// An API controller for the broker firm API.
+	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
 	[Route("api/BrokerFirm")]
 	[ApiController]
 	public class BrokerFirmController : ControllerBase
@@ -62,13 +68,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <!-- Co Authors: -->
 		[HttpGet("{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
 		{
 			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
 
 			if (brokerFirm == null)
 			{
-				return NotFound();
+				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
@@ -82,12 +89,15 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// </summary>
 		/// <param name="id">The ID of the broker firm to update.</param>
 		/// <param name="brokerFirmDto">The serialized DTO object.</param>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
 		[HttpPut("{id:int}")]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult> Put(int id, [FromBody] BrokerFirmDto brokerFirmDto )
 		{
 			if (id != brokerFirmDto.BrokerFirmId)
 			{
-				return BadRequest();
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the supplied broker firm object."));
 			}
 
 			var brokerFirm = _mapper.Map<BrokerFirm>(brokerFirmDto);

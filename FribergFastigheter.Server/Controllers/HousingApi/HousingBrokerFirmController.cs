@@ -60,13 +60,14 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Co Authors: -->
 		[HttpGet("{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
 		{
 			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
 
 			if (brokerFirm == null)
 			{
-				return NotFound();
+				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);

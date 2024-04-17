@@ -2,9 +2,11 @@
 using FribergFastigheter.Data.Entities;
 using FribergFastigheter.Server.Data.DTO;
 using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +32,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// The injected housing repository.
         /// </summary>
-        private readonly IBrokerFirmRepository _brokerFirmRepository;
+        private readonly IBrokerRepository _brokerRepository;
 
         /// <summary>
         /// The injected Auto Mapper.
@@ -44,12 +46,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="brokerFirmRepository">The injected housing repository.</param>
+        /// <param name="brokerRepository">The injected broker repository.</param>
         /// <param name="mapper">The injected Auto Mapper.</param>
         /// <param name="configuration">The injected configuration properties.</param>
-        public BrokerController(IBrokerFirmRepository brokerFirmRepository, IMapper mapper, IConfiguration configuration)
+        public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IConfiguration configuration)
         {
-            _brokerFirmRepository = brokerFirmRepository;
+            _brokerRepository = brokerRepository;
             _mapper = mapper;
             _configuration = configuration;
         }
@@ -58,35 +60,69 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
         // GET: api/<BrokerFirmHousing>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> Get([Required] int brokerFirmId)
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		public async Task<ActionResult<IEnumerable<BrokerDto>>> Get([Required] int brokerFirmId)
         {
-            //var housings = (await _brokerFirmRepository.;
             return Ok();
         }
 
         // GET api/<BrokerFirmHousing>/5
         [HttpGet("{id}")]
-        public string GetById(int id)
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		public string GetById(int id)
         {
-            return "value";
+            // Merge code
+			//if (broker == null)
+			//{
+			//	return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
+			//}
+
+			return "value";
         }
 
         // POST api/<BrokerFirmHousing>
         [HttpPost]
-        public void Post([FromBody] string value)
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		public void Post([FromBody] string value)
         {
-        }
+			// Merge code
+			//if (brokerFirmId != brokerDto.BrokerFirmId)
+			//{
+			//	return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted broker object."));
+			//}
+		}
 
-        // PUT api/<BrokerFirmHousing>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+		// PUT api/<BrokerFirmHousing>/5
+		[HttpPut("{id}")]
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		public void Put(int id, [FromBody] string value)
         {
-        }
+			// Merge code
+			//if (brokerFirmId != brokerDto.BrokerFirmId)
+			//{
+			//	return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted broker object."));
+			//}
+		}
 
-        // DELETE api/<BrokerFirmHousing>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+		// DELETE api/<BrokerFirmHousing>/5
+		[HttpDelete("{id}")]
+		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult> Delete(int id)
         {
-        }
+            //if (!await _brokerRepository.Exists(id))
+            //{
+            //	return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't exists."));
+            //}
+            //else if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
+            //{
+            //	return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
+            //}
+
+            return Ok();
+		}
     }
 }
