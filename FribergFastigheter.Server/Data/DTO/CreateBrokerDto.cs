@@ -6,21 +6,16 @@ namespace FribergFastigheter.Server.Data.DTO
 	/// <summary>
 	/// A DTO class that represents a broker.
 	/// </summary>
-	/// <!-- Author: Jimmie -->
+	/// <!-- Author: Marcus -->
 	/// <!-- Co Authors: -->
-	public class BrokerDto
+	public class CreateBrokerDto
 	{
 		#region Properties
 
 		/// <summary>
 		/// The firm that the broker belongs to.
 		/// </summary>
-		public BrokerFirmDto BrokerFirm { get; set; }
-
-		/// <summary>
-		/// The ID of the broker.
-		/// </summary>
-		public int BrokerId { get; set; }
+		public int BrokerFirmId { get; set; }
 
 		/// <summary>
 		/// The email of the broker.
