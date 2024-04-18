@@ -79,14 +79,15 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Co Authors: Marcus -->
         [HttpGet("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<HousingDto>> GetHousing(int id)
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<HousingDto>> GetHousing(int id)
         {
             var housing = await _housingRepo.GetHousingByIdAsync(id);
 
             if (housing == null)
             {
-                return NotFound();
-            }
+				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The housing object with ID '{id}' was not found."));
+			}
 
             var result = _mapper.Map<HousingDto>(housing);
             _imageService.SetImageData(result.Images);

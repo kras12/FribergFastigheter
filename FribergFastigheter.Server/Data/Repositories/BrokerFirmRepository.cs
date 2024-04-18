@@ -9,7 +9,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 	/// Repository for BrokerFirms
 	/// </summary>
 	/// <!-- Author: Marcus -->
-	/// <!-- Co Authors: -->
+	/// <!-- Co Authors: Jimmie -->
 
     public class BrokerFirmRepository : IBrokerFirmRepository
     {
@@ -36,7 +36,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(BrokerFirm brokerFirm)
+		public async Task DeleteAsync(BrokerFirm brokerFirm)
         {
             applicationDbContext.BrokerFirms.Remove(brokerFirm);
             await applicationDbContext.SaveChangesAsync();
@@ -62,6 +62,13 @@ namespace FribergFastigheter.Server.Data.Repositories
             return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).ToListAsync();
         }
 
-        #endregion
-    }
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors:  -->
+		public async Task<int> BrokerCount(int brokerFirmId)
+        {
+            return await applicationDbContext.BrokerFirms.Where(x => x.BrokerFirmId == brokerFirmId).Select(x => x.Brokers).CountAsync();
+        }
+
+		#endregion
+	}
 }

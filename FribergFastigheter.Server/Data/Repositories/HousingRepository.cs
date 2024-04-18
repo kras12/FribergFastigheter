@@ -52,40 +52,50 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Housing housing)
+		/// <!-- Author: Marcus, Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task UpdateAsync(Housing housing)
         {
-            applicationDbContext.Brokers.Attach(housing.Broker);
+			// We must store the final images outside of the entity for our comparisions,
+			// since EF Core will add tracked images to the entity if they don't exist.
+			var targetImages = housing.Images.ToList();
+			applicationDbContext.Update(housing);
+
+			applicationDbContext.Brokers.Attach(housing.Broker);
             applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
             applicationDbContext.HousingCategories.Attach(housing.Category);
             applicationDbContext.Municipalities.Attach(housing.Municipality);
-            applicationDbContext.Update(housing);
-            await applicationDbContext.SaveChangesAsync();
+
+			// EF Core will add missing images to the entity here.
+			var databaseImages = await applicationDbContext.Housings.Where(x => x.HousingId == housing.HousingId).SelectMany(x => x.Images).ToListAsync();
+
+			// Modify status for deleted images
+			databaseImages.ExceptBy(targetImages.Select(x => x.ImageId), y => y.ImageId).ToList()
+				.ForEach(deletedImage =>
+				{
+					applicationDbContext.Entry(deletedImage).State = EntityState.Deleted;
+				});
+
+			await applicationDbContext.SaveChangesAsync();
         }
 
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<Housing?> GetHousingByIdAsync(int id, int? brokerId = null)
+		public async Task<Housing?> GetHousingByIdAsync(int id)
         {
-            var query = applicationDbContext.Housings
+           return await applicationDbContext.Housings
                 .Include(x => x.Broker)
                 .Include(x => x.BrokerFirm)
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
                 .Include(x => x.Images)
                 .Where(x => x.HousingId == id)
-                .AsQueryable();
-
-			if (brokerId != null)
-			{
-				query = query.Where(x => x.Broker.BrokerId == brokerId);
-			}
-
-			return await query.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
 		}
 
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null)
+		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null)
         {
             var query = applicationDbContext.Housings
                 .Include(x => x.Broker)
@@ -105,9 +115,28 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.Broker.BrokerId == brokerId);
 			}
 
+			if (brokerFirm != null)
+			{
+				query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirm);
+			}
+
 			return await query.ToListAsync();
         }
 
-        #endregion
-    }
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId)
+        {
+            return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id && x.BrokerFirm.BrokerFirmId == BrokerFirmId);
+		}
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<bool> Exists(int id)
+		{
+			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id);
+		}
+
+		#endregion
+	}
 }

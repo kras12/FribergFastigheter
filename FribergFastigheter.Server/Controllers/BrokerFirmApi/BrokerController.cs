@@ -7,6 +7,7 @@ using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -46,7 +47,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="brokerRepository">The injected housing repository.</param>
+        /// <param name="brokerRepository">The injected broker repository.</param>
         /// <param name="mapper">The injected Auto Mapper.</param>
         /// <param name="imageService">The injected imageService properties.</param>
         public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IImageService imageService)
