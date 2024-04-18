@@ -3,6 +3,7 @@ using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FribergFastigheter.Server.Data.Repositories
 {
@@ -95,7 +96,8 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null)
+		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null, 
+			int? limitHousings = null, int? limitImagesPerHousing = null)
         {
             var query = applicationDbContext.Housings
                 .Include(x => x.Broker)
@@ -120,8 +122,20 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirm);
 			}
 
-			return await query.ToListAsync();
-        }
+			if (limitHousings != null && limitHousings.Value > 0)
+			{
+				query = query.Take(limitHousings.Value);
+			}
+
+			var result = await query.ToListAsync();
+
+			if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
+			{
+				result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
+			}
+
+			return result;
+		}
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
@@ -135,6 +149,29 @@ namespace FribergFastigheter.Server.Data.Repositories
 		public Task<bool> Exists(int id)
 		{
 			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id);
+		}
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<List<Image>> GetHousingImages(int housingId, List<int>? imageIds = null)
+        {
+			var query = applicationDbContext
+				.Housings.Where(x => x.HousingId == housingId)
+				.SelectMany(x => x.Images);
+				
+			if (imageIds != null)
+			{
+				query = query.Where(x => imageIds.Contains(x.ImageId));
+			}
+
+			return query.ToListAsync();
+        }
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<bool> HousingExists(int housingId)
+		{
+			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == housingId);
 		}
 
 		#endregion
