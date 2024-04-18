@@ -64,28 +64,21 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<Housing?> GetHousingByIdAsync(int id, int? brokerId = null)
+		public async Task<Housing?> GetHousingByIdAsync(int id)
         {
-            var query = applicationDbContext.Housings
+           return await applicationDbContext.Housings
                 .Include(x => x.Broker)
                 .Include(x => x.BrokerFirm)
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
                 .Include(x => x.Images)
                 .Where(x => x.HousingId == id)
-                .AsQueryable();
-
-			if (brokerId != null)
-			{
-				query = query.Where(x => x.Broker.BrokerId == brokerId);
-			}
-
-			return await query.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
 		}
 
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null)
+		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null)
         {
             var query = applicationDbContext.Housings
                 .Include(x => x.Broker)
@@ -105,9 +98,28 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.Broker.BrokerId == brokerId);
 			}
 
+			if (brokerFirm != null)
+			{
+				query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirm);
+			}
+
 			return await query.ToListAsync();
         }
 
-        #endregion
-    }
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId)
+        {
+            return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id && x.BrokerFirm.BrokerFirmId == BrokerFirmId);
+		}
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<bool> Exists(int id)
+		{
+			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id);
+		}
+
+		#endregion
+	}
 }
