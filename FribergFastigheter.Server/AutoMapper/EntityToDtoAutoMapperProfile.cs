@@ -12,10 +12,10 @@ namespace FribergFastigheter.Server.AutoMapper
 	/// <!-- Co Authors: -->
 	public class EntityToDtoAutoMapperProfile : Profile
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public EntityToDtoAutoMapperProfile()
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public EntityToDtoAutoMapperProfile()
 		{
 			CreateMap<Housing, HousingDto>();
 			CreateMap<HousingCategory, HousingCategoryDto>();
@@ -27,8 +27,11 @@ namespace FribergFastigheter.Server.AutoMapper
 			CreateMap<Broker, BrokerDto>()
 				.ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null));
 
-			CreateMap<Image, string>()
-				.ConvertUsing(src => src.FileName);
+			CreateMap<Image, ImageDto>();
+
+			
 		}
+		
 	}
+
 }

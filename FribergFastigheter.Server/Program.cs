@@ -3,6 +3,7 @@ using FribergFastigheter.HelperClasses;
 using FribergFastigheter.Server.AutoMapper;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
+using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +30,16 @@ namespace FribergFastigheter
 
 			// Repositories
 			builder.Services.AddTransient<IHousingRepository, HousingRepository>();
+            builder.Services.AddTransient<IBrokerRepository, BrokerRepository>();
+            builder.Services.AddTransient<IBrokerFirmRepository, BrokerFirmRepository>();
 
             // Auto Mapper
             builder.Services.AddAutoMapper(typeof(EntityToDtoAutoMapperProfile), typeof(DtoToEntityAutoMapperProfile));
 
-			var app = builder.Build();
+            // Custom Services
+            builder .Services.AddTransient<IImageService, ImageService>();
+			
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

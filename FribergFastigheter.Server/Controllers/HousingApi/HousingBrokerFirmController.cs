@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Server.Data.DTO;
 using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +17,6 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		#region Fields
 
 		/// <summary>
-		/// The injected configuration properties.
-		/// </summary>
-		private readonly IConfiguration _configuration;
-
-		/// <summary>
 		/// The injected housing repository.
 		/// </summary>
 		private readonly IBrokerFirmRepository _brokerFirmRepository;
@@ -30,22 +26,27 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// </summary>
 		private readonly IMapper _mapper;
 
-		#endregion
+        /// <summary>
+        /// The injected imageService properties.
+        /// </summary>
+        private readonly IImageService _imageService;
 
-		#region Constructors
+        #endregion
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="brokerFirmRepository">The injected broker firm repository.</param>
-		/// <param name="mapper">The injected Auto Mapper.</param>
-		/// <param name="configuration">The injected configuration properties.</param>
-		public HousingBrokerFirmController(IBrokerFirmRepository brokerFirmRepository, IMapper mapper, IConfiguration configuration)
+        #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="brokerFirmRepository">The injected broker firm repository.</param>
+        /// <param name="mapper">The injected Auto Mapper.</param>
+        /// <param name="imageService">The injected imageService.</param>
+        public HousingBrokerFirmController(IBrokerFirmRepository brokerFirmRepository, IMapper mapper, IImageService imageService)
 		{
 			_brokerFirmRepository = brokerFirmRepository;
 			_mapper = mapper;
-			_configuration = configuration;
-		}
+            _imageService = imageService;
+        }
 
 		#endregion
 
@@ -57,7 +58,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <param name="id">The ID of the broker firm to fetch.</param>
 		/// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
+		/// <!-- Co Authors: Marcus -->
 		[HttpGet("{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -71,7 +72,10 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
-			result.Logotype = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{result.Logotype}";
+            if (result.Logotype != null)
+            {
+                _imageService.SetImageData(result.Logotype);
+            }
 
 			return Ok(result);
 		}

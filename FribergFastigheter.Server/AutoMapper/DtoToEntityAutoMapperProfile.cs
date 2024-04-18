@@ -37,8 +37,13 @@ namespace FribergFastigheter.Server.AutoMapper
 			.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 			.ForMember(dest => dest.Category, opt => opt.MapFrom(src => new HousingCategory() { HousingCategoryId = src.CategoryId }));
 
-			CreateMap<string, Image>()
-				.ConvertUsing(src => new Image(src));
+			CreateMap<CreateBrokerDto, Broker>()
+				.ForMember(dest => dest.BrokerFirm, opt => opt.Ignore())
+				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
+
+			CreateMap<UpdateBrokerDto, Broker>()
+				.ForMember(dest => dest.BrokerFirm, opt => opt.Ignore())
+				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
 		}
 	}
 }

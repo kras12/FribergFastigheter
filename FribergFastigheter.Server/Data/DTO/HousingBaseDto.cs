@@ -35,7 +35,7 @@ namespace FribergFastigheter.Server.Data.DTO
 		/// <summary>
 		/// The images associated with the housing object.
 		/// </summary>
-		public List<string> Images { get; set; } = new();
+		public List<ImageDto> Images { get; set; } = new();
 
 		/// <summary>
 		/// The land area (m2) of the housing object.

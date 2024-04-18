@@ -20,11 +20,11 @@ namespace FribergFastigheterApi.Data.Entities
             
         }
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="fileName">The name of the file.</param>
-		public Image(string fileName)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="fileName">The name of the file.</param>
+        public Image(string fileName)
 		{
 			if (string.IsNullOrEmpty(fileName))
 			{
