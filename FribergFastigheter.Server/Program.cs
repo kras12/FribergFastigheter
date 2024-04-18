@@ -6,8 +6,10 @@ using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace FribergFastigheter
 {
@@ -38,11 +40,27 @@ namespace FribergFastigheter
 
             // Custom Services
             builder .Services.AddTransient<IImageService, ImageService>();
-			
-            var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            // Add serialization converters
+            builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+			// Compression test			
+			//builder.Services.AddResponseCompression(options =>
+			//{
+			//	options.EnableForHttps = true;
+			//    options.Providers.Add<BrotliCompressionProvider>();
+			//	options.Providers.Add<GzipCompressionProvider>();
+			//});
+			//builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
+			//builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+
+			var app = builder.Build();
+
+			// Compression test
+			//app.UseResponseCompression();
+
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -52,8 +70,7 @@ namespace FribergFastigheter
 
             app.UseAuthorization();
 
-
-            app.MapControllers();
+			app.MapControllers();
 
 			using (var scope = app.Services.CreateScope())
 			{
