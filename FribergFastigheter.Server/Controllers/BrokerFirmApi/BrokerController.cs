@@ -122,7 +122,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var newBroker = _mapper.Map<Broker>(createBrokerDto);
             if (createBrokerDto.ProfileImage != null)
             {
-               newBroker.ProfileImage = _imageService.SaveImageToDisk(createBrokerDto.ProfileImage);
+                newBroker.ProfileImage = new Image(_imageService.SaveImageToDisk(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
             }
 
             newBroker.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId};
@@ -142,18 +142,25 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         {
             if (brokerId != updateBrokerDto.BrokerId)
             {
-                return BadRequest();
-            }
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
+			}
 
-            var broker = _mapper.Map<Broker>(updateBrokerDto);
-            var existingBroker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
-            if (existingBroker.ProfileImage != null && updateBrokerDto.ProfileImage.FileName != existingBroker.ProfileImage.FileName) 
+			var existingBroker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
+
+            if (existingBroker == null)
+            {
+				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+			}
+
+			var broker = _mapper.Map<Broker>(updateBrokerDto);
+            
+            if (existingBroker.ProfileImage != null && updateBrokerDto.ProfileImage?.FileName != existingBroker.ProfileImage.FileName) 
             {
                 _imageService.DeleteImageFromDisk(existingBroker.ProfileImage.FileName);
             }
             if (updateBrokerDto.ProfileImage != null)
             {
-                broker.ProfileImage = _imageService.SaveImageToDisk(updateBrokerDto.ProfileImage);
+				broker.ProfileImage = new Image(_imageService.SaveImageToDisk(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
             }
 
             await _brokerRepository.UpdateAsync(broker);
