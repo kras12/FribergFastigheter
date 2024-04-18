@@ -25,7 +25,7 @@ namespace FribergFastigheter.Server.Data.DTO
 		/// <summary>
 		/// The file name of the logotype.
 		/// </summary>
-		public string? Logotype { get; set; }
+		public ImageDto? Logotype { get; set; }
 
 		/// <summary>
 		/// The name of the broker firm.
