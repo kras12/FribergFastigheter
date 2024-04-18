@@ -69,6 +69,14 @@ namespace FribergFastigheter.Server.Data.Repositories
             return await applicationDbContext.BrokerFirms.Where(x => x.BrokerFirmId == brokerFirmId).Select(x => x.Brokers).CountAsync();
         }
 
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors:  -->
+		public async Task<bool> HaveBroker(int brokerFirmId, int brokerId)
+        {
+            return await applicationDbContext.BrokerFirms
+                .AnyAsync(x => x.BrokerFirmId == brokerFirmId && x.Brokers.Any(x => x.BrokerId == brokerId));
+        }
+
 		#endregion
 	}
 }

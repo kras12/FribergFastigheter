@@ -23,7 +23,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
     [ApiController]
     public class BrokerHousingController : ControllerBase
     {
-        #region Fields
+		#region Fields
+
+		/// <summary>
+		/// The injected broker firm repository.
+		/// </summary>
+		private readonly IBrokerFirmRepository _brokerFirmRepository;
 
         /// <summary>
         /// The injected housing repository.
@@ -40,22 +45,24 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         private readonly IImageService _imageService;
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="housingRepository">The injected housing repository.</param>
-        /// <param name="mapper">The injected Auto Mapper.</param>
-        /// <param name="imageService">The injected imageService properties.</param>
-        public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService)
-        {
-            _housingRepository = housingRepository;
-            _mapper = mapper;
-            _imageService = imageService;
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="housingRepository">The injected housing repository.</param>
+		/// <param name="mapper">The injected Auto Mapper.</param>
+		/// <param name="imageService">The injected imageService properties.</param>
+		/// <param name="brokerFirmRepository">The injected broker firm repository.</param>
+		public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService, IBrokerFirmRepository brokerFirmRepository)
+		{
+			_housingRepository = housingRepository;
+			_mapper = mapper;
+			_imageService = imageService;
+			_brokerFirmRepository = brokerFirmRepository;
+		}
 
 		#endregion
 
@@ -99,6 +106,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<HousingDto>>> Get([Required] int brokerFirmId, int? brokerId, int? municipalityId = null)
         {
+            if (brokerId != null && !(await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId.Value)))
+            {
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
+			}
+
 			var housings = (await _housingRepository.GetAllHousingAsync(municipalityId, brokerId, brokerFirmId, limitImagesPerHousing: 3))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
