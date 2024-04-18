@@ -2,6 +2,7 @@
 using FribergFastigheter.Data.Entities;
 using FribergFastigheter.Server.Data.DTO;
 using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -14,17 +15,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
     /// An API controller for the broker search housings API.
     /// </summary>
     /// <!-- Author: Jimmie -->
-    /// <!-- Co Authors: -->
+    /// <!-- Co Authors: Marcus-->
     [Route("api/BrokerFirm/Housing")]
     [ApiController]
     public class BrokerHousingController : ControllerBase
     {
         #region Fields
-
-        /// <summary>
-        /// The injected configuration properties.
-        /// </summary>
-        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// The injected housing repository.
@@ -36,6 +32,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// The injected imageService properties.
+        /// </summary>
+        private readonly IImageService _imageService;
+
         #endregion
 
         #region Constructors
@@ -45,12 +46,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         /// <param name="housingRepository">The injected housing repository.</param>
         /// <param name="mapper">The injected Auto Mapper.</param>
-        /// <param name="configuration">The injected configuration properties.</param>
-        public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IConfiguration configuration)
+        /// <param name="imageService">The injected imageService properties.</param>
+        public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService)
         {
             _housingRepository = housingRepository;
             _mapper = mapper;
-            _configuration = configuration;
+            _imageService = imageService;
         }
 
         #endregion
@@ -62,7 +63,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         /// <param name="id">The ID of the housing object to delete.</param>
         /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
+        /// <!-- Co Authors:  -->
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -77,7 +78,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="municipalityId">An optional municipality filter.</param>
         /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
         /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
+        /// <!-- Co Authors: Marcus -->
         [HttpGet]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<HousingDto>>> Get([Required] int brokerId, int? municipalityId = null)
@@ -86,8 +87,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            housings.ForEach(x => x.Images = x.Images.Select(y => y = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{y}").ToList());
-
+            _imageService.SetImageData(housings
+                .SelectMany(x => x.Images).ToList());
+            
             return Ok(housings);
         }
 
@@ -98,7 +100,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="brokerId">The ID of the broker associated with the housing.</param>
         /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
         /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
+        /// <!-- Co Authors: Marcus -->
         [HttpGet("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<HousingDto>>> GetById(int id, [Required] int brokerId)
@@ -111,7 +113,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
 
             var result = _mapper.Map<HousingDto>(housing);
-            result.Images = result.Images.Select(x => x = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{x}").ToList();
+            _imageService.SetImageData(result.Images);
 
             return Ok(result);
         }
@@ -125,8 +127,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         public async Task<ActionResult> Post([Required] int brokerId, [FromBody] HousingDto housingDto)
         {
             var newHousing = _mapper.Map<Housing>(housingDto);
-
-            return Ok();
 
             await _housingRepository.AddAsync(newHousing);
             return Ok();
@@ -147,8 +147,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
 
             var housing = _mapper.Map<Housing>(housingDto);
-
-            return Ok();
 
             await _housingRepository.UpdateAsync(housing);
             return Ok();

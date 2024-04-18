@@ -2,6 +2,7 @@
 using FribergFastigheter.Data.Entities;
 using FribergFastigheter.Server.Data.DTO;
 using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,20 +20,29 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
     public class HousingSearchController : ControllerBase
     {
         #region Fields
-
+        /// <summary>
+        /// The injected housing repository.
+        /// </summary>
         private readonly IHousingRepository _housingRepo;
-        private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// The injected Auto Mapper.
+        /// </summary>
+        private readonly IMapper _mapper;
+
+        /// <summary>
+        /// The injected imageService properties.
+        /// </summary>
+        private readonly IImageService _imageService;
         #endregion
 
         #region Constructors
 
-        public HousingSearchController(IHousingRepository housingRepo, IMapper mapper, IConfiguration configuration)
+        public HousingSearchController(IHousingRepository housingRepo, IMapper mapper, IImageService imageService)
         {
             _housingRepo = housingRepo;
             _mapper = mapper;
-            _configuration = configuration;
+            _imageService = imageService;
         }
 
         #endregion
@@ -54,7 +64,8 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            housings.ForEach(x => x.Images = x.Images.Select(y => y = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{y}").ToList());
+            _imageService.SetImageData(housings
+                .SelectMany(x => x.Images).ToList());
 
             return Ok(housings);
         }
@@ -65,7 +76,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <param name="id">The ID of the housing object to fetch.</param>
         /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors:  -->
+        /// <!-- Co Authors: Marcus -->
         [HttpGet("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<HousingDto>> GetHousing(int id)
@@ -78,7 +89,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
             }
 
             var result = _mapper.Map<HousingDto>(housing);
-            result.Images = result.Images.Select(x => x = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{x}").ToList();
+            _imageService.SetImageData(result.Images);
 
             return Ok(result);
         }
