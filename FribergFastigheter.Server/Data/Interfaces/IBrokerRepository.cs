@@ -11,8 +11,10 @@ namespace FribergFastigheter.Server.Data.Interfaces
     public interface IBrokerRepository
     {
         Task AddAsync(Broker broker);
+        Task DeleteAsync(int brokerId);
         Task DeleteAsync(Broker broker);
         Task<List<Broker>> GetAllBrokersAsync();
+        Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId);
         Task<Broker?> GetBrokerByIdAsync(int id);
         Task UpdateAsync(Broker broker);
     }

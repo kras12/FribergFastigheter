@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Files\MockData\Images\" />
+    <Folder Include="Files\Graphics\" />
   </ItemGroup>
 
   <ItemGroup>

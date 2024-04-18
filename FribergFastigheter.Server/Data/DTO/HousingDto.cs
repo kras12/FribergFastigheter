@@ -10,12 +10,17 @@ namespace FribergFastigheter.Server.Data.DTO
 	/// <!-- Co Authors: -->
 	public class HousingDto : HousingBaseDto
 	{
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		/// The broker of the housing object.
-		/// </summary>
-		public BrokerDto Broker { get; set; }
+        /// <summary>
+        /// The ID of the housing object.
+        /// </summary>
+        public int HousingId { get; set; }
+
+        /// <summary>
+        /// The broker of the housing object.
+        /// </summary>
+        public BrokerDto Broker { get; set; }
 
 		/// <summary>
 		/// The category of the housing object.
