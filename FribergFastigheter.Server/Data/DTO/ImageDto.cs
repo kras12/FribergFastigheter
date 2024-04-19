@@ -1,13 +1,31 @@
-﻿namespace FribergFastigheter.Server.Data.DTO
+﻿using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Server.Enums;
+
+namespace FribergFastigheter.Server.Data.DTO
 {
     public class ImageDto
     {
-        #region Properties
+		#region Properties
 
-        public string FileName { get; set; }
-        public string FileType { get; set; }
+		/// <summary>
+		/// A base64 string representation of the image file data.
+		/// </summary>
+		public string Base64 { get; set; } = "";
 
-        public string Base64 { get; set; }
+		/// <summary>
+		/// The filename of the image.
+		/// </summary>
+		public string FileName { get; set; } = "";
+
+		/// <summary>
+		/// The image type.
+		/// </summary>
+		public ImageTypes ImageType { get; set; } 
+
+		/// <summary>
+		/// The ID of the image.
+		/// </summary>
+		public int ImageId { get; set; }
 
         #endregion
     }

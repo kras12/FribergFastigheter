@@ -17,5 +17,6 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id);
         Task UpdateAsync(BrokerFirm brokerFirm);
         Task<int> BrokerCount(int brokerFirmId);
-    }
+		Task<bool> HaveBroker(int brokerFirmId, int brokerId);
+	}
 }

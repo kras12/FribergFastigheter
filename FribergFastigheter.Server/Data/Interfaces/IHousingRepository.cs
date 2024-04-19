@@ -1,4 +1,5 @@
 ﻿using FribergFastigheter.Data.Entities;
+using FribergFastigheterApi.Data.Entities;
 
 namespace FribergFastigheter.Server.Data.Interfaces
 {
@@ -12,10 +13,12 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task AddAsync(Housing housing);
 		Task DeleteAsync(int housingId);
 		Task DeleteAsync(Housing housing);
-        Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null);
+        Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null, int? limitHousings = null, int? limitImagesPerHousing = null);
         Task<Housing?> GetHousingByIdAsync(int id);
         Task UpdateAsync(Housing housing);
 		Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
 		Task<bool> Exists(int id);
-    }
+		Task<List<Image>> GetHousingImages(int housingId, List<int>? imageIds = null);
+		Task<bool> HousingExists(int housingId);
+	}
 }

@@ -28,6 +28,11 @@ namespace FribergFastigheter.Server.Data.DTO
 		public HousingCategoryDto Category { get; set; }
 
 		/// <summary>
+		/// The images associated with the housing object.
+		/// </summary>
+		public List<ImageDto> Images { get; set; } = new();
+
+		/// <summary>
 		/// The municipality of the housing object.
 		/// </summary>
 		public MunicipalityDto Municipality { get; set; }

@@ -85,8 +85,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
                 _imageservice.SetImageData(result.Logotype);
             }
 
-			//result.Logotype = $"{_configuration.GetSection("FileStorage").GetSection("UploadFolderPath").Value}/{result.Logotype}";
-
 			return Ok(result);
 		}
 

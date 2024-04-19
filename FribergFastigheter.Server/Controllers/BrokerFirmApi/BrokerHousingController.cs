@@ -7,6 +7,7 @@ using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,7 +23,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
     [ApiController]
     public class BrokerHousingController : ControllerBase
     {
-        #region Fields
+		#region Fields
+
+		/// <summary>
+		/// The injected broker firm repository.
+		/// </summary>
+		private readonly IBrokerFirmRepository _brokerFirmRepository;
 
         /// <summary>
         /// The injected housing repository.
@@ -39,22 +45,24 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         private readonly IImageService _imageService;
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="housingRepository">The injected housing repository.</param>
-        /// <param name="mapper">The injected Auto Mapper.</param>
-        /// <param name="imageService">The injected imageService properties.</param>
-        public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService)
-        {
-            _housingRepository = housingRepository;
-            _mapper = mapper;
-            _imageService = imageService;
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="housingRepository">The injected housing repository.</param>
+		/// <param name="mapper">The injected Auto Mapper.</param>
+		/// <param name="imageService">The injected imageService properties.</param>
+		/// <param name="brokerFirmRepository">The injected broker firm repository.</param>
+		public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService, IBrokerFirmRepository brokerFirmRepository)
+		{
+			_housingRepository = housingRepository;
+			_mapper = mapper;
+			_imageService = imageService;
+			_brokerFirmRepository = brokerFirmRepository;
+		}
 
 		#endregion
 
@@ -98,7 +106,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<HousingDto>>> Get([Required] int brokerFirmId, int? brokerId, int? municipalityId = null)
         {
-			var housings = (await _housingRepository.GetAllHousingAsync(municipalityId, brokerId, brokerFirmId))
+            if (brokerId != null && !(await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId.Value)))
+            {
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
+			}
+
+			var housings = (await _housingRepository.GetAllHousingAsync(municipalityId, brokerId, brokerFirmId, limitImagesPerHousing: 3))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
@@ -142,21 +155,32 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// An API endpoint for creating housing objects. 
 		/// </summary>
 		/// param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-		/// <param name="housingDto">The serialized DTO object.</param>
+		/// <param name="createhousingDto">The serialized DTO object.</param>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		[HttpPost]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateHousingDto housingDto)
+		public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateHousingDto newHousingDto)
         {
-			if (brokerFirmId != housingDto.BrokerFirmId)
+			if (brokerFirmId != newHousingDto.BrokerFirmId)
 			{
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted housing object."));
 			}
 
-			var newHousing = _mapper.Map<Housing>(housingDto);
-            await _housingRepository.AddAsync(newHousing);
+			var newHousingEntity = _mapper.Map<Housing>(newHousingDto);
+
+			// Save new images to disk
+			if (newHousingDto.NewImages.Count > 0)
+			{
+				foreach (var newImageDto in newHousingDto.NewImages)
+				{
+					var newImage = new Image(_imageService.SaveImageToDisk(newImageDto.Base64, newImageDto.ImageType));
+					newHousingEntity.Images.Add(newImage);
+				}
+			}
+
+            await _housingRepository.AddAsync(newHousingEntity);
             return Ok();
         }
 
@@ -165,20 +189,52 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// </summary>
 		/// <param name="id">The ID of the housing object to update.</param>
 		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-		/// <param name="housingDto">The serialized DTO object.</param>
+		/// <param name="updateHousingDto">The serialized DTO object.</param>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		[HttpPut("{id:int}")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Put(int id, [Required] int brokerFirmId, [FromBody] UpdateHousingDto housingDto)
+		public async Task<ActionResult> Put(int id, [Required] int brokerFirmId, [FromBody] UpdateHousingDto updateHousingDto)
         {
-            if (id != housingDto.HousingId || !await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
+            if (id != updateHousingDto.HousingId || !await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
 			}
 
-            await _housingRepository.UpdateAsync(_mapper.Map<Housing>(housingDto));
+			if (!await _housingRepository.HousingExists(id))
+			{
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't exists."));
+			}
+
+    		var updatedHousingEntity = _mapper.Map<Housing>(updateHousingDto);
+			updatedHousingEntity.Images = await _housingRepository.GetHousingImages(id);
+
+			// Delete images from disk
+			if (updateHousingDto.DeletedImages.Count > 0)
+            {
+                var deletedImages = updatedHousingEntity.Images.Where(x => updateHousingDto.DeletedImages.Contains(x.ImageId)).ToList();
+
+                if (updateHousingDto.DeletedImages.Count != deletedImages.Count)
+                {
+					return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "All images to delete were not found in the database."));
+				}
+
+                foreach (var image in deletedImages)
+                {
+                    _imageService.DeleteImageFromDisk(image.FileName);
+                    updatedHousingEntity.Images.Remove(image);
+                }
+            }
+
+            // Save new images to disk
+            foreach (var newImageDto in updateHousingDto.NewImages)
+            {
+                var newImage = new Image(_imageService.SaveImageToDisk(newImageDto.Base64, newImageDto.ImageType));
+				updatedHousingEntity.Images.Add(newImage);
+			}
+
+            await _housingRepository.UpdateAsync(updatedHousingEntity);
             return Ok();
         }
 

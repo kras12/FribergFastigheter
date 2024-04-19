@@ -45,22 +45,24 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
             _imageService = imageService;
         }
 
-        #endregion
+		#endregion
 
-        #region ApiEndPoints
+		#region ApiEndPoints
 
-        /// <summary>
-        /// An API endpoint for searching housing objects. 
-        /// </summary>
-        /// <param name="municipalityId">An optional municipality filter.</param>
-        /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
-        [HttpGet]
+		/// <summary>
+		/// An API endpoint for searching housing objects. 
+		/// </summary>
+		/// <param name="municipalityId">An optional municipality filter.</param>
+		/// <param name="limitHousings">An optional max limit for number of retrieved housings.</param>
+		/// <param name="limitImageCountPerHousing">An optional max limit for number of retrieved images per housing.</param>
+		/// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
+		/// <!-- Author: Marcus -->
+		/// <!-- Co Authors: Jimmie -->
+		[HttpGet]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null)
+        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null)
         {
-            var housings = (await _housingRepo.GetAllHousingAsync(municipalityId))
+            var housings = (await _housingRepo.GetAllHousingAsync(municipalityId: municipalityId, limitHousings: limitHousings, limitImagesPerHousing: limitImageCountPerHousing))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
