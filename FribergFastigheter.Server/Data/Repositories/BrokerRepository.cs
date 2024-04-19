@@ -3,6 +3,7 @@ using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
 
 namespace FribergFastigheter.Server.Data.Repositories
 {
@@ -57,24 +58,23 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         public async Task<Broker?> GetBrokerByIdAsync(int id)
         {
-            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).FirstOrDefaultAsync(b => b.BrokerId == id);
+            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).AsNoTracking().FirstOrDefaultAsync(b => b.BrokerId == id);
         }
 
         public async Task<List<Broker>> GetAllBrokersAsync()
         {
-            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).ToListAsync();
+            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
+        public Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
         {
-            var query = applicationDbContext.Brokers
+            return applicationDbContext.Brokers
                 .Include(x => x.BrokerFirm)
                 .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
-                .AsQueryable();
-
-            return await query.ToListAsync();
+				.AsNoTracking()
+				.ToListAsync();
         }
 
-        #endregion
-    }
+		#endregion
+	}
 }
