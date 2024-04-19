@@ -28,6 +28,11 @@ namespace FribergFastigheter.Server.Data.DTO
 		public int CategoryId { get; set; }
 
 		/// <summary>
+		/// A collection of IDs for deleted images.
+		/// </summary>
+		public List<int> DeletedImages { get; set; } = new();
+
+		/// <summary>
 		/// The ID of the housing object.
 		/// </summary>
 		public int HousingId { get; set; }
@@ -36,6 +41,11 @@ namespace FribergFastigheter.Server.Data.DTO
 		/// The ID of the municipality associated with the housing object.
 		/// </summary>
 		public int MunicipalityId { get; set; }
+
+		/// <summary>
+		/// A collection of new images.
+		/// </summary>
+		public List<NewImageDto> NewImages { get; set; } = new();
 
 		#endregion
 	}

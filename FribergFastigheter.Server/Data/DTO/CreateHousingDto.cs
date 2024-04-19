@@ -30,7 +30,12 @@ namespace FribergFastigheter.Server.Data.DTO
 		/// <summary>
 		/// The ID of the municipality associated with the housing object.
 		/// </summary>
-		public int MunicipalityId { get; set; }	
+		public int MunicipalityId { get; set; }
+
+		/// <summary>
+		/// A collection of new images.
+		/// </summary>
+		public List<NewImageDto> NewImages { get; set; } = new();
 
 		#endregion
 	}

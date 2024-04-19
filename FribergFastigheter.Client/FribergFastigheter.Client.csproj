@@ -7,17 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Graphics\placeholder.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\Graphics\placeholder.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\Graphics\profile-image-placeholder.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
