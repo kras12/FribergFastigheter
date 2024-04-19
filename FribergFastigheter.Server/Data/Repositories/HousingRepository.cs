@@ -129,6 +129,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 			var result = await query.ToListAsync();
 
+			// TODO - Look for a more optimized way to fetch a limited number of images
 			if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
 			{
 				result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
