@@ -6,6 +6,7 @@ using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
@@ -97,7 +98,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (broker == null)
             {
-                return NotFound();
+                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
             }
 
             var result = _mapper.Map<BrokerDto>(broker);
@@ -180,7 +181,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             await _brokerRepository.DeleteAsync(id);
             return Ok();
         }
+
+        #endregion
+
+    
     }
+
 }
 
-#endregion
+
