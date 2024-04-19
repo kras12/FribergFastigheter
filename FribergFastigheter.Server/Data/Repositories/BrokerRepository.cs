@@ -65,19 +65,12 @@ namespace FribergFastigheter.Server.Data.Repositories
             return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).ToListAsync();
         }
 
-        public async Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
+        public Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
         {
-            var query = applicationDbContext.Brokers
+            return applicationDbContext.Brokers
                 .Include(x => x.BrokerFirm)
                 .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
-                .AsQueryable();
-
-            if (brokerFirmId != null)
-            {
-                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
-            }
-
-            return await query.ToListAsync();
+                .ToListAsync();
         }
 
         #endregion
