@@ -20,9 +20,20 @@ namespace FribergFastigheter
         {
 			var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
 
-            builder.Services.AddControllers();
+			// Add Cors policy for our debug build
+#if DEBUG
+			builder.Services.AddCors(policy =>
+			{
+				policy.AddPolicy("LocalHostingCorsPolicy", builder => builder.WithOrigins("https://localhost:7038")
+					 .AllowAnyMethod()
+					 .AllowAnyHeader()
+					 .AllowCredentials());
+			});
+#endif
+
+			// Add services to the container.
+			builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -45,17 +56,6 @@ namespace FribergFastigheter
             // Add serialization converters
             builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-			// Add Cors policy for our debug build
-#if DEBUG
-			builder.Services.AddCors(policy =>
-			{
-				policy.AddPolicy("_myAllowSpecificOrigins", builder => builder.WithOrigins("https://localhost:7078/")
-					 .AllowAnyMethod()
-					 .AllowAnyHeader()
-					 .AllowCredentials());
-			});
-#endif
-
 			// Compression test			
 			//builder.Services.AddResponseCompression(options =>
 			//{
@@ -67,6 +67,10 @@ namespace FribergFastigheter
 			//builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
 
 			var app = builder.Build();
+
+#if DEBUG
+			app.UseCors("LocalHostingCorsPolicy");
+#endif
 
 			// Compression test
 			//app.UseResponseCompression();
