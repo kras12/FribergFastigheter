@@ -72,11 +72,6 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
                 .AsQueryable();
 
-            if (brokerFirmId != null)
-            {
-                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
-            }
-
             return await query.ToListAsync();
         }
 
