@@ -15,7 +15,7 @@ namespace FribergFastigheter.Server.Data.DTO
 		/// <summary>
 		/// The firm that the broker belongs to.
 		/// </summary>
-		public int BrokerFirm { get; set; }
+		public int BrokerFirmId { get; set; }
 
 		/// <summary>
 		/// The ID of the broker.
