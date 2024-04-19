@@ -54,12 +54,12 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         public async Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id)
         {
-            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).FirstOrDefaultAsync(b => b.BrokerFirmId == id);
+            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).AsNoTracking().FirstOrDefaultAsync(b => b.BrokerFirmId == id);
         }
 
         public async Task<List<BrokerFirm>> GetAllBrokerFirmsAsync()
         {
-            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).ToListAsync();
+            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).AsNoTracking().ToListAsync();
         }
 
 		/// <!-- Author: Jimmie -->

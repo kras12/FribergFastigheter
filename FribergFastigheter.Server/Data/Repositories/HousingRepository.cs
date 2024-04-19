@@ -91,7 +91,8 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Include(x => x.Municipality)
                 .Include(x => x.Images)
                 .Where(x => x.HousingId == id)
-                .FirstOrDefaultAsync();
+				.AsNoTracking()
+				.FirstOrDefaultAsync();
 		}
 
 		/// <!-- Author: Marcus, Jimmie -->
@@ -105,7 +106,8 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
                 .Include(x => x.Images)
-                .AsQueryable();
+				.AsNoTracking()
+				.AsQueryable();
 
             if (municipalityId != null)
             {
@@ -158,6 +160,7 @@ namespace FribergFastigheter.Server.Data.Repositories
         {
 			var query = applicationDbContext
 				.Housings.Where(x => x.HousingId == housingId)
+				.AsNoTracking()
 				.SelectMany(x => x.Images);
 				
 			if (imageIds != null)
