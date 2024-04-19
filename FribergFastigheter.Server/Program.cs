@@ -45,6 +45,17 @@ namespace FribergFastigheter
             // Add serialization converters
             builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+			// Add Cors policy for our debug build
+#if DEBUG
+			builder.Services.AddCors(policy =>
+			{
+				policy.AddPolicy("_myAllowSpecificOrigins", builder => builder.WithOrigins("https://localhost:7078/")
+					 .AllowAnyMethod()
+					 .AllowAnyHeader()
+					 .AllowCredentials());
+			});
+#endif
+
 			// Compression test			
 			//builder.Services.AddResponseCompression(options =>
 			//{
@@ -67,7 +78,7 @@ namespace FribergFastigheter
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+			app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
