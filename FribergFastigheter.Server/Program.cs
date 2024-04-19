@@ -8,6 +8,7 @@ using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 
@@ -76,11 +77,12 @@ namespace FribergFastigheter
 			{
 				var services = scope.ServiceProvider;
 				var context = services.GetRequiredService<ApplicationDbContext>();
+                var configuration = services.GetRequiredService<IConfiguration>();
 				context.Database.Migrate();
 
                 if (!context.Housings.Any())
                 {
-                    SeedMockData(context);
+                    SeedMockData(context, configuration);
 
 				}		
 			}
@@ -106,7 +108,7 @@ namespace FribergFastigheter
 		}
 
 		[Conditional("DEBUG")]
-		private static void SeedMockData(ApplicationDbContext context)
+		private static void SeedMockData(ApplicationDbContext context, IConfiguration configuration)
 		{
             // Database
 			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
@@ -121,13 +123,12 @@ namespace FribergFastigheter
                 housing.Municipality = municipalities[housing.Municipality.MunicipalityName];
                 context.Housings.Add(housing);
             }
+			context.SaveChanges();
 
-            context.SaveChanges();
-
-            // Images
-            foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
+			// Images
+			foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
             {
-                string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
+                string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.GetSection("FileStorage").GetSection("UploadFolderName").Value!);
 
 				if (!Directory.Exists(destinationFolder))
                 {
@@ -137,5 +138,5 @@ namespace FribergFastigheter
                 File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
             }
 		}
-	}    
+	}
 }
