@@ -2,7 +2,8 @@
 
 namespace FribergFastigheter.Client.Pages
 {
-    public partial class Home:ComponentBase
-     {
+    public partial class Home : ComponentBase
+    {
+
     }
 }

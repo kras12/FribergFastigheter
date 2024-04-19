@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.ComponentModel;
 
-namespace FribergFastigheter.Client.Pages.Broker
+namespace FribergFastigheter.Client.Pages
 {
     public partial class BrokerHome : Component
     {

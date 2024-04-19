@@ -2,9 +2,9 @@
 
 namespace FribergFastigheter.Client.Pages
 {
-    public partial class Broker: ComponentBase
+    public partial class Broker : ComponentBase
     {
-        [Parameter]
-        public int Id { get; set; }
-    }
+		[Parameter]
+		public int Id { get; set; }
+	}
 }
