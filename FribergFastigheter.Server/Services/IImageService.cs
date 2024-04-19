@@ -1,5 +1,5 @@
-﻿using FribergFastigheter.Server.Data.DTO;
-using FribergFastigheter.Server.Enums;
+﻿using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Enums;
 using FribergFastigheterApi.Data.Entities;
 
 namespace FribergFastigheter.Server.Services

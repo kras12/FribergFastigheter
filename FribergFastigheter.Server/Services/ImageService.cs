@@ -1,5 +1,5 @@
-﻿using FribergFastigheter.Server.Data.DTO;
-using FribergFastigheter.Server.Enums;
+﻿using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Enums;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿namespace FribergFastigheter.Server.Enums
+﻿namespace FribergFastigheter.Shared.Enums
 {
 	/// <summary>
 	/// Supported image types.
