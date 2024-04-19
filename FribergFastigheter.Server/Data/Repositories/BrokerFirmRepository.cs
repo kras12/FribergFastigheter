@@ -9,7 +9,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 	/// Repository for BrokerFirms
 	/// </summary>
 	/// <!-- Author: Marcus -->
-	/// <!-- Co Authors: -->
+	/// <!-- Co Authors: Jimmie -->
 
     public class BrokerFirmRepository : IBrokerFirmRepository
     {
@@ -36,7 +36,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(BrokerFirm brokerFirm)
+		public async Task DeleteAsync(BrokerFirm brokerFirm)
         {
             applicationDbContext.BrokerFirms.Remove(brokerFirm);
             await applicationDbContext.SaveChangesAsync();
@@ -54,14 +54,29 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         public async Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id)
         {
-            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).FirstOrDefaultAsync(b => b.BrokerFirmId == id);
+            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).AsNoTracking().FirstOrDefaultAsync(b => b.BrokerFirmId == id);
         }
 
         public async Task<List<BrokerFirm>> GetAllBrokerFirmsAsync()
         {
-            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).ToListAsync();
+            return await applicationDbContext.BrokerFirms.Include(x => x.Brokers).AsNoTracking().ToListAsync();
         }
 
-        #endregion
-    }
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors:  -->
+		public async Task<int> BrokerCount(int brokerFirmId)
+        {
+            return await applicationDbContext.BrokerFirms.Where(x => x.BrokerFirmId == brokerFirmId).Select(x => x.Brokers).CountAsync();
+        }
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors:  -->
+		public async Task<bool> HaveBroker(int brokerFirmId, int brokerId)
+        {
+            return await applicationDbContext.BrokerFirms
+                .AnyAsync(x => x.BrokerFirmId == brokerFirmId && x.Brokers.Any(x => x.BrokerId == brokerId));
+        }
+
+		#endregion
+	}
 }

@@ -3,10 +3,14 @@ using FribergFastigheter.HelperClasses;
 using FribergFastigheter.Server.AutoMapper;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
+using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace FribergFastigheter
 {
@@ -29,14 +33,35 @@ namespace FribergFastigheter
 
 			// Repositories
 			builder.Services.AddTransient<IHousingRepository, HousingRepository>();
+            builder.Services.AddTransient<IBrokerRepository, BrokerRepository>();
+            builder.Services.AddTransient<IBrokerFirmRepository, BrokerFirmRepository>();
 
             // Auto Mapper
-            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+            builder.Services.AddAutoMapper(typeof(EntityToDtoAutoMapperProfile), typeof(DtoToEntityAutoMapperProfile));
+
+            // Custom Services
+            builder .Services.AddTransient<IImageService, ImageService>();
+
+            // Add serialization converters
+            builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+			// Compression test			
+			//builder.Services.AddResponseCompression(options =>
+			//{
+			//	options.EnableForHttps = true;
+			//    options.Providers.Add<BrotliCompressionProvider>();
+			//	options.Providers.Add<GzipCompressionProvider>();
+			//});
+			//builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
+			//builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
 
 			var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+			// Compression test
+			//app.UseResponseCompression();
+
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -46,8 +71,7 @@ namespace FribergFastigheter
 
             app.UseAuthorization();
 
-
-            app.MapControllers();
+			app.MapControllers();
 
 			using (var scope = app.Services.CreateScope())
 			{
@@ -57,8 +81,8 @@ namespace FribergFastigheter
 
                 if (!context.Housings.Any())
                 {
-                    SeedMockData(context);
-
+					var configuration = services.GetRequiredService<IConfiguration>();
+					SeedMockData(context, configuration);
 				}		
 			}
 
@@ -83,7 +107,7 @@ namespace FribergFastigheter
 		}
 
 		[Conditional("DEBUG")]
-		private static void SeedMockData(ApplicationDbContext context)
+		private static void SeedMockData(ApplicationDbContext context, IConfiguration configuration)
 		{
             // Database
 			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
@@ -98,13 +122,12 @@ namespace FribergFastigheter
                 housing.Municipality = municipalities[housing.Municipality.MunicipalityName];
                 context.Housings.Add(housing);
             }
+			context.SaveChanges();
 
-            context.SaveChanges();
-
-            // Images
-            foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
+			// Images
+			foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
             {
-                string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Uploads");
+                string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.GetSection("FileStorage").GetSection("UploadFolderName").Value!);
 
 				if (!Directory.Exists(destinationFolder))
                 {
@@ -114,5 +137,5 @@ namespace FribergFastigheter
                 File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
             }
 		}
-	}    
+	}
 }

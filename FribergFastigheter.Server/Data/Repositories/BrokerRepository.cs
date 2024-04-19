@@ -1,7 +1,9 @@
-﻿using FribergFastigheter.Server.Data.Interfaces;
+﻿using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
 
 namespace FribergFastigheter.Server.Data.Repositories
 {
@@ -36,7 +38,12 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Broker broker) 
+        public Task DeleteAsync(int brokerId)
+        {
+            return DeleteAsync(new Broker() { BrokerId = brokerId });
+        }
+
+        public async Task DeleteAsync(Broker broker)
         {
             applicationDbContext.Brokers.Remove(broker);
             await applicationDbContext.SaveChangesAsync();
@@ -51,15 +58,23 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         public async Task<Broker?> GetBrokerByIdAsync(int id)
         {
-            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).FirstOrDefaultAsync(b => b.BrokerId == id);
+            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).AsNoTracking().FirstOrDefaultAsync(b => b.BrokerId == id);
         }
 
         public async Task<List<Broker>> GetAllBrokersAsync()
         {
-            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).ToListAsync();
+            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).AsNoTracking().ToListAsync();
         }
 
+        public Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
+        {
+            return applicationDbContext.Brokers
+                .Include(x => x.BrokerFirm)
+                .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
+				.AsNoTracking()
+				.ToListAsync();
+        }
 
-        #endregion
-    }
+		#endregion
+	}
 }

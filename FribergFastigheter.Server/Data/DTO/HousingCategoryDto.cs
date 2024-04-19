@@ -14,7 +14,7 @@ namespace FribergFastigheter.Server.Data.DTO
 		/// <summary>
 		/// The name of the category.
 		/// </summary>
-		public string CategoryName { get; private set; } = string.Empty;
+		public string CategoryName { get; set; } = string.Empty;
 
 		/// <summary>
 		/// The ID of the category.

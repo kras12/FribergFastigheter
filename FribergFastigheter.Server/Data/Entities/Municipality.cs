@@ -9,14 +9,22 @@ namespace FribergFastigheterApi.Data.Entities
 	/// <!-- Co Authors: -->
 	public class Municipality
 	{
-		#region Constructors
+        #region Constructors
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="municipalityName">The name of the municipality.</param>
-		/// <exception cref="ArgumentException"></exception>
-		public Municipality(string municipalityName)
+        public Municipality()
+        {
+				
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="municipalityName">The name of the municipality.</param>
+        /// <exception cref="ArgumentException"></exception>
+        public Municipality(string municipalityName)
 		{
 			if (string.IsNullOrEmpty(municipalityName))
 			{
