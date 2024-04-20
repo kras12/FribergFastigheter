@@ -77,7 +77,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .Select(x => _mapper.Map<BrokerDto>(x))
                 .ToList();
 
-            _imageService.SetImageData(brokers.Where(x => x.ProfileImage != null)
+            _imageService.SetImageData(HttpContext, brokers
+                .Where(x => x.ProfileImage != null)
                 .Select(x => x.ProfileImage).ToList());
 
             return Ok(brokers);
@@ -104,7 +105,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var result = _mapper.Map<BrokerDto>(broker);
             if (result.ProfileImage != null)
             {
-                _imageService.SetImageData(result.ProfileImage);
+                _imageService.SetImageData(HttpContext, result.ProfileImage, includeImageData: true);
             }
 
             return Ok(result);

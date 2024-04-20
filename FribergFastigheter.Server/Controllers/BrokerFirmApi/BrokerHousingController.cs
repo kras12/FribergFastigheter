@@ -115,7 +115,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            _imageService.SetImageData(housings
+            _imageService.SetImageData(HttpContext, housings
                 .SelectMany(x => x.Images).ToList());
             
             return Ok(housings);
@@ -146,7 +146,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
             var result = _mapper.Map<HousingDto>(housing);
-            _imageService.SetImageData(result.Images);
+            _imageService.SetImageData(HttpContext, result.Images);
 
             return Ok(result);
         }

@@ -82,7 +82,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
 			if (result.Logotype != null)
             {
-                _imageservice.SetImageData(result.Logotype);
+                _imageservice.SetImageData(HttpContext, result.Logotype, includeImageData: true);
             }
 
 			return Ok(result);

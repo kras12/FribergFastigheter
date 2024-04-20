@@ -33,21 +33,22 @@ namespace FribergFastigheter.Client.Services
 			_httpClient = httpClient;
 		}
 
-		#endregion
+        #endregion
 
-		#region OpenAPiMethods
+        #region OpenAPiMethods
 
-		/// <summary>
-		/// Fetches all housings that matches the filters and options.
-		/// </summary>
-		/// <param name="municipalityId">Sets a filter on municipality.</param>
-		/// <param name="limitHousings">Sets the max limit of housing objects to return.</param>
-		/// <param name="limitImageCountPerHousing">Sets the max limit of images to return per housing object.</param>
-		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/>.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<List<HousingDto>?> SearchHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null)
-		{
+        /// <summary>
+        /// Fetches all housings that matches the filters and options.
+        /// </summary>
+        /// <param name="municipalityId">Sets a filter on municipality.</param>
+        /// <param name="limitHousings">Sets the max limit of housing objects to return.</param>
+        /// <param name="limitImageCountPerHousing">Sets the max limit of images to return per housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        /// <param name="includeImageData"></param>
+        public async Task<List<HousingDto>?> SearchHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null, bool includeImageData = false)
+        {
 			List<KeyValuePair<string, string>> queries = new();
 
 			if (municipalityId != null)
@@ -65,7 +66,12 @@ namespace FribergFastigheter.Client.Services
 				queries.Add(new KeyValuePair<string, string>("limitImageCountPerHousing", limitImageCountPerHousing.Value.ToString()));
 			}
 
-			return await _httpClient.GetFromJsonAsync<List<HousingDto>>($"/api/Housing/Search{BuildQueryString(queries)}");
+            if (includeImageData)
+            {
+                queries.Add(new KeyValuePair<string, string>("includeImageData", includeImageData.ToString()));
+            }
+
+            return await _httpClient.GetFromJsonAsync<List<HousingDto>>($"/api/Housing/Search{BuildQueryString(queries)}");
 		}
 
 		#endregion

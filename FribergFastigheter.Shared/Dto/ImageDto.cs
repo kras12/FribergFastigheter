@@ -26,6 +26,11 @@ namespace FribergFastigheter.Shared.Dto
         /// </summary>
         public int ImageId { get; set; }
 
+        /// <summary>
+        /// The url of the image.
+        /// </summary>
+        public string Url { get; set; } = "";
+
         #endregion
     }
 }
