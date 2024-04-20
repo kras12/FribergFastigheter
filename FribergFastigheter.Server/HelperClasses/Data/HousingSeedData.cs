@@ -1,62 +1,49 @@
-﻿using FribergFastigheterApi.Data.Entities;
+﻿using FribergFastigheter.Data.Entities;
+using FribergFastigheterApi.Data.Entities;
 
-namespace FribergFastigheterApi.HelperClasses.Data
+namespace FribergFastigheter.Server.HelperClasses.Data
 {
-	/// <summary>
-	/// A class that stores serialized seed data for housing objects. 
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public class HousingSeedDataRow
+    /// <summary>
+    /// Stores seed data for housings.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public class HousingSeedData
     {
-		/// <summary>
-		/// The address of the housing object.
-		/// </summary>
-		public string Address { get; set; } = "";
+        #region Properties
 
-		/// <summary>
-		/// The name of the broker.
-		/// </summary>
-		public string Broker { get; set; } = "";
+        /// <summary>
+        /// Returns a list of categories associated with the housings.
+        /// </summary>
+        public List<HousingCategory> HousingCategories
+        {
+            get
+            {
+                return Housings.Select(x => x.Category).ToHashSet().ToList();
+            }
+        }
 
-		/// <summary>
-		/// The name of the broker firm.
-		/// </summary>
-		public string BrokerFirm { get; set; } = "";
+        /// <summary>
+        /// A collection of housing objects.
+        /// </summary>
+        public List<Housing> Housings { get; set; } = new();
 
-		/// <summary>
-		/// The description of the housing object.
-		/// </summary>
-		public string Description { get; set; } = "";
+        /// <summary>
+        /// Returns a list of municipalities associated with the housings.
+        /// </summary>
+        public List<Municipality> Municipalities
+        {
+            get
+            {
+                return Housings.Select(x => x.Municipality).ToHashSet().ToList();
+            }
+        }
 
-		/// <summary>
-		/// An image associated with the housing object.
-		/// </summary>
-		public string Image { get; set; } = "";
+        /// <summary>
+        /// A collection of urls tied to the housings, brokers, and broker firms. 
+        /// </summary>
+        public ImageUrlCollection SeedImageUrls { get; set; } = new();
 
-		/// <summary>
-		/// The key for extra housing data.
-		/// </summary>
-		public string Key { get; set; } = "";
-
-		/// <summary>
-		/// The area and municipality of the housing object.
-		/// </summary>
-		public string Location { get; set; } = "";
-
-		/// <summary>
-		/// The URL of the housing object page.
-		/// </summary>
-		public string PageURL { get; set; } = "";
-
-		/// <summary>
-		/// The price of the housing object.
-		/// </summary>
-		public string Price { get; set; } = "";
-
-		/// <summary>
-		/// The value for extra housing data. 
-		/// </summary>
-		public string Value { get; set; } = "";	
+        #endregion
     }
 }

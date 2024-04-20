@@ -3,6 +3,7 @@ using FribergFastigheter.HelperClasses;
 using FribergFastigheter.Server.AutoMapper;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
+using FribergFastigheter.Server.HelperClasses.Data;
 using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
@@ -101,32 +102,19 @@ namespace FribergFastigheter
 				}		
 			}
 
-			//WriteSeedImageUrlsToOutputFolder();
+            //CopyMockDataImagesToUploadFolder();
 
-			app.Run();
+
+            app.Run();
         }
-
-		[Conditional("DEBUG")]
-        private static void WriteSeedImageUrlsToOutputFolder()
-        {
-			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
-			var imageUrls = SeedDataHelper.GetHousingImagePathsFromJsonFile(seedFile);
-            string debugFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DebugOutput");
-
-			if (!Directory.Exists(debugFolder))
-            {
-                Directory.CreateDirectory(debugFolder);
-            }
-                
-            File.WriteAllLines(Path.Combine(debugFolder, "SeedImageUrls.txt"), imageUrls);
-		}
 
 		[Conditional("DEBUG")]
 		private static void SeedMockData(ApplicationDbContext context, IConfiguration configuration)
 		{
             // Database
 			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
-			var seedData = SeedDataHelper.GetHousingSeedDataFromJsonFile(seedFile);
+            var seedHelper = new SeedDataHelper(seedFile);
+			var seedData = seedHelper.GetSeedData();
 
             var housingCategories = context.HousingCategories.ToDictionary(x => x.CategoryName);
             var municipalities = context.Municipalities.ToDictionary(x => x.MunicipalityName);
@@ -139,18 +127,32 @@ namespace FribergFastigheter
             }
 			context.SaveChanges();
 
-			// Images
-			foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
+            // Save urls for images to download
+            string outputFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DebugSeedImageUrls");
+            if (!Directory.Exists(outputFolder))
+            {
+                Directory.CreateDirectory(outputFolder);
+            }
+
+            File.WriteAllLines(Path.Combine(outputFolder, "SeedImageUrls.txt"), seedData.SeedImageUrls.AllImageUrls);
+        }
+
+        [Conditional("DEBUG")]
+        private static void CopyMockDataImagesToUploadFolder(ApplicationDbContext context, IConfiguration configuration)
+        {
+            // Copy images
+            foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
             {
                 string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.GetSection("FileStorage").GetSection("UploadFolderName").Value!);
 
-				if (!Directory.Exists(destinationFolder))
+                if (!Directory.Exists(destinationFolder))
                 {
                     Directory.CreateDirectory(destinationFolder);
                 }
 
                 File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
             }
-		}
-	}
+        }
+
+    }
 }
