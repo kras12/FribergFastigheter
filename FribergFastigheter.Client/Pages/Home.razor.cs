@@ -11,6 +11,8 @@ namespace FribergFastigheter.Client.Pages
     /// </summary>
     public partial class Home : ComponentBase
     {
+        private Stopwatch _stopwatch = new Stopwatch();
+
 		#region Properties
 
 #pragma warning disable CS8618
@@ -19,12 +21,12 @@ namespace FribergFastigheter.Client.Pages
 		/// </summary>
 		[Inject] 
 		private IFribergFastigheterApiService ApiService { get; set; }
-#pragma warning restore CS8618 
+#pragma warning restore CS8618
 
 		/// <summary>
 		/// A test property to test the API.
 		/// </summary>
-		public int HouseFetchCount { get; set; }
+		public List<HousingDto> Housings { get; set; } = new();
 
 		#endregion
 
@@ -38,15 +40,64 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
+            //await EmbeddedDataTest();
+            await UrlDataTest();
 
-			var housings = await ApiService.SearchHousings(limitHousings: 25, limitImageCountPerHousing: 3);
-
-			if (housings != null)
-			{
-				HouseFetchCount = housings.Count;
-			}
+            _stopwatch.Start();
 		}
 
-		#endregion
-	}
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+        }
+
+        private async Task EmbeddedDataTest()
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            var housings = await ApiService.SearchHousings(limitHousings: 50, limitImageCountPerHousing: 3, includeImageData: true);
+
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
+
+            if (housings != null)
+            {
+                var firstImage = housings.First().Images.First().Base64;
+               Housings = housings;
+
+#pragma warning disable CS4014
+                Task.Run(
+                    async () =>
+                    {
+                        await Task.Delay(2000);
+                        foreach (var housing in housings)
+                        {
+                            foreach (var image in housing.Images)
+                            {
+                                Console.WriteLine("Switching image.");
+                                image.Base64 = firstImage;
+                                StateHasChanged();
+                                await Task.Delay(100);
+                            }
+                        }
+                    });
+#pragma warning restore CS4014
+            }
+        }
+
+        private async Task UrlDataTest()
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            var housings = await ApiService.SearchHousings(limitHousings: 50, limitImageCountPerHousing: 1, includeImageData: false);
+
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
+
+            if (housings != null)
+            {                
+                Housings = housings;
+            }
+        }
+
+        #endregion
+    }	
 }
