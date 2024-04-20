@@ -23,8 +23,10 @@ namespace FribergFastigheterApi.Data.Entities
 		/// Constructor.
 		/// </summary>
 		/// <param name="name">The name of the broker firm.</param>
+		/// <param name="description">The description of the broker firm.</param>
+		/// <param name="logotype">The logotype of the broker firm.</param>
 		/// <exception cref="ArgumentException"></exception>
-		public BrokerFirm(string name)
+		public BrokerFirm(string name, string description = "", Image? logotype = null)
 		{
 			#region Checks
 
@@ -36,6 +38,8 @@ namespace FribergFastigheterApi.Data.Entities
 			#endregion
 
 			Name = name;
+			Description = description;
+			Logotype = logotype;
 		}
 
 		#endregion
