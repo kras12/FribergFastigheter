@@ -20,15 +20,17 @@ namespace FribergFastigheterApi.Data.Entities
             
         }
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="firstName">The first name of the broker.</param>
-		/// <param name="lastName">The last name of the broker.</param>
-		/// <param name="email">The email of the broker.</param>
-		/// <param name="phoneNumber">The phonenumber of the broker.</param>
-		/// <exception cref="ArgumentException"></exception>
-		public Broker(string firstName, string lastName, string email, string phoneNumber, BrokerFirm brokerFirm)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="firstName">The first name of the broker.</param>
+        /// <param name="lastName">The last name of the broker.</param>
+        /// <param name="email">The email of the broker.</param>
+        /// <param name="phoneNumber">The phonenumber of the broker.</param>
+        /// <param name="description">The description of the broker.</param>
+        /// <param name="profileImage">The profile image of the broker.</param>
+        /// <exception cref="ArgumentException"></exception>
+        public Broker(string firstName, string lastName, string email, string phoneNumber, BrokerFirm brokerFirm, string description = "", Image? profileImage = null)
 		{
 			#region Checks
 
@@ -64,6 +66,8 @@ namespace FribergFastigheterApi.Data.Entities
 			Email = email;
 			PhoneNumber = phoneNumber;
 			BrokerFirm = brokerFirm;
+			Description = description;
+			ProfileImage = profileImage;
 		}
 
 		#endregion
@@ -82,10 +86,22 @@ namespace FribergFastigheterApi.Data.Entities
 		[Key]
 		public int BrokerId { get; set; }
 
-		/// <summary>
-		/// The first name of the broker.
-		/// </summary>
-		[Required]
+        /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        [Required]
+        public string Description { get; set; } = "";
+
+        /// <summary>
+        /// The email of the broker.
+        /// </summary>
+        [Required]
+        public string Email { get; set; } = "";
+
+        /// <summary>
+        /// The first name of the broker.
+        /// </summary>
+        [Required]
 		public string FirstName { get; set; } = "";
 
 		/// <summary>
@@ -93,12 +109,6 @@ namespace FribergFastigheterApi.Data.Entities
 		/// </summary>
 		[Required]
 		public string LastName { get; set; } = "";
-
-		/// <summary>
-		/// The email of the broker.
-		/// </summary>
-		[Required]
-		public string Email { get; set; } = "";
 
 		/// <summary>
 		/// The phone number of the broker.
