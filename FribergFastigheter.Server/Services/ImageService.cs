@@ -255,16 +255,19 @@ namespace FribergFastigheter.Server.Services
         /// <summary>
 		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
 		/// </summary>
-		/// <param name="imageType">The image type.</param>
+		/// <param name="imageFileName">The file name of the image.</param>
 		/// <returns>A <see cref="FileContentResult"/> if the file was found or null if not.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<FileContentResult?> PrepareImageFileDownloadAsync(string imageFileName)
+        public async Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName)
         {
             var filePath = Path.Combine(UploadFolderPath, imageFileName);
 
-            if (File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
+                throw new IOException($"The file '{imageFileName}' doesn't exists");
+            }
+
                return new FileContentResult(await File.ReadAllBytesAsync(filePath), GetImageContentType(GetImageType(imageFileName)))
                 {
                     FileDownloadName = imageFileName
