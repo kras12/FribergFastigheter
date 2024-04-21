@@ -208,7 +208,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
     		var updatedHousingEntity = _mapper.Map<Housing>(updateHousingDto);
-			updatedHousingEntity.Images = await _housingRepository.GetHousingImages(id);
+			updatedHousingEntity.Images = await _housingRepository.GetImages(id);
 
 			// Delete images from disk
 			if (updateHousingDto.DeletedImages.Count > 0)
