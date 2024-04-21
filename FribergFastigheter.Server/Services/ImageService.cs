@@ -180,25 +180,32 @@ namespace FribergFastigheter.Server.Services
 		}
 
         /// <summary>
-        /// Gets the extension for the image type.
+        /// Creates a file name by combining a name with the proper file extension.
         /// </summary>
-        /// <param name="imageType">The image type.</param>
-        /// <returns><see cref="string"/>.</returns>
+        /// <param name="imageType">The type of the image.</param>
+        /// <param name="fileNameWithoutExtension">The wanted filename without the extension.</param>
+        /// <returns>A <see cref="string"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        private string GetImageFileExtension(ImageTypes imageType)
+        private string CreateImageFileName(ImageTypes imageType, string fileNameWithoutExtension)
         {
+            StringBuilder stringBuilder = new (fileNameWithoutExtension);
+
             switch (imageType)
             {
                 case ImageTypes.Jpeg:
-                    return ".jpg";
+                    stringBuilder.Append(".jpg");
+                    break;
 
 				case ImageTypes.Png:
-					return ".png";
+                    stringBuilder.Append(".png");
+                    break;
 
 				default:
                     throw new NotSupportedException($"The image type is not supported: {imageType}");
             }
+
+            return stringBuilder.ToString();
         }
 
         /// <summary>
