@@ -93,22 +93,23 @@ namespace FribergFastigheter
 			{
 				var services = scope.ServiceProvider;
 				var context = services.GetRequiredService<ApplicationDbContext>();
-				context.Database.Migrate();
+                var configuration = services.GetRequiredService<IConfiguration>();
+                context.Database.Migrate();
 
                 if (!context.Housings.Any())
-                {
-					var configuration = services.GetRequiredService<IConfiguration>();
+                {					
 					SeedMockData(context, configuration);
-				}		
-			}
+				}
 
-            //CopyMockDataImagesToUploadFolder();
-
+                //CopyMockDataImagesToUploadFolder(configuration);
+            }        
 
             app.Run();
         }
 
-		[Conditional("DEBUG")]
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [Conditional("DEBUG")]
 		private static void SeedMockData(ApplicationDbContext context, IConfiguration configuration)
 		{
             // Database
@@ -137,8 +138,10 @@ namespace FribergFastigheter
             File.WriteAllLines(Path.Combine(outputFolder, "SeedImageUrls.txt"), seedData.SeedImageUrls.AllImageUrls);
         }
 
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
         [Conditional("DEBUG")]
-        private static void CopyMockDataImagesToUploadFolder(ApplicationDbContext context, IConfiguration configuration)
+        private static void CopyMockDataImagesToUploadFolder(IConfiguration configuration)
         {
             // Copy images
             foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
@@ -153,6 +156,5 @@ namespace FribergFastigheter
                 File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
             }
         }
-
     }
 }
