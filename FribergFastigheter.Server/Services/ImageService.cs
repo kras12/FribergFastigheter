@@ -108,6 +108,37 @@ namespace FribergFastigheter.Server.Services
 		}
 
 		/// <summary>
+		/// Method for saving images to disk.
+		/// </summary>
+		/// <param name="imageFile">The file to save to the disk.</param>
+        /// <returns>The file name of the saved file.</returns>
+        /// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<string> SaveImageToDiskAsync(IFormFile imageFile)
+        {
+            #region Checks           
+
+            if (imageFile == null)
+            {
+                throw new ArgumentNullException(nameof(imageFile), $"The value of parameter '{imageFile}' can't be null.");
+            }
+
+            #endregion
+
+            string filePath = RandomUniqueFilePath(GetImageType(imageFile.FileName));
+            
+            using (var sourceStream = imageFile.OpenReadStream())
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    await sourceStream.CopyToAsync(fileStream);
+                }
+            }
+
+            return Path.GetFileName(filePath);
+        }
+
+        /// <summary>
 		/// Method for deleting images from disk.
 		/// </summary>
 		/// <param name="imageFileName">The image object to be deleted from disk.</param>
