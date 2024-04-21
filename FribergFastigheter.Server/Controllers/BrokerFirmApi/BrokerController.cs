@@ -124,7 +124,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var newBroker = _mapper.Map<Broker>(createBrokerDto);
             if (createBrokerDto.ProfileImage != null)
             {
-                newBroker.ProfileImage = new Image(_imageService.SaveImageToDisk(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
+                newBroker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
             }
 
             newBroker.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId};
@@ -162,7 +162,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
             if (updateBrokerDto.ProfileImage != null)
             {
-				broker.ProfileImage = new Image(_imageService.SaveImageToDisk(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
+				broker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
             }
 
             await _brokerRepository.UpdateAsync(broker);

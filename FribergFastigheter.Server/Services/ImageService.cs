@@ -90,7 +90,7 @@ namespace FribergFastigheter.Server.Services
         /// <returns>The file name of the saved file.</returns>
         /// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public string SaveImageToDisk(string base64StringData, ImageTypes imageType)
+		public async Task<string> SaveImageToDiskAsync(string base64StringData, ImageTypes imageType)
 		{
             #region Checks           
 
@@ -101,12 +101,10 @@ namespace FribergFastigheter.Server.Services
 
             #endregion
 
-            var fileName = RandomUniqueFilePath(imageType);
-			var filePath = Path.Combine(UploadFolderPath, fileName);
-			var bytes = Convert.FromBase64String(base64StringData);
-			File.WriteAllBytes(filePath, bytes);
+            var filePath = RandomUniqueFilePath(imageType);
+			await File.WriteAllBytesAsync(filePath, Convert.FromBase64String(base64StringData));
 
-            return fileName;
+            return Path.GetFileName(filePath);
 		}
 
 		/// <summary>

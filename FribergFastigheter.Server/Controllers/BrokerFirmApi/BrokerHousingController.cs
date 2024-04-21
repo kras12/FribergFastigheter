@@ -175,8 +175,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			{
 				foreach (var newImageDto in newHousingDto.NewImages)
 				{
-					var newImage = new Image(_imageService.SaveImageToDisk(newImageDto.Base64, newImageDto.ImageType));
-					newHousingEntity.Images.Add(newImage);
+					newHousingEntity.Images.Add(new Image(
+						await _imageService.SaveImageToDiskAsync(newImageDto.Base64, newImageDto.ImageType)));
 				}
 			}
 
@@ -230,7 +230,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             // Save new images to disk
             foreach (var newImageDto in updateHousingDto.NewImages)
             {
-                var newImage = new Image(_imageService.SaveImageToDisk(newImageDto.Base64, newImageDto.ImageType));
+                var newImage = new Image(await _imageService.SaveImageToDiskAsync(newImageDto.Base64, newImageDto.ImageType));
 				updatedHousingEntity.Images.Add(newImage);
 			}
 
