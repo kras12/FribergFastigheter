@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -6,8 +7,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Compression;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
-using Image = FribergFastigheterApi.Data.Entities.Image;
 
 namespace FribergFastigheter.Server.Services
 {
@@ -107,7 +109,7 @@ namespace FribergFastigheter.Server.Services
             return Path.GetFileName(filePath);
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Method for saving images to disk.
 		/// </summary>
 		/// <param name="imageFile">The file to save to the disk.</param>
@@ -139,12 +141,12 @@ namespace FribergFastigheter.Server.Services
         }
 
         /// <summary>
-		/// Method for deleting images from disk.
-		/// </summary>
-		/// <param name="imageFileName">The image object to be deleted from disk.</param>
-		/// /// <!-- Author: Marcus -->
-		/// <!-- Co Authors: -->
-		public void DeleteImageFromDisk(string imageFileName)
+        /// Method for deleting images from disk.
+        /// </summary>
+        /// <param name="imageFileName">The image object to be deleted from disk.</param>
+        /// /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: -->
+        public void DeleteImageFromDisk(string imageFileName)
         {
             var filePath = Path.Combine(UploadFolderPath, imageFileName);
             if (File.Exists(filePath))
@@ -201,7 +203,7 @@ namespace FribergFastigheter.Server.Services
                     stringBuilder.Append(".png");
                     break;
 
-				default:
+                default:
                     throw new NotSupportedException($"The image type is not supported: {imageType}");
             }
 
@@ -268,13 +270,55 @@ namespace FribergFastigheter.Server.Services
                 throw new IOException($"The file '{imageFileName}' doesn't exists");
             }
 
-               return new FileContentResult(await File.ReadAllBytesAsync(filePath), GetImageContentType(GetImageType(imageFileName)))
-                {
-                    FileDownloadName = imageFileName
-                };
+            return new FileContentResult(await File.ReadAllBytesAsync(filePath), GetImageContentType(GetImageType(imageFileName)))
+            {
+                FileDownloadName = imageFileName
+            };
+        }
+
+        /// <summary>
+		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
+		/// </summary>
+		/// <param name="imageFileNames">A collection of image file names.</param>
+		/// <returns>A <see cref="FileStreamResult"/> if the files was found or null if not.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<FileStreamResult> PrepareImageFilesZipDownloadAsync(List<string> imageFileNames)
+        {
+            if (imageFileNames.Count == 0)
+            {
+                throw new ArgumentException($"The collection '{imageFileNames}' can't be empty.", nameof(imageFileNames));
             }
 
-            return null;
+            MemoryStream memoryStream = new();
+
+            using (ZipArchive archive = new(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
+            {
+                foreach (var imageFileName in imageFileNames)
+                {
+                    var filePath = Path.Combine(UploadFolderPath, imageFileName);
+
+                    if (!File.Exists(filePath))
+                    {
+                        throw new IOException($"The file '{imageFileName}' doesn't exists");
+                    }
+                    var entry = archive.CreateEntry(imageFileName);
+
+                    using (var entryStream = entry.Open())
+                    {
+                        using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                        {
+                            await fileStream.CopyToAsync(entryStream);
+                        }
+                    }
+                }                
+            }
+
+            memoryStream.Position = 0;
+            return new FileStreamResult(memoryStream, "application/zip")
+            {
+                FileDownloadName = $"images-{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss_fff")}-{new Random().Next(100_000, 1_000_000)}.zip"
+            };
         }
 
         #endregion
