@@ -159,7 +159,7 @@ namespace FribergFastigheter.Server.Services
 		/// <param name="imageType">The image type.</param>
 		/// <returns>The generated file name.</returns>
 		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: -->
+		/// <!-- Co Authors: Jimmmie -->
 		private string RandomUniqueFilePath(ImageTypes imageType)
         {
 			Random random = new Random();
@@ -168,10 +168,10 @@ namespace FribergFastigheter.Server.Services
 
             do
             {
-                string newFileName = Enumerable.Repeat(chars, 32)
-                    .Select(s => s[random.Next(s.Length)]).ToString()!;
+                string randomName = new(Enumerable.Repeat(chars, 32)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
 
-                filePath = Path.Combine(UploadFolderPath, newFileName, GetImageFileExtension(imageType));
+                filePath = Path.Combine(UploadFolderPath, CreateImageFileName(imageType, randomName));
            
             }
             while (File.Exists(filePath)); 
