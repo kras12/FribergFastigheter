@@ -87,7 +87,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 
 			return Ok(result);
 		}
-
+		
+		// TODO - Wait until identity is implemented before we decide whether to include or remove this feature. 
 		/// <summary>
 		/// An API endpoint for updating broker firms.
 		/// </summary>
@@ -95,19 +96,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <param name="brokerFirmDto">The serialized DTO object.</param>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		[HttpPut("{id:int}")]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Put(int id, [FromBody] BrokerFirmDto brokerFirmDto )
-		{
-			if (id != brokerFirmDto.BrokerFirmId)
-			{
-				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the supplied broker firm object."));
-			}
+		//[HttpPut("{id:int}")]
+		//[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		//public async Task<ActionResult> Put(int id, [FromBody] BrokerFirmDto brokerFirmDto )
+		//{
+		//	if (id != brokerFirmDto.BrokerFirmId)
+		//	{
+		//		return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the supplied broker firm object."));
+		//	}
 
-			var brokerFirm = _mapper.Map<BrokerFirm>(brokerFirmDto);
-			await _brokerFirmRepository.UpdateAsync(brokerFirm);
-			return Ok();
-		}
+		//	var brokerFirm = _mapper.Map<BrokerFirm>(brokerFirmDto);
+		//	await _brokerFirmRepository.UpdateAsync(brokerFirm);
+		//	return Ok();
+		//}
 
 		#endregion
 	}
