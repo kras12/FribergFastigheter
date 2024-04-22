@@ -78,7 +78,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             _imageService.SetImageData(HttpContext, brokers
                 .Where(x => x.ProfileImage != null)
-                .Select(x => x.ProfileImage).ToList());
+                .Select(x => x.ProfileImage).Cast<ImageDto>().ToList());
 
             return Ok(brokers);
         }
