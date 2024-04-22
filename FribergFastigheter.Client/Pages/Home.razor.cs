@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Net.Http.Json;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheter.Client.Services;
+using FribergFastigheter.Client.Services.HousingApi;
 
 namespace FribergFastigheter.Client.Pages
 {
@@ -11,8 +11,6 @@ namespace FribergFastigheter.Client.Pages
     /// </summary>
     public partial class Home : ComponentBase
     {
-        private Stopwatch _stopwatch = new Stopwatch();
-
 		#region Properties
 
 #pragma warning disable CS8618
@@ -20,7 +18,7 @@ namespace FribergFastigheter.Client.Pages
 		/// The inject Api service for Friberg Fastigheter.
 		/// </summary>
 		[Inject] 
-		private IFribergFastigheterApiService ApiService { get; set; }
+		private IHousingApiService ApiService { get; set; }
 #pragma warning restore CS8618
 
 		/// <summary>
@@ -40,10 +38,7 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-            //await EmbeddedDataTest();
             await UrlDataTest();
-
-            _stopwatch.Start();
 		}
 
         protected override void OnAfterRender(bool firstRender)
@@ -55,7 +50,7 @@ namespace FribergFastigheter.Client.Pages
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            var housings = await ApiService.SearchHousings(limitHousings: 50, limitImageCountPerHousing: 1, includeImageData: false);
+            var housings = await ApiService.SearchHousings(limitHousings: 50, limitImageCountPerHousing: 1);
 
             Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
