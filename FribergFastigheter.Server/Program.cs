@@ -52,7 +52,7 @@ namespace FribergFastigheter
             builder.Services.AddAutoMapper(typeof(EntityToDtoAutoMapperProfile), typeof(DtoToEntityAutoMapperProfile));
 
             // Custom Services
-            builder .Services.AddTransient<IImageService, ImageService>();
+            builder.Services.AddTransient<IImageService, ImageService>();
 
             // Add serialization converters
             builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
