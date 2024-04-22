@@ -14,16 +14,15 @@ using System.Net;
 
 namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 {
-    [Route("api/BrokerFirm/Broker")]
-    [ApiController]
-    public class BrokerController : ControllerBase
-    {
         /// <summary>
         /// An API controller for the brokerfirm housings API.
         /// </summary>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
-        /// 
+    [Route("api/BrokerFirm/Broker")]
+    [ApiController]
+    public class BrokerController : ControllerBase
+    {
         #region Fields
 
         /// <summary>
