@@ -51,39 +51,6 @@ namespace FribergFastigheter.Client.Pages
             base.OnAfterRender(firstRender);
         }
 
-        private async Task EmbeddedDataTest()
-        {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            var housings = await ApiService.SearchHousings(limitHousings: 50, limitImageCountPerHousing: 3, includeImageData: true);
-
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
-
-            if (housings != null)
-            {
-                var firstImage = housings.First().Images.First().Base64;
-               Housings = housings;
-
-#pragma warning disable CS4014
-                Task.Run(
-                    async () =>
-                    {
-                        await Task.Delay(2000);
-                        foreach (var housing in housings)
-                        {
-                            foreach (var image in housing.Images)
-                            {
-                                Console.WriteLine("Switching image.");
-                                image.Base64 = firstImage;
-                                StateHasChanged();
-                                await Task.Delay(100);
-                            }
-                        }
-                    });
-#pragma warning restore CS4014
-            }
-        }
-
         private async Task UrlDataTest()
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
