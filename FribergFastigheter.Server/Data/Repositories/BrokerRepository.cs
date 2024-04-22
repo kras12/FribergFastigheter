@@ -75,6 +75,19 @@ namespace FribergFastigheter.Server.Data.Repositories
 				.ToListAsync();
         }
 
+        /// <summary>
+        /// Returns true if the broker belongs to the broker firm.
+        /// </summary>
+        /// <param name="brokerId">The ID of the broker.</param>
+        /// <param name="brokerFirmId">The ID of the broker firm.</param>
+        /// <returns></returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: -->
+        public Task<bool> BelongsToBrokerFirm(int brokerId, int brokerFirmId)
+        {
+            return applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId).AnyAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+        }
+
 		#endregion
 	}
 }
