@@ -156,7 +156,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public Task<List<Image>> GetHousingImages(int housingId, List<int>? imageIds = null)
+		public Task<List<Image>> GetImages(int housingId, List<int>? imageIds = null)
         {
 			var query = applicationDbContext
 				.Housings.Where(x => x.HousingId == housingId)
@@ -171,13 +171,67 @@ namespace FribergFastigheter.Server.Data.Repositories
 			return query.ToListAsync();
         }
 
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public Task<bool> HousingExists(int housingId)
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<Image?> GetImagebyId(int housingId, int imageId)
+		{
+			return (await GetImages(housingId, new List<int>() { imageId })).SingleOrDefault();
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<bool> HousingExists(int housingId)
 		{
 			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == housingId);
 		}
 
-		#endregion
-	}
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<bool> OwnsImage(int housingId, int imageId)
+		{
+            return applicationDbContext.Housings.Where(x => x.HousingId == housingId).AnyAsync(x => x.Images.Any(x => x.ImageId == imageId));
+		}
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task AddImages(int housingId, List<Image> imageIds)
+		{
+			var housing = await GetHousingByIdAsync(housingId);
+
+			if (housing == null)
+			{
+				throw new Exception($"The housing object with ID '{housing}' was not found.");
+			}
+
+            // We return entities as no tracking.
+            applicationDbContext.Housings.Attach(housing); 
+            housing.Images.AddRange(imageIds);
+			//housing.Images.ForEach(x => applicationDbContext.Entry(x).State = EntityState.Added);
+			await applicationDbContext.SaveChangesAsync();
+		}
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<int> DeleteImages(int housingId, List<int> imageIds)
+		{
+			var housing = await GetHousingByIdAsync(housingId);
+
+            if (housing == null)
+            {
+                throw new Exception($"The housing object with ID '{housing}' was not found.");
+            }
+
+			housing.Images.Where(x => imageIds.Contains(x.ImageId)).ToList().ForEach(x => applicationDbContext.Entry(x).State = EntityState.Deleted);
+            return await applicationDbContext.SaveChangesAsync();
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+		public Task<int> DeleteImage(int housingId, int imageId)
+		{
+			return DeleteImages(housingId, new List<int> { imageId });       
+		}
+
+        #endregion
+    }
 }

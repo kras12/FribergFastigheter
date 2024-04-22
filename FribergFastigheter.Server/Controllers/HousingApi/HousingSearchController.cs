@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Data.Entities;
-using FribergFastigheter.Server.Data.DTO;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
@@ -60,14 +60,17 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Co Authors: Jimmie -->
 		[HttpGet]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null)
+        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null, 
+            bool includeImageData = false)
         {
             var housings = (await _housingRepo.GetAllHousingAsync(municipalityId: municipalityId, limitHousings: limitHousings, limitImagesPerHousing: limitImageCountPerHousing))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            _imageService.SetImageData(housings
-                .SelectMany(x => x.Images).ToList());
+            _imageService.SetImageData(HttpContext,
+                housings
+                    .SelectMany(x => x.Images).ToList(),
+                includeImageData);
 
             return Ok(housings);
         }
@@ -92,7 +95,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			}
 
             var result = _mapper.Map<HousingDto>(housing);
-            _imageService.SetImageData(result.Images);
+            _imageService.SetImageData(HttpContext, result.Images);
 
             return Ok(result);
         }

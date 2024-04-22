@@ -1,4 +1,6 @@
 ﻿using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Server.HelperClasses.Data;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheterApi.Data.Entities;
 using FribergFastigheterApi.HelperClasses.Data;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,12 +14,12 @@ using System.Text.Json;
 
 namespace FribergFastigheter.HelperClasses
 {
-	/// <summary>
-	/// A helper class for handling seed data.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public static class SeedDataHelper
+    /// <summary>
+    /// A helper class for handling seed data.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public class SeedDataHelper
     {
 		#region Constants
 
@@ -26,217 +28,271 @@ namespace FribergFastigheter.HelperClasses
 		/// </summary>
 		private const string NonBreakingSpace = "\u00A0";
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Returns a collection of image urls associated with the housing objects from a json seed file.
-		/// </summary>
-		/// <param name="jsonFilePath"The path of the seed file.></param>
-		/// <returns></returns>
-		/// <exception cref="Exception"></exception>
-		public static List<string> GetHousingImagePathsFromJsonFile(string jsonFilePath)
-		{
-			List<string> result = new();
-			string json = File.ReadAllText(jsonFilePath);
-			var seedDataRows = JsonSerializer.Deserialize<List<HousingSeedDataRow>>(json) ?? throw new Exception("Failed to deserialize housing seed data input");
+        #region Fields
 
-			foreach (var row in seedDataRows)
-			{
-				if (!string.IsNullOrEmpty(row.Image) && !row.Image.StartsWith("data:image"))
-				{
-					result.Add(row.Image);
-				}
-			}
+        /// <summary>
+        /// A lookup collection for broker firm images.
+        /// </summary>
+        /// <remarks>Key: Full URL.</remarks>
+        private Dictionary<string, Image> _brokerFirmImages = new();
 
-			return result;
-		}
+        /// <summary>
+        /// A lookup collection for broker firms
+        /// </summary>
+        private Dictionary<string, BrokerFirm> _brokerFirms = new();
 
-		/// <summary>
-		/// Creates housing seed data from a json seed file.
-		/// </summary>
-		/// <param name="jsonFilePath">The path of the seed file.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="Exception"></exception>
-		public static HousingSeedData GetHousingSeedDataFromJsonFile(string jsonFilePath)
-		{
+        /// <summary>
+        /// A lookup collection for broker images.
+        /// </summary>
+        /// <remarks>Key: Full URL.</remarks>
+        private Dictionary<string, Image> _brokerImages = new();
+
+        /// <summary>
+        /// A lookup collection for housing categories.
+        /// </summary>
+        private Dictionary<string, HousingCategory> _categories = new();
+
+        /// <summary>
+        /// A collection of grouped seed housing data.
+        /// </summary>
+        private List<GroupedHousingSeedData> _groupedHousingSeeds = new();
+
+        /// <summary>
+        /// A lookup collection for housing images.
+        /// </summary>
+        /// <remarks>Key: Full URL.</remarks>
+        private Dictionary<string, Image> _housingImages = new();
+
+        /// <summary>
+        /// The path of the seed file.
+        /// </summary>
+        private string _jsonSeedFilePath = "";
+
+        /// <summary>
+        /// A lookup collection for municipalities.
+        /// </summary>
+        private Dictionary<string, Municipality> _municipalities = new();
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+		/// <param name="jsonSeedFile">The path of the seed file.</param>
+        public SeedDataHelper(string jsonSeedFile)
+        {
             #region Checks
 
-            if (string.IsNullOrEmpty(jsonFilePath))
+            if (string.IsNullOrEmpty(jsonSeedFile))
             {
-                throw new ArgumentException("The file path can't be empty", nameof(jsonFilePath));
+                throw new ArgumentException("The file path can't be empty", nameof(jsonSeedFile));
             }
 
-			#endregion
 
-			HousingSeedData result = new HousingSeedData();
-            string json = File.ReadAllText(jsonFilePath);
-			var seedDataRows = JsonSerializer.Deserialize<List<HousingSeedDataRow>>(json) ?? throw new Exception("Failed to deserialize housing seed data input");
+            #endregion
+            this._jsonSeedFilePath = jsonSeedFile;
+        }
 
-            var pageData = seedDataRows.GroupBy(
+        #endregion
+
+        #region PublicMethods
+
+        /// <summary>
+        /// Creates housing seed data from a json seed file.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
+        public HousingSeedData GetSeedData()
+        {
+            ResetLookupData();
+            HousingSeedData result = new HousingSeedData();
+            string json = File.ReadAllText(_jsonSeedFilePath);
+            var seedDataRows = JsonSerializer.Deserialize<List<SeedFileDataRow>>(json) ?? throw new Exception("Failed to deserialize housing seed data input");
+
+            _groupedHousingSeeds = seedDataRows.GroupBy(
                keySelector: row => row.PageURL,
                elementSelector: row => row,
-               resultSelector: (PageUrl, Rows) => new
+               resultSelector: (PageUrl, Rows) => new GroupedHousingSeedData()
                {
                    PageUrl = PageUrl,
-                   Rows = Rows
+                   MainDataRow = Rows.Last(),
+                   ExtraData = Rows.GroupBy(x => x.Key).Select(x => new KeyValuePair<string, string>(x.Key, x.First().Value)).ToDictionary(x => x.Key, x => x.Value),
+                   Images = Rows.Select(x => x.Image).Where(x => !string.IsNullOrEmpty(x) && !x.StartsWith("data:image")).ToList()
                })
                 .ToList();
 
-			Dictionary<string, HousingCategory> categories = new();
-			Dictionary<string, Municipality> municipalities = new();
-			Dictionary<string, Image> images = new();
-			Dictionary<string, BrokerFirm> brokerFirms = new();
+            CreateLookupTables();
 
-			foreach (var page in pageData)
+            foreach (var groupedData in _groupedHousingSeeds)
             {
-                Housing newHousing = new Housing();
-                bool isFirstIteration = true;
-                Dictionary<string, KeyValuePair<string, string>> housingData = new();
+                Housing newHousing = new();
+                ParseHousingData(newHousing, groupedData);
 
-				foreach (var row in page.Rows)
+                if (newHousing.Images.Count > 0 && newHousing.Category != null && newHousing.Broker != null && newHousing.BrokerFirm != null)
                 {
-                    if (isFirstIteration)
-                    {
-						// Mixed
-                        newHousing.Address = row.Address;
-                        newHousing.Description = row.Description;						
-						newHousing.Price = int.Parse(row.Price.Replace("Pris saknas", "1000000").Replace(NonBreakingSpace, "").Split("kr")[0].Replace(" ", ""));
-
-						// Municipality
-						var parsedMunicipality = ParseMunicipality(row.Location);
-						if (!municipalities.ContainsKey(parsedMunicipality.MunicipalityName))
-						{
-							municipalities.Add(parsedMunicipality.MunicipalityName, parsedMunicipality);
-						}
-						newHousing.Municipality = municipalities[parsedMunicipality.MunicipalityName];
-
-						// Brokers and broker firms
-						if (TryParseBrokerFirm(row.BrokerFirm, out string? parsedBrokerFirmName) && TryParseBroker(row.Broker, out string? parsedBrokerFirstName, out string? parsedBrokerLastName))
-						{
-							if (!brokerFirms.ContainsKey(parsedBrokerFirmName))
-							{
-								brokerFirms.Add(parsedBrokerFirmName, new BrokerFirm(parsedBrokerFirmName));
-							}
-
-							newHousing.BrokerFirm = brokerFirms[parsedBrokerFirmName];
-
-							if (!newHousing.BrokerFirm.Brokers.Any(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
-								&& x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
-							{
-								string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower().Replace(" ", "")}.se";
-								string phoneNumber = $"070-{new Random().Next(1_000_000, 2_000_000)}";
-								newHousing.BrokerFirm.Brokers.Add(new Broker(parsedBrokerFirstName, parsedBrokerLastName, email, phoneNumber, newHousing.BrokerFirm));
-							}
-
-							newHousing.Broker = brokerFirms[parsedBrokerFirmName].Brokers.First(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
-								&& x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
-						}
-					}
-
-                    if (!string.IsNullOrEmpty(row.Image) && !row.Image.StartsWith("data:image"))
-                    {
-						string imageFileName = Path.GetFileName(row.Image);
-
-						if (!images.ContainsKey(imageFileName))
-						{
-							images.Add(imageFileName, new Image(imageFileName));
-						}
-
-						newHousing.Images.Add(images[imageFileName]);
-                    }
-
-					if (!string.IsNullOrEmpty(row.Key) && !housingData.ContainsKey(row.Key))
-                    {
-                        housingData.Add(row.Key, new KeyValuePair<string, string>(row.Key, row.Value));
-                    }
+                    result.Housings.Add(newHousing);
                 }
+            }
 
-                if (TryParseHousingCategory(housingData, out var parsedCategory))
-                {
-					if (!categories.ContainsKey(parsedCategory.CategoryName))
-					{
-						categories.Add(parsedCategory.CategoryName, parsedCategory);
-					}
+            result.SeedImageUrls.HousingImageUrls = _housingImages.Keys.ToList();
+            result.SeedImageUrls.BrokerImages = _brokerImages.Keys.ToList();
+            result.SeedImageUrls.BrokerFirmImages = _brokerFirmImages.Keys.ToList();
 
-                    newHousing.Category = categories[parsedCategory.CategoryName];
-                }
-
-				if (TryParseLivingArea(housingData, out double? parsedLivingArea))
-				{
-					newHousing.LivingArea = parsedLivingArea.Value;
-				}
-
-				if (TryParseAncillaryArea(housingData, out double? parsedAncillaryArea))
-				{
-					newHousing.AncillaryArea = parsedAncillaryArea.Value;
-				}
-
-				if (TryParseLandArea(housingData, out double? parsedLandArea))
-				{
-					newHousing.LandArea = parsedLandArea.Value;
-				}
-
-				if (TryParseRoomCount(housingData, out int? parsedRoomCount))
-				{
-					newHousing.RoomCount = parsedRoomCount.Value;
-				}
-
-				if (TryParseRunningCost(housingData, out decimal? parsedYearlyRunningCost))
-				{
-					newHousing.YearlyRunningCost = parsedYearlyRunningCost.Value;
-				}
-
-				if (TryParseMonthlyCost(housingData, out decimal? parsedMonthlyFee))
-				{
-					newHousing.MonthlyFee = parsedMonthlyFee.Value;
-				}
-
-				if (TryParseBuildYear(housingData, out int? parsedBuildYear))
-				{
-					newHousing.BuildYear = parsedBuildYear.Value;
-				}
-
-				if (newHousing.Images.Count > 0 && newHousing.Category != null && newHousing.Broker != null && newHousing.BrokerFirm != null)
-                {
-					result.Housings.Add(newHousing);
-                }
-			}
-
-			return result;
+            ResetLookupData();
+            return result;
         }
 
-		/// <summary>
-		/// Attempts to parse the municipality from serialized data.
-		/// </summary>
-		/// <param name="location">The location string to parse (can contain location and municipality).</param>
-		/// <returns>The parsed municipality.</returns>
-		private static Municipality ParseMunicipality(string location)
-		{
-			int dataPoints = location.Count(x => x == ',');
+        #endregion
 
-			if (dataPoints == 0)
-			{
-				return new Municipality(location.Trim());
-			}
-			else
-			{
-				var parts = location.Split(",");
-				return new Municipality(parts[parts.Length - 1].Trim());
-			}
-		}
+        #region PrivateMethods        
 
-		/// <summary>
-		/// Attempts to parse the housing ancillary area from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="ancillaryArea">The ancillary area if the operation was successful.</param>
-		/// <returns>True if an ancillary area was found.</returns>
-		private static bool TryParseAncillaryArea(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out double? ancillaryArea)
+        /// <summary>
+        /// Creates the lookup tables
+        /// </summary>
+		private void CreateLookupTables()
+        {
+            foreach (var groupedData in _groupedHousingSeeds)
+            {
+                var parsedMunicipality = new Municipality(ParseMunicipality(groupedData));
+                _municipalities.TryAdd(parsedMunicipality.MunicipalityName, parsedMunicipality);
+                groupedData.Images.ForEach(x => _housingImages.TryAdd(x, new Image(Path.GetFileName(x))));
+
+                if (TryParseHousingCategory(groupedData, out var parsedCategory))
+                {
+                    _categories.TryAdd(parsedCategory.CategoryName, parsedCategory);
+                }
+
+                if (TryParseBrokerFirm(groupedData, out string? parsedBrokerFirmName, out string? parsedBrokerFirmImage)
+                    && TryParseBroker(groupedData, out string? parsedBrokerFirstName, out string? parsedBrokerLastName,
+                        out string? parsedBrokerImage, out string? parsedBrokerDescription))
+                {
+                    _brokerImages.TryAdd(parsedBrokerImage, new Image(Path.GetFileName(parsedBrokerImage)));
+                    _brokerFirmImages.TryAdd(parsedBrokerFirmImage, new Image(Path.GetFileName(parsedBrokerFirmImage)));
+                    _brokerFirms.TryAdd(parsedBrokerFirmName, new BrokerFirm(parsedBrokerFirmName, logotype: _brokerFirmImages[parsedBrokerFirmImage]));
+
+                    if (!_brokerFirms[parsedBrokerFirmName].Brokers.Any(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
+                        && x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower().Replace(" ", "")}.se";
+                        string phoneNumber = $"070-{new Random().Next(1_000_000, 2_000_000)}";
+                        _brokerFirms[parsedBrokerFirmName].Brokers.Add(new Broker(
+                            parsedBrokerFirstName, parsedBrokerLastName, email, phoneNumber, _brokerFirms[parsedBrokerFirmName],
+                            parsedBrokerDescription, _brokerImages[parsedBrokerImage]));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parses housing data and fills a housing object with it.
+        /// </summary>
+        /// <param name="housing">The housing object that receives the data</param>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+		private void ParseHousingData(Housing housing, GroupedHousingSeedData groupedData)
+        {
+            housing.Address = groupedData.MainDataRow.Address;
+            housing.Description = groupedData.MainDataRow.Description;
+            housing.Price = int.Parse(groupedData.MainDataRow.Price.Replace("Pris saknas", "1000000").Replace(NonBreakingSpace, "").Split("kr")[0].Replace(" ", ""));
+            housing.Municipality = _municipalities[ParseMunicipality(groupedData)];
+            housing.Images = groupedData.Images.Select(x => _housingImages[x]).ToList();
+
+            if (TryParseHousingCategory(groupedData, out var parsedCategory))
+            {
+                housing.Category = _categories[parsedCategory.CategoryName];
+            }
+
+            if (TryParseBrokerFirm(groupedData, out string? parsedBrokerFirmName, out string? parsedBrokerFirmImage)
+                && TryParseBroker(groupedData, out string? parsedBrokerFirstName, out string? parsedBrokerLastName,
+                        out string? _, out string? _))
+            {
+                housing.BrokerFirm = _brokerFirms[parsedBrokerFirmName];
+                housing.Broker = _brokerFirms[parsedBrokerFirmName].Brokers.Single(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
+                        && x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+            if (TryParseLivingArea(groupedData, out double? parsedLivingArea))
+            {
+                housing.LivingArea = parsedLivingArea.Value;
+            }
+
+            if (TryParseAncillaryArea(groupedData, out double? parsedAncillaryArea))
+            {
+                housing.AncillaryArea = parsedAncillaryArea.Value;
+            }
+
+            if (TryParseLandArea(groupedData, out double? parsedLandArea))
+            {
+                housing.LandArea = parsedLandArea.Value;
+            }
+
+            if (TryParseRoomCount(groupedData, out int? parsedRoomCount))
+            {
+                housing.RoomCount = parsedRoomCount.Value;
+            }
+
+            if (TryParseRunningCost(groupedData, out decimal? parsedYearlyRunningCost))
+            {
+                housing.YearlyRunningCost = parsedYearlyRunningCost.Value;
+            }
+
+            if (TryParseMonthlyCost(groupedData, out decimal? parsedMonthlyFee))
+            {
+                housing.MonthlyFee = parsedMonthlyFee.Value;
+            }
+
+            if (TryParseBuildYear(groupedData, out int? parsedBuildYear))
+            {
+                housing.BuildYear = parsedBuildYear.Value;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to parse the municipality from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <returns>The parsed municipality.</returns>
+        private string ParseMunicipality(GroupedHousingSeedData groupedData)
+        {
+            int dataPoints = groupedData.MainDataRow.Location.Count(x => x == ',');
+
+            if (dataPoints == 0)
+            {
+                return groupedData.MainDataRow.Location.Trim();
+            }
+            else
+            {
+                var parts = groupedData.MainDataRow.Location.Split(",");
+                return parts[parts.Length - 1].Trim();
+            }
+        }
+
+        /// <summary>
+        /// Resets lookup data.
+        /// </summary>
+        private void ResetLookupData()
+        {
+            _categories = new();
+            _municipalities = new();
+            _housingImages = new();
+            _brokerFirms = new();
+            _groupedHousingSeeds = new();
+        }
+        /// <summary>
+        /// Attempts to parse the housing ancillary area from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="ancillaryArea">The ancillary area if the operation was successful.</param>
+        /// <returns>True if an ancillary area was found.</returns>
+        private bool TryParseAncillaryArea(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out double? ancillaryArea)
 		{
-			if (housingData.ContainsKey("Biarea"))
+			if (groupedData.ExtraData.ContainsKey("Biarea"))
 			{
-				ancillaryArea = double.Parse(housingData["Biarea"].Value.Split(NonBreakingSpace)[0]);
+				ancillaryArea = double.Parse(groupedData.ExtraData["Biarea"].Split(NonBreakingSpace)[0]);
 				return true;
 			}
 
@@ -244,26 +300,68 @@ namespace FribergFastigheter.HelperClasses
 			return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the build year from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="buildYear">The build year if the operation was successful.</param>
-		/// <returns>True if a build year was found.</returns>
-		private static bool TryParseBuildYear(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out int? buildYear)
+        /// <summary>
+        /// Attempts to parse the broker from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="brokerFirstName">The first name of the broker if the operation was successful.</param>
+        /// <param name="brokerLastName">The first name of the broker if the operation was successful.</param>
+        /// <returns>True if a broker was found.</returns>
+        private bool TryParseBroker(GroupedHousingSeedData groupedData,
+            [NotNullWhen(returnValue: true)] out string? brokerFirstName, [NotNullWhen(returnValue: true)] out string? brokerLastName,
+            [NotNullWhen(returnValue: true)] out string? brokerImage,
+            out string brokerDescription)
+        {
+            string[] brokerNameParts = groupedData.MainDataRow.Broker.Split(" ");
+            brokerFirstName = string.Join(" ", brokerNameParts.Take(brokerNameParts.Length - 1));
+            brokerLastName = brokerNameParts[brokerNameParts.Length - 1];
+            brokerDescription = groupedData.MainDataRow.BrokerDescription;
+            brokerImage = groupedData.MainDataRow.BrokerImage;
+
+            return !string.IsNullOrEmpty(brokerFirstName) && !string.IsNullOrEmpty(brokerLastName)
+               && !string.IsNullOrEmpty(brokerImage);
+
+        }
+
+        /// <summary>
+        /// Attempts to parse the broker firm from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="brokerFirm">The parsed broker firm name if the operation was successful.</param>
+        /// <param name="brokerFirmImage">The parsed broker firm image if the operation was successful.</param>
+        /// <returns>True if a broker firm name was found.</returns>
+        private bool TryParseBrokerFirm(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out string? brokerFirm,
+            [NotNullWhen(returnValue: true)] out string? brokerFirmImage)
+        {
+            // Code from old seed structure
+            //string[] parts = brokerFirm.Split("</div>");
+            //brokerFirmName = parts[parts.Length - 1];
+
+            brokerFirm = groupedData.MainDataRow.BrokerFirm;
+            brokerFirmImage = groupedData.MainDataRow.BrokerFirmImage;
+            return !string.IsNullOrEmpty(brokerFirm) && !string.IsNullOrEmpty(brokerFirmImage);
+        }
+
+        /// <summary>
+        /// Attempts to parse the build year from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="buildYear">The build year if the operation was successful.</param>
+        /// <returns>True if a build year was found.</returns>
+        private bool TryParseBuildYear(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out int? buildYear)
 		{
-			if (housingData.ContainsKey("Byggår"))
+			if (groupedData.ExtraData.ContainsKey("Byggår"))
 			{
-				int dataPoints = housingData["Byggår"].Value.Count(x => x == '-');
+				int dataPoints = groupedData.ExtraData["Byggår"].Count(x => x == '-');
 
 				if (dataPoints == 0)
 				{
-					buildYear = int.Parse(housingData["Byggår"].Value);
+					buildYear = int.Parse(groupedData.ExtraData["Byggår"]);
 					return true;
 				}
 				else
 				{
-					buildYear = int.Parse(housingData["Byggår"].Value.Split("-", StringSplitOptions.TrimEntries)[0]);
+					buildYear = int.Parse(groupedData.ExtraData["Byggår"].Split("-", StringSplitOptions.TrimEntries)[0]);
 					return true;
 				}
 			}
@@ -272,59 +370,70 @@ namespace FribergFastigheter.HelperClasses
 			return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the housing category from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="category">The category if the operation was successful.</param>
-		/// <returns>True if a category was found.</returns>
-		private static bool TryParseHousingCategory(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out HousingCategory? category)
+        /// <summary>
+        /// Attempts to parse the housing category from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="category">The category if the operation was successful.</param>
+        /// <returns>True if a category was found.</returns>
+        private bool TryParseHousingCategory(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out HousingCategory? category)
         {
-            // Bostadsrättslägenhet
-            if (housingData.ContainsKey("Bostadstyp") && housingData["Bostadstyp"].Value == "Lägenhet"
-                && housingData.ContainsKey("Upplåtelseform") && housingData["Upplåtelseform"].Value == "Bostadsrätt")
-            {
-                category = new HousingCategory("Bostadsrättslägenhet");
-                return true;
+            if (groupedData.ExtraData.ContainsKey("Bostadstyp"))
+			{
+				string housingType = groupedData.ExtraData["Bostadstyp"];
+				string? housingForm = null;
+
+				if (groupedData.ExtraData.ContainsKey("Upplåtelseform"))
+				{
+					housingForm = groupedData.ExtraData["Upplåtelseform"];
+                }
+
+                // Bostadsrättslägenhet
+                if (housingType == "Lägenhet" && housingForm != null && housingForm == "Bostadsrätt")
+                {
+                    category = new HousingCategory("Bostadsrättslägenhet");
+                    return true;
+                }
+                // Bostadsrättsradhus
+                else if ((housingType == "Par-/kedje-/radhus" || housingType == "Kedjehus" || housingType == "Radhus")
+                    && housingForm != null && housingForm == "Bostadsrätt")
+                {
+                    category = new HousingCategory("Bostadsrättsradhus");
+                    return true;
+                }
+                // Fritidshus
+                else if (housingType == "Fritidshus" || housingType == "Fritidsboende" || housingType == "Vinterbonat fritidshus")
+                {
+                    category = new HousingCategory("Fritidshus");
+                    return true;
+                }
+                // Villa
+                else if (housingType == "Villa")
+                {
+                    category = new HousingCategory("Villa");
+                    return true;
+                }
+                else
+                {
+                    Debug.WriteLine($"Unknown housing type.");
+                }
             }
-            // Bostadsrättsradhus
-            else if (housingData.ContainsKey("Bostadstyp") && (housingData["Bostadstyp"].Value == "Par-/kedje-/radhus" || housingData["Bostadstyp"].Value == "Kedjehus" || housingData["Bostadstyp"].Value == "Radhus")
-                && housingData.ContainsKey("Upplåtelseform") && housingData["Upplåtelseform"].Value == "Bostadsrätt")
-            {
-                category = new HousingCategory("Bostadsrättsradhus");
-				return true;
-			}
-            // Fritidshus
-            else if (housingData.ContainsKey("Bostadstyp") && (housingData["Bostadstyp"].Value == "Fritidshus" || housingData["Bostadstyp"].Value == "Fritidsboende" || housingData["Bostadstyp"].Value == "Vinterbonat fritidshus"))
-            {
-                category = new HousingCategory("Fritidshus");
-				return true;
-			}
-            // Villa
-            else if (housingData.ContainsKey("Bostadstyp") && housingData["Bostadstyp"].Value == "Villa")
-            {
-                category = new HousingCategory("Villa");
-				return true;
-			}
-            else
-            {
-                Debug.WriteLine($"Unknown housing type.");
-                category = null;
-                return false;
-            }
+
+            category = null;
+            return false;
         }
 
-		/// <summary>
-		/// Attempts to parse the housing land area from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="landArea">The land area if the operation was successful.</param>
-		/// <returns>True if a land area was found.</returns>
-		private static bool TryParseLandArea(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out double? landArea)
+        /// <summary>
+        /// Attempts to parse the housing land area from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="landArea">The land area if the operation was successful.</param>
+        /// <returns>True if a land area was found.</returns>
+        private bool TryParseLandArea(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out double? landArea)
 		{
-			if (housingData.ContainsKey("Tomtarea"))
+			if (groupedData.ExtraData.ContainsKey("Tomtarea"))
 			{
-				landArea = double.Parse(housingData["Tomtarea"].Value.Split(NonBreakingSpace)[0]);
+				landArea = double.Parse(groupedData.ExtraData["Tomtarea"].Split(NonBreakingSpace)[0]);
 				return true;
 			}
 
@@ -332,17 +441,17 @@ namespace FribergFastigheter.HelperClasses
 			return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the housing living area from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="livingArea">The living area if the operation was successful.</param>
-		/// <returns>True if a living area was found.</returns>
-		private static bool TryParseLivingArea(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out double? livingArea)
+        /// <summary>
+        /// Attempts to parse the housing living area from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="livingArea">The living area if the operation was successful.</param>
+        /// <returns>True if a living area was found.</returns>
+        private bool TryParseLivingArea(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out double? livingArea)
         {
-			if (housingData.ContainsKey("Boarea"))
+			if (groupedData.ExtraData.ContainsKey("Boarea"))
 			{
-                livingArea = double.Parse(housingData["Boarea"].Value.Split(NonBreakingSpace)[0]);
+                livingArea = double.Parse(groupedData.ExtraData["Boarea"].Split(NonBreakingSpace)[0]);
 				return true;
 			}
 
@@ -350,17 +459,17 @@ namespace FribergFastigheter.HelperClasses
             return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the monthly cost from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="monthlyFee">The monthly fee if the operation was successful.</param>
-		/// <returns>True if a monthly fee was found.</returns>
-		private static bool TryParseMonthlyCost(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out decimal? monthlyFee)
+        /// <summary>
+        /// Attempts to parse the monthly cost from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="monthlyFee">The monthly fee if the operation was successful.</param>
+        /// <returns>True if a monthly fee was found.</returns>
+        private bool TryParseMonthlyCost(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out decimal? monthlyFee)
 		{
-			if (housingData.ContainsKey("Avgift"))
+			if (groupedData.ExtraData.ContainsKey("Avgift"))
 			{
-				monthlyFee = decimal.Parse(housingData["Avgift"].Value.Replace("kr/mån", "").Trim());
+				monthlyFee = decimal.Parse(groupedData.ExtraData["Avgift"].Replace("kr/mån", "").Trim());
 				return true;
 			}
 
@@ -368,18 +477,18 @@ namespace FribergFastigheter.HelperClasses
 			return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the number of rooms from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="roomCount">The room count if the operation was successful.</param>
-		/// <returns>True if the room count was found.</returns>
-		private static bool TryParseRoomCount(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out int? roomCount)
+        /// <summary>
+        /// Attempts to parse the number of rooms from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="roomCount">The room count if the operation was successful.</param>
+        /// <returns>True if the room count was found.</returns>
+        private bool TryParseRoomCount(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out int? roomCount)
 		{
-			if (housingData.ContainsKey("Antal rum"))
+			if (groupedData.ExtraData.ContainsKey("Antal rum"))
 			{
 				// Some ads have rooms with decimal points
-				roomCount = int.Parse(housingData["Antal rum"].Value.Split(" ")[0].Replace(".5", ""));
+				roomCount = int.Parse(groupedData.ExtraData["Antal rum"].Split(" ")[0].Replace(".5", ""));
 				return true;
 			}
 
@@ -387,17 +496,17 @@ namespace FribergFastigheter.HelperClasses
 			return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the running cost from serialized data.
-		/// </summary>
-		/// <param name="housingData">A dictionary containing the serialized data to parse.</param>
-		/// <param name="yearlyRunningCost">The yearly running cost if the operation was successful.</param>
-		/// <returns>True if a running cost was found.</returns>
-		private static bool TryParseRunningCost(Dictionary<string, KeyValuePair<string, string>> housingData, [NotNullWhen(returnValue: true)] out decimal? yearlyRunningCost)
+        /// <summary>
+        /// Attempts to parse the running cost from serialized data.
+        /// </summary>
+        /// <param name="groupedData">The grouped seed data for the housing object.</param>
+        /// <param name="yearlyRunningCost">The yearly running cost if the operation was successful.</param>
+        /// <returns>True if a running cost was found.</returns>
+        private bool TryParseRunningCost(GroupedHousingSeedData groupedData, [NotNullWhen(returnValue: true)] out decimal? yearlyRunningCost)
 		{
-			if (housingData.ContainsKey("Driftkostnad"))
+			if (groupedData.ExtraData.ContainsKey("Driftkostnad"))
 			{
-				yearlyRunningCost = decimal.Parse(housingData["Driftkostnad"].Value.Replace("kr/år", "").Trim());
+				yearlyRunningCost = decimal.Parse(groupedData.ExtraData["Driftkostnad"].Replace("kr/år", "").Trim());
 				return true;
 			}
 
@@ -405,71 +514,6 @@ namespace FribergFastigheter.HelperClasses
 			return false;
 		}
 
-		/// <summary>
-		/// Attempts to parse the broker from serialized data.
-		/// </summary>
-		/// <param name="broker">The broker string to parse.</param>
-		/// <param name="brokerFirstName">The first name of the broker if the operation was successful.</param>
-		/// <param name="brokerLastName">The first name of the broker if the operation was successful.</param>
-		/// <returns>True if a broker was found.</returns>
-		private static bool TryParseBroker(string broker,
-			[NotNullWhen(returnValue: true)] out string? brokerFirstName, [NotNullWhen(returnValue: true)] out string? brokerLastName)
-		{
-			string[] brokerNameParts = broker.Split(" ");
-			brokerFirstName = string.Join(" ", brokerNameParts.Take(brokerNameParts.Length - 1));
-			brokerLastName = brokerNameParts[brokerNameParts.Length - 1];
-			return !string.IsNullOrEmpty(brokerFirstName) && !string.IsNullOrEmpty(brokerLastName);
-		}
-
-		/// <summary>
-		/// Attempts to parse the broker firm from serialized data.
-		/// </summary>
-		/// <param name="brokerFirm">The broker firm string to parse.</param>
-		/// <param name="brokerFirmName">The parsed broker firm name if the operation was successful.</param>
-		/// <returns>True if a broker firm name was found.</returns>
-		private static bool TryParseBrokerFirm(string brokerFirm, [NotNullWhen(returnValue: true)] out string? brokerFirmName)
-		{
-			string[] parts = brokerFirm.Split("</div>");
-			brokerFirmName = parts[parts.Length - 1];
-			return !string.IsNullOrEmpty(brokerFirmName);
-		}
-	}
-
-	/// <summary>
-	/// Stores seed data for housings.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public class HousingSeedData
-	{
-		#region Properties
-
-		/// <summary>
-		/// Returns a list of categories associated with the housings.
-		/// </summary>
-		public List<HousingCategory> HousingCategories
-		{
-			get
-			{
-				return Housings.Select(x => x.Category).ToHashSet().ToList();
-			}
-		}
-
-		/// <summary>
-		/// A collection of housing objects.
-		/// </summary>
-		public List<Housing> Housings { get; set; } = new();
-		/// <summary>
-		/// Returns a list of municipalities associated with the housings.
-		/// </summary>
-		public List<Municipality> Municipalities
-		{
-			get
-			{
-				return Housings.Select(x => x.Municipality).ToHashSet().ToList();
-			}
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }

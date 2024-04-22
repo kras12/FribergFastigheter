@@ -18,7 +18,12 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task UpdateAsync(Housing housing);
 		Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
 		Task<bool> Exists(int id);
-		Task<List<Image>> GetHousingImages(int housingId, List<int>? imageIds = null);
+		Task<List<Image>> GetImages(int housingId, List<int>? imageIds = null);
 		Task<bool> HousingExists(int housingId);
-	}
+        Task<bool> OwnsImage(int housingId, int imageId);
+        Task<int> DeleteImages(int housingId, List<int> imageIds);
+        Task<int> DeleteImage(int housingId, int imageId);
+        Task<Image?> GetImagebyId(int housingId, int imageId);
+        Task AddImages(int housingId, List<Image> imageIds);
+    }
 }

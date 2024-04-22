@@ -1,10 +1,15 @@
-﻿using FribergFastigheter.Server.Data.DTO;
-using FribergFastigheter.Server.Enums;
+﻿using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Enums;
 using FribergFastigheterApi.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Compression;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
-using Image = FribergFastigheterApi.Data.Entities.Image;
 
 namespace FribergFastigheter.Server.Services
 {
@@ -14,7 +19,7 @@ namespace FribergFastigheter.Server.Services
         /// A Service for handling Images.
         /// </summary>
         /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
+        /// <!-- Co Authors: Jimmie -->
         ///
         #region Fields
 
@@ -49,26 +54,33 @@ namespace FribergFastigheter.Server.Services
         /// Method for converting images to Base64.
         /// </summary>
         /// <param name="image">The image object to be converted.</param>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="embeddImageData">True to embedd the image file data.</param>
         /// /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
-        public void SetImageData(ImageDto image)
+        /// <!-- Co Authors: Jimmie -->
+        /// <param name="httpContext"></param>
+        /// <param name="embeddImageData"></param>
+        public void SetImageData(HttpContext httpContext, ImageDto image, bool embeddImageData = false)
         {
             byte[] imageArray = File.ReadAllBytes($"{UploadFolderPath}/{image.FileName}");
-            image.Base64 = Convert.ToBase64String(imageArray);
             image.ImageType = GetImageType(image.FileName);
-		}
+            image.Url = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/Housing/Image/{image.FileName}";
+            image.Base64 = embeddImageData ? Convert.ToBase64String(imageArray) : "";
+        }
 
         /// <summary>
         /// Method for converting a list of images to Base64.
         /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
         /// <param name="imageList">The List of image objects to be converted.</param>
+        /// <param name="embeddImageData">True to embedd the image file data.</param>
         /// /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
-        public void SetImageData(List<ImageDto> imageList)
+        /// <!-- Co Authors: Jimmie -->
+        public void SetImageData(HttpContext httpContext, List<ImageDto> imageList, bool includeImageData = false)
         {
             foreach (ImageDto image in imageList)
             {
-                SetImageData(image);
+                SetImageData(httpContext, image, includeImageData);
             }
         }
 
@@ -80,7 +92,7 @@ namespace FribergFastigheter.Server.Services
         /// <returns>The file name of the saved file.</returns>
         /// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public string SaveImageToDisk(string base64StringData, ImageTypes imageType)
+		public async Task<string> SaveImageToDiskAsync(string base64StringData, ImageTypes imageType)
 		{
             #region Checks           
 
@@ -91,21 +103,50 @@ namespace FribergFastigheter.Server.Services
 
             #endregion
 
-            var fileName = RandomUniqueFilePath(imageType);
-			var filePath = Path.Combine(UploadFolderPath, fileName);
-			var bytes = Convert.FromBase64String(base64StringData);
-			File.WriteAllBytes(filePath, bytes);
+            var filePath = RandomUniqueFilePath(imageType);
+			await File.WriteAllBytesAsync(filePath, Convert.FromBase64String(base64StringData));
 
-            return fileName;
+            return Path.GetFileName(filePath);
 		}
 
-		/// <summary>
-		/// Method for deleting images from disk.
+        /// <summary>
+		/// Method for saving images to disk.
 		/// </summary>
-		/// <param name="imageFileName">The image object to be deleted from disk.</param>
-		/// /// <!-- Author: Marcus -->
+		/// <param name="imageFile">The file to save to the disk.</param>
+        /// <returns>The file name of the saved file.</returns>
+        /// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public void DeleteImageFromDisk(string imageFileName)
+		public async Task<string> SaveImageToDiskAsync(IFormFile imageFile)
+        {
+            #region Checks           
+
+            if (imageFile == null)
+            {
+                throw new ArgumentNullException(nameof(imageFile), $"The value of parameter '{imageFile}' can't be null.");
+            }
+
+            #endregion
+
+            string filePath = RandomUniqueFilePath(GetImageType(imageFile.FileName));
+            
+            using (var sourceStream = imageFile.OpenReadStream())
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    await sourceStream.CopyToAsync(fileStream);
+                }
+            }
+
+            return Path.GetFileName(filePath);
+        }
+
+        /// <summary>
+        /// Method for deleting images from disk.
+        /// </summary>
+        /// <param name="imageFileName">The image object to be deleted from disk.</param>
+        /// /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: -->
+        public void DeleteImageFromDisk(string imageFileName)
         {
             var filePath = Path.Combine(UploadFolderPath, imageFileName);
             if (File.Exists(filePath))
@@ -120,7 +161,7 @@ namespace FribergFastigheter.Server.Services
 		/// <param name="imageType">The image type.</param>
 		/// <returns>The generated file name.</returns>
 		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: -->
+		/// <!-- Co Authors: Jimmmie -->
 		private string RandomUniqueFilePath(ImageTypes imageType)
         {
 			Random random = new Random();
@@ -129,10 +170,10 @@ namespace FribergFastigheter.Server.Services
 
             do
             {
-                string newFileName = Enumerable.Repeat(chars, 32)
-                    .Select(s => s[random.Next(s.Length)]).ToString()!;
+                string randomName = new(Enumerable.Repeat(chars, 32)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
 
-                filePath = Path.Combine(UploadFolderPath, newFileName, GetImageFileExtension(imageType));
+                filePath = Path.Combine(UploadFolderPath, CreateImageFileName(imageType, randomName));
            
             }
             while (File.Exists(filePath)); 
@@ -140,32 +181,43 @@ namespace FribergFastigheter.Server.Services
             return filePath;
 		}
 
-		/// <summary>
-		/// Gets the extension for the image type.
-		/// </summary>
-		/// <param name="imageType">The image type.</param>
-		/// <returns></returns>
-		private string GetImageFileExtension(ImageTypes imageType)
+        /// <summary>
+        /// Creates a file name by combining a name with the proper file extension.
+        /// </summary>
+        /// <param name="imageType">The type of the image.</param>
+        /// <param name="fileNameWithoutExtension">The wanted filename without the extension.</param>
+        /// <returns>A <see cref="string"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private string CreateImageFileName(ImageTypes imageType, string fileNameWithoutExtension)
         {
+            StringBuilder stringBuilder = new (fileNameWithoutExtension);
+
             switch (imageType)
             {
                 case ImageTypes.Jpeg:
-                    return ".jpg";
+                    stringBuilder.Append(".jpg");
+                    break;
 
 				case ImageTypes.Png:
-					return ".png";
+                    stringBuilder.Append(".png");
+                    break;
 
-				default:
+                default:
                     throw new NotSupportedException($"The image type is not supported: {imageType}");
             }
+
+            return stringBuilder.ToString();
         }
 
-		/// <summary>
-		/// Gets the image type from a file name.
-		/// </summary>
-		/// <param name="imageType">The file name.</param>
-		/// <returns><see cref="ImageTypes"/>.</returns>
-		private ImageTypes GetImageType(string fileName)
+        /// <summary>
+        /// Gets the image type from a file name.
+        /// </summary>
+        /// <param name="imageType">The file name.</param>
+        /// <returns><see cref="ImageTypes"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private ImageTypes GetImageType(string fileName)
 		{
 			switch (Path.GetExtension(fileName.ToLower()))
 			{
@@ -180,6 +232,95 @@ namespace FribergFastigheter.Server.Services
 			}
 		}
 
-		#endregion
-	}
+        /// <summary>
+		/// Gets the extension for the image type.
+		/// </summary>
+		/// <param name="imageType">The image type.</param>
+		/// <returns></returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+		private string GetImageContentType(ImageTypes imageType)
+        {
+            switch (imageType)
+            {
+                case ImageTypes.Jpeg:
+                    return "application/jpg";
+
+                case ImageTypes.Png:
+                    return "application/png";
+
+                default:
+                    throw new NotSupportedException($"The image type is not supported: {imageType}");
+            }
+        }
+
+        /// <summary>
+		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
+		/// </summary>
+		/// <param name="imageFileName">The file name of the image.</param>
+		/// <returns>A <see cref="FileContentResult"/> if the file was found or null if not.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName)
+        {
+            var filePath = Path.Combine(UploadFolderPath, imageFileName);
+
+            if (!File.Exists(filePath))
+            {
+                throw new IOException($"The file '{imageFileName}' doesn't exists");
+            }
+
+            return new FileContentResult(await File.ReadAllBytesAsync(filePath), GetImageContentType(GetImageType(imageFileName)))
+            {
+                FileDownloadName = imageFileName
+            };
+        }
+
+        /// <summary>
+		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
+		/// </summary>
+		/// <param name="imageFileNames">A collection of image file names.</param>
+		/// <returns>A <see cref="FileStreamResult"/> if the files was found or null if not.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<FileStreamResult> PrepareImageFilesZipDownloadAsync(List<string> imageFileNames)
+        {
+            if (imageFileNames.Count == 0)
+            {
+                throw new ArgumentException($"The collection '{imageFileNames}' can't be empty.", nameof(imageFileNames));
+            }
+
+            MemoryStream memoryStream = new();
+
+            using (ZipArchive archive = new(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
+            {
+                foreach (var imageFileName in imageFileNames)
+                {
+                    var filePath = Path.Combine(UploadFolderPath, imageFileName);
+
+                    if (!File.Exists(filePath))
+                    {
+                        throw new IOException($"The file '{imageFileName}' doesn't exists");
+                    }
+                    var entry = archive.CreateEntry(imageFileName);
+
+                    using (var entryStream = entry.Open())
+                    {
+                        using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                        {
+                            await fileStream.CopyToAsync(entryStream);
+                        }
+                    }
+                }                
+            }
+
+            memoryStream.Position = 0;
+            return new FileStreamResult(memoryStream, "application/zip")
+            {
+                FileDownloadName = $"images-{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss_fff")}-{new Random().Next(100_000, 1_000_000)}.zip"
+            };
+        }
+
+        #endregion
+    }
 }

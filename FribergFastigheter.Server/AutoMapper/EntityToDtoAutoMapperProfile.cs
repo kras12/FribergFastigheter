@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Data.Entities;
-using FribergFastigheter.Server.Data.DTO;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheterApi.Data.Entities;
 
 namespace FribergFastigheter.Server.AutoMapper

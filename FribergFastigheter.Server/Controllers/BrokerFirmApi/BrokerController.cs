@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Data.Entities;
-using FribergFastigheter.Server.Data.DTO;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -77,7 +77,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .Select(x => _mapper.Map<BrokerDto>(x))
                 .ToList();
 
-            _imageService.SetImageData(brokers.Where(x => x.ProfileImage != null)
+            _imageService.SetImageData(HttpContext, brokers
+                .Where(x => x.ProfileImage != null)
                 .Select(x => x.ProfileImage).ToList());
 
             return Ok(brokers);
@@ -104,7 +105,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var result = _mapper.Map<BrokerDto>(broker);
             if (result.ProfileImage != null)
             {
-                _imageService.SetImageData(result.ProfileImage);
+                _imageService.SetImageData(HttpContext, result.ProfileImage, includeImageData: true);
             }
 
             return Ok(result);
@@ -123,7 +124,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var newBroker = _mapper.Map<Broker>(createBrokerDto);
             if (createBrokerDto.ProfileImage != null)
             {
-                newBroker.ProfileImage = new Image(_imageService.SaveImageToDisk(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
+                newBroker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
             }
 
             newBroker.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId};
@@ -161,7 +162,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
             if (updateBrokerDto.ProfileImage != null)
             {
-				broker.ProfileImage = new Image(_imageService.SaveImageToDisk(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
+				broker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
             }
 
             await _brokerRepository.UpdateAsync(broker);

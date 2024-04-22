@@ -8,4 +8,23 @@
     Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
 </div>
 
-Welcome to your new app.
+<div>Fetched: @Housings.Count</div>
+
+<div class="d-flex flex-column gap-3">
+    @* <img src="https://localhost:7078/api/Housing/Image/00c5598b659a8e1cc6fa5c227d9e79bd.jpg" /> *@
+    @foreach (var house in Housings)
+    {
+        @foreach (var image in house.Images)
+        {
+            if (!string.IsNullOrEmpty(image.Base64))
+            {
+                <img class="housing-image" src="data:image/jpeg;base64, @image.Base64" />
+            }
+            else
+            {
+                <img class="housing-image" src="@image.Url" />
+            }            
+        }
+    }
+</div>
+

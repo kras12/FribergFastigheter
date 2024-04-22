@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Data.Entities;
-using FribergFastigheter.Server.Data.DTO;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.Entities;
@@ -115,7 +115,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            _imageService.SetImageData(housings
+            _imageService.SetImageData(HttpContext, housings
                 .SelectMany(x => x.Images).ToList());
             
             return Ok(housings);
@@ -146,7 +146,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
             var result = _mapper.Map<HousingDto>(housing);
-            _imageService.SetImageData(result.Images);
+            _imageService.SetImageData(HttpContext, result.Images);
 
             return Ok(result);
         }
@@ -175,8 +175,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			{
 				foreach (var newImageDto in newHousingDto.NewImages)
 				{
-					var newImage = new Image(_imageService.SaveImageToDisk(newImageDto.Base64, newImageDto.ImageType));
-					newHousingEntity.Images.Add(newImage);
+					newHousingEntity.Images.Add(new Image(
+						await _imageService.SaveImageToDiskAsync(newImageDto.Base64, newImageDto.ImageType)));
 				}
 			}
 
@@ -208,7 +208,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
     		var updatedHousingEntity = _mapper.Map<Housing>(updateHousingDto);
-			updatedHousingEntity.Images = await _housingRepository.GetHousingImages(id);
+			updatedHousingEntity.Images = await _housingRepository.GetImages(id);
 
 			// Delete images from disk
 			if (updateHousingDto.DeletedImages.Count > 0)
@@ -230,7 +230,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             // Save new images to disk
             foreach (var newImageDto in updateHousingDto.NewImages)
             {
-                var newImage = new Image(_imageService.SaveImageToDisk(newImageDto.Base64, newImageDto.ImageType));
+                var newImage = new Image(await _imageService.SaveImageToDiskAsync(newImageDto.Base64, newImageDto.ImageType));
 				updatedHousingEntity.Images.Add(newImage);
 			}
 

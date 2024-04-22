@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Server.Data.DTO;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -74,7 +74,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			var result = _mapper.Map<BrokerDto>(broker);
             if (result.ProfileImage != null)
             {
-                _imageService.SetImageData(result.ProfileImage);
+                _imageService.SetImageData(HttpContext, result.ProfileImage, includeImageData: true);
             }
 
 			return Ok(result);

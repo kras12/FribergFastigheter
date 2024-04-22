@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Data.Entities;
-using FribergFastigheter.Server.Data.DTO;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
@@ -82,7 +82,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
 			if (result.Logotype != null)
             {
-                _imageservice.SetImageData(result.Logotype);
+                _imageservice.SetImageData(HttpContext, result.Logotype, includeImageData: true);
             }
 
 			return Ok(result);
