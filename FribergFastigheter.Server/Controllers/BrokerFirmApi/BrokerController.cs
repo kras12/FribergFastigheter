@@ -14,11 +14,11 @@ using System.Net;
 
 namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 {
-        /// <summary>
-        /// An API controller for the brokerfirm housings API.
-        /// </summary>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
+    /// <summary>
+    /// An API controller for the brokerfirm housings API.
+    /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     [Route("api/BrokerFirm/Broker")]
     [ApiController]
     public class BrokerController : ControllerBase
@@ -119,7 +119,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for creating broker objects. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the creating the new broker.</param>
-        /// <param name="brokerDto">The serialized DTO object.</param>
+        /// <param name="createBrokerDto">The serialized DTO object.</param>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPost]
@@ -135,22 +135,27 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for updating broker objects. 
         /// </summary>
         /// <param name="brokerId">The ID of the broker associated with the update</param>
+        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the creating the new broker.</param>
         /// <param name="updateBrokerDto">The serialized DTO object.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPut("{brokerId:int}")]
-        public async Task<ActionResult> Put([Required] int brokerId, [FromBody] UpdateBrokerDto updateBrokerDto)
+        public async Task<ActionResult> Put([Required] int brokerId, [Required] int brokerFirmId, [FromBody] UpdateBrokerDto updateBrokerDto)
         {
             if (brokerId != updateBrokerDto.BrokerId)
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
 			}
+            else if (! await _brokerRepository.BelongsToBrokerFirm(brokerId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+            }
 
 			var existingBroker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
 
             if (existingBroker == null)
             {
-				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
 			}
 
 			var broker = _mapper.Map<Broker>(updateBrokerDto);
