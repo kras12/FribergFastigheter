@@ -122,11 +122,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateBrokerDto createBrokerDto)
         {
             var newBroker = _mapper.Map<Broker>(createBrokerDto);
-            if (createBrokerDto.ProfileImage != null)
-            {
-                newBroker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
-            }
-
             newBroker.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId};
             await _brokerRepository.AddAsync(newBroker);
             return Ok();
@@ -155,16 +150,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
 			var broker = _mapper.Map<Broker>(updateBrokerDto);
-            
-            if (existingBroker.ProfileImage != null && updateBrokerDto.ProfileImage?.FileName != existingBroker.ProfileImage.FileName) 
-            {
-                _imageService.DeleteImageFromDisk(existingBroker.ProfileImage.FileName);
-            }
-            if (updateBrokerDto.ProfileImage != null)
-            {
-				broker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
-            }
-
             await _brokerRepository.UpdateAsync(broker);
             return Ok();
         }

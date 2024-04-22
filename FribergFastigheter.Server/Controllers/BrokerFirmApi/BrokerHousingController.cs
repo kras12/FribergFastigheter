@@ -169,17 +169,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
 			var newHousingEntity = _mapper.Map<Housing>(newHousingDto);
-
-			// Save new images to disk
-			if (newHousingDto.NewImages.Count > 0)
-			{
-				foreach (var newImageDto in newHousingDto.NewImages)
-				{
-					newHousingEntity.Images.Add(new Image(
-						await _imageService.SaveImageToDiskAsync(newImageDto.Base64, newImageDto.ImageType)));
-				}
-			}
-
             await _housingRepository.AddAsync(newHousingEntity);
             return Ok();
         }
@@ -201,39 +190,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
 			}
-
-			if (!await _housingRepository.HousingExists(id))
+			else if (!await _housingRepository.HousingExists(id))
 			{
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't exists."));
 			}
 
     		var updatedHousingEntity = _mapper.Map<Housing>(updateHousingDto);
-			updatedHousingEntity.Images = await _housingRepository.GetImages(id);
-
-			// Delete images from disk
-			if (updateHousingDto.DeletedImages.Count > 0)
-            {
-                var deletedImages = updatedHousingEntity.Images.Where(x => updateHousingDto.DeletedImages.Contains(x.ImageId)).ToList();
-
-                if (updateHousingDto.DeletedImages.Count != deletedImages.Count)
-                {
-					return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "All images to delete were not found in the database."));
-				}
-
-                foreach (var image in deletedImages)
-                {
-                    _imageService.DeleteImageFromDisk(image.FileName);
-                    updatedHousingEntity.Images.Remove(image);
-                }
-            }
-
-            // Save new images to disk
-            foreach (var newImageDto in updateHousingDto.NewImages)
-            {
-                var newImage = new Image(await _imageService.SaveImageToDiskAsync(newImageDto.Base64, newImageDto.ImageType));
-				updatedHousingEntity.Images.Add(newImage);
-			}
-
             await _housingRepository.UpdateAsync(updatedHousingEntity);
             return Ok();
         }
