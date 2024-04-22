@@ -40,11 +40,6 @@ namespace FribergFastigheter.Shared.Dto
         /// </summary>
         public string PhoneNumber { get; set; } = "";
 
-        /// <summary>
-        /// The broker profile image.
-        /// </summary>
-        public ImageDto? ProfileImage { get; set; } = null;
-
         #endregion
     }
 }

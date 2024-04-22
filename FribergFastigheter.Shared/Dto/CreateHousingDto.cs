@@ -31,11 +31,6 @@ namespace FribergFastigheter.Shared.Dto
         /// </summary>
         public int MunicipalityId { get; set; }
 
-        /// <summary>
-        /// A collection of new images.
-        /// </summary>
-        public List<NewImageDto> NewImages { get; set; } = new();
-
         #endregion
     }
 }
