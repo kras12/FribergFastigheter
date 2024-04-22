@@ -55,17 +55,14 @@ namespace FribergFastigheter.Server.Services
         /// </summary>
         /// <param name="image">The image object to be converted.</param>
         /// <param name="httpContext">The HttpContext for the request.</param>
-        /// <param name="embeddImageData">True to embedd the image file data.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
         /// <param name="httpContext"></param>
         /// <param name="embeddImageData"></param>
-        public void SetImageData(HttpContext httpContext, ImageDto image, bool embeddImageData = false)
+        public void SetImageData(HttpContext httpContext, ImageDto image)
         {
-            byte[] imageArray = File.ReadAllBytes($"{UploadFolderPath}/{image.FileName}");
             image.ImageType = GetImageType(image.FileName);
             image.Url = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/Housing/Image/{image.FileName}";
-            image.Base64 = embeddImageData ? Convert.ToBase64String(imageArray) : "";
         }
 
         /// <summary>
@@ -80,7 +77,7 @@ namespace FribergFastigheter.Server.Services
         {
             foreach (ImageDto image in imageList)
             {
-                SetImageData(httpContext, image, includeImageData);
+                SetImageData(httpContext, image);
             }
         }
 

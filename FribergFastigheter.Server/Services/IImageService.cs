@@ -13,7 +13,7 @@ namespace FribergFastigheter.Server.Services
         Task<FileStreamResult> PrepareImageFilesZipDownloadAsync(List<string> imageFileNames);
         Task<string> SaveImageToDiskAsync(string base64StringData, ImageTypes imageType);
         Task<string> SaveImageToDiskAsync(IFormFile imageFile);
-        void SetImageData(HttpContext httpContext, ImageDto image, bool includeImageData = false);
+        void SetImageData(HttpContext httpContext, ImageDto image);
         void SetImageData(HttpContext httpContext, List<ImageDto> imageList, bool includeImageData = false);
     }
 }

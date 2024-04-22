@@ -7,11 +7,6 @@ namespace FribergFastigheter.Shared.Dto
         #region Properties
 
         /// <summary>
-        /// A base64 string representation of the image file data.
-        /// </summary>
-        public string Base64 { get; set; } = "";
-
-        /// <summary>
         /// The filename of the image.
         /// </summary>
         public string FileName { get; set; } = "";
