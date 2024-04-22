@@ -87,18 +87,23 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for fetching a housing object. 
         /// </summary>
         /// <param name="brokerId">The ID of the broker to fetch.</param>
+        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
+        /// <!-- Co Authors: Jimmie -->
         [HttpGet("{brokerId:int}")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById(int brokerId)
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById([Required] int brokerId, [Required] int brokerFirmId)
         {
             var broker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
 
             if (broker == null)
             {
-                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+                return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+            }
+            else if (broker.BrokerFirm.BrokerFirmId != brokerFirmId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
             }
 
             var result = _mapper.Map<BrokerDto>(broker);
