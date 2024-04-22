@@ -81,31 +81,6 @@ namespace FribergFastigheter.Server.Services
             }
         }
 
-		/// <summary>
-		/// Method for saving images to disk.
-		/// </summary>
-		/// <param name="base64StringData">A base64 string representation of the file data.</param>
-        /// <param name="imageType">The image type.</param>
-        /// <returns>The file name of the saved file.</returns>
-        /// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<string> SaveImageToDiskAsync(string base64StringData, ImageTypes imageType)
-		{
-            #region Checks           
-
-            if (string.IsNullOrEmpty(base64StringData))
-            {
-				throw new ArgumentException($"The file data is empty.");
-			}
-
-            #endregion
-
-            var filePath = RandomUniqueFilePath(imageType);
-			await File.WriteAllBytesAsync(filePath, Convert.FromBase64String(base64StringData));
-
-            return Path.GetFileName(filePath);
-		}
-
         /// <summary>
 		/// Method for saving images to disk.
 		/// </summary>
