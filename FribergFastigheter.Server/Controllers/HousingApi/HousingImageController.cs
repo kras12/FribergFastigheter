@@ -48,7 +48,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         [HttpGet("{imageFileName}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetHousingImageFile(string imageFileName)
+        public async Task<IActionResult> GetImageFile(string imageFileName)
         {
             var fileResult = await _imageService.PrepareImageFileDownloadAsync(imageFileName);
 

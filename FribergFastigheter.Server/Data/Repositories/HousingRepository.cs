@@ -194,7 +194,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task AddImages(int housingId, List<Image> imageIds)
+		public async Task AddImages(int housingId, List<Image> images)
 		{
 			var housing = await GetHousingByIdAsync(housingId);
 
@@ -205,8 +205,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
             // We return entities as no tracking.
             applicationDbContext.Housings.Attach(housing); 
-            housing.Images.AddRange(imageIds);
-			//housing.Images.ForEach(x => applicationDbContext.Entry(x).State = EntityState.Added);
+            housing.Images.AddRange(images);
 			await applicationDbContext.SaveChangesAsync();
 		}
 

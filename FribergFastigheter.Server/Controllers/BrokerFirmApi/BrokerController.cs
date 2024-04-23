@@ -14,16 +14,15 @@ using System.Net;
 
 namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 {
+    /// <summary>
+    /// An API controller for the brokerfirm housings API.
+    /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     [Route("api/BrokerFirm/Broker")]
     [ApiController]
     public class BrokerController : ControllerBase
     {
-        /// <summary>
-        /// An API controller for the brokerfirm housings API.
-        /// </summary>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
-        /// 
         #region Fields
 
         /// <summary>
@@ -88,24 +87,29 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for fetching a housing object. 
         /// </summary>
         /// <param name="brokerId">The ID of the broker to fetch.</param>
+        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
+        /// <!-- Co Authors: Jimmie -->
         [HttpGet("{brokerId:int}")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById(int brokerId)
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById([Required] int brokerId, [Required] int brokerFirmId)
         {
             var broker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
 
             if (broker == null)
             {
-                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+                return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+            }
+            else if (broker.BrokerFirm.BrokerFirmId != brokerFirmId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
             }
 
             var result = _mapper.Map<BrokerDto>(broker);
             if (result.ProfileImage != null)
             {
-                _imageService.SetImageData(HttpContext, result.ProfileImage, includeImageData: true);
+                _imageService.SetImageData(HttpContext, result.ProfileImage);
             }
 
             return Ok(result);
@@ -115,18 +119,13 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for creating broker objects. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the creating the new broker.</param>
-        /// <param name="brokerDto">The serialized DTO object.</param>
+        /// <param name="createBrokerDto">The serialized DTO object.</param>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPost]
         public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateBrokerDto createBrokerDto)
         {
             var newBroker = _mapper.Map<Broker>(createBrokerDto);
-            if (createBrokerDto.ProfileImage != null)
-            {
-                newBroker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(createBrokerDto.ProfileImage.Base64, createBrokerDto.ProfileImage.ImageType));
-            }
-
             newBroker.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId};
             await _brokerRepository.AddAsync(newBroker);
             return Ok();
@@ -136,35 +135,30 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for updating broker objects. 
         /// </summary>
         /// <param name="brokerId">The ID of the broker associated with the update</param>
+        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the creating the new broker.</param>
         /// <param name="updateBrokerDto">The serialized DTO object.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPut("{brokerId:int}")]
-        public async Task<ActionResult> Put([Required] int brokerId, [FromBody] UpdateBrokerDto updateBrokerDto)
+        public async Task<ActionResult> Put([Required] int brokerId, [Required] int brokerFirmId, [FromBody] UpdateBrokerDto updateBrokerDto)
         {
             if (brokerId != updateBrokerDto.BrokerId)
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
 			}
+            else if (! await _brokerRepository.BelongsToBrokerFirm(brokerId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+            }
 
 			var existingBroker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
 
             if (existingBroker == null)
             {
-				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
 			}
 
 			var broker = _mapper.Map<Broker>(updateBrokerDto);
-            
-            if (existingBroker.ProfileImage != null && updateBrokerDto.ProfileImage?.FileName != existingBroker.ProfileImage.FileName) 
-            {
-                _imageService.DeleteImageFromDisk(existingBroker.ProfileImage.FileName);
-            }
-            if (updateBrokerDto.ProfileImage != null)
-            {
-				broker.ProfileImage = new Image(await _imageService.SaveImageToDiskAsync(updateBrokerDto.ProfileImage.Base64, updateBrokerDto.ProfileImage.ImageType));
-            }
-
             await _brokerRepository.UpdateAsync(broker);
             return Ok();
         }

@@ -1,14 +1,14 @@
 ﻿using FribergFastigheter.Shared.Dto;
 
-namespace FribergFastigheter.Client.Services
+namespace FribergFastigheter.Client.Services.HousingApi
 {
-	/// <summary>
-	/// An interface for a service to fetch data from Friberg Fastigheter API endpoints.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public interface IFribergFastigheterApiService
-	{
+    /// <summary>
+    /// An interface for a service to fetch data from Friberg Fastigheter Housing API endpoints.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public interface IHousingApiService
+    {
         /// <summary>
         /// Fetches all housings that matches the filters and options.
         /// </summary>
@@ -18,7 +18,6 @@ namespace FribergFastigheter.Client.Services
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        /// <param name="includeImageData"></param>
-        Task<List<HousingDto>?> SearchHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null, bool includeImageData = false);
-	}
+        Task<List<HousingDto>?> SearchHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null);
+    }
 }

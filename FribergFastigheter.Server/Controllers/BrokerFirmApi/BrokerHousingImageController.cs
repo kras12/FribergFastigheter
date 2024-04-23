@@ -48,7 +48,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         public BrokerHousingImageController(IHousingRepository housingRepository, IImageService imageService)
         {
             _housingRepository = housingRepository;
-            _imageService = imageService;   
+            _imageService = imageService;
         }
 
         #endregion
@@ -166,6 +166,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
+        /// <param name="newFiles">A collection of uploaded image files.</param>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         [HttpPost]

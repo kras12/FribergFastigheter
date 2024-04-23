@@ -16,14 +16,7 @@
     {
         @foreach (var image in house.Images)
         {
-            if (!string.IsNullOrEmpty(image.Base64))
-            {
-                <img class="housing-image" src="data:image/jpeg;base64, @image.Base64" />
-            }
-            else
-            {
-                <img class="housing-image" src="@image.Url" />
-            }            
+            <img class="housing-image" src="@image.Url" />            
         }
     }
 </div>

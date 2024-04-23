@@ -55,17 +55,14 @@ namespace FribergFastigheter.Server.Services
         /// </summary>
         /// <param name="image">The image object to be converted.</param>
         /// <param name="httpContext">The HttpContext for the request.</param>
-        /// <param name="embeddImageData">True to embedd the image file data.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
         /// <param name="httpContext"></param>
         /// <param name="embeddImageData"></param>
-        public void SetImageData(HttpContext httpContext, ImageDto image, bool embeddImageData = false)
+        public void SetImageData(HttpContext httpContext, ImageDto image)
         {
-            byte[] imageArray = File.ReadAllBytes($"{UploadFolderPath}/{image.FileName}");
             image.ImageType = GetImageType(image.FileName);
             image.Url = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/Housing/Image/{image.FileName}";
-            image.Base64 = embeddImageData ? Convert.ToBase64String(imageArray) : "";
         }
 
         /// <summary>
@@ -80,34 +77,9 @@ namespace FribergFastigheter.Server.Services
         {
             foreach (ImageDto image in imageList)
             {
-                SetImageData(httpContext, image, includeImageData);
+                SetImageData(httpContext, image);
             }
         }
-
-		/// <summary>
-		/// Method for saving images to disk.
-		/// </summary>
-		/// <param name="base64StringData">A base64 string representation of the file data.</param>
-        /// <param name="imageType">The image type.</param>
-        /// <returns>The file name of the saved file.</returns>
-        /// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<string> SaveImageToDiskAsync(string base64StringData, ImageTypes imageType)
-		{
-            #region Checks           
-
-            if (string.IsNullOrEmpty(base64StringData))
-            {
-				throw new ArgumentException($"The file data is empty.");
-			}
-
-            #endregion
-
-            var filePath = RandomUniqueFilePath(imageType);
-			await File.WriteAllBytesAsync(filePath, Convert.FromBase64String(base64StringData));
-
-            return Path.GetFileName(filePath);
-		}
 
         /// <summary>
 		/// Method for saving images to disk.
