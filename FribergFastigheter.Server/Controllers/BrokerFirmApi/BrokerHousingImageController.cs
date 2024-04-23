@@ -19,6 +19,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
+    /// 
     [Route("api/BrokerFirm/Housing/Image")]
     [ApiController]
     public class BrokerHousingImageController : ControllerBase
@@ -44,7 +45,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         /// <param name="housingRepository">The injected housing repository.</param>
         /// <param name="imageService">The injected imageService properties.</param>
-        public BrokerHousingImageController(IHousingRepository housingRepository,IImageService imageService)
+        public BrokerHousingImageController(IHousingRepository housingRepository, IImageService imageService)
         {
             _housingRepository = housingRepository;
             _imageService = imageService;
