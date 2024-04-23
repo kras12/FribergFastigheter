@@ -38,27 +38,13 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-            await UrlDataTest();
+            var result = await ApiService.SearchHousings(limitHousings: 10, limitImageCountPerHousing: 6);
+
+			if (result != null)
+			{
+				Housings = result;
+			}
 		}
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-        }
-
-        private async Task UrlDataTest()
-        {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-
-            var housings = await ApiService.SearchHousings(limitHousings: 50, limitImageCountPerHousing: 1);
-
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
-
-            if (housings != null)
-            {                
-                Housings = housings;
-            }
-        }
 
         #endregion
     }	
