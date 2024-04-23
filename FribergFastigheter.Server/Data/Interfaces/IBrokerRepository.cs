@@ -11,11 +11,17 @@ namespace FribergFastigheter.Server.Data.Interfaces
     public interface IBrokerRepository
     {
         Task AddAsync(Broker broker);
+        Task AddImage(int brokerId, Image imageId);
         Task DeleteAsync(int brokerId);
         Task DeleteAsync(Broker broker);
+        Task<int> DeleteImage(int brokerId);
+        Task<bool> Exists(int id);
         Task<List<Broker>> GetAllBrokersAsync();
         Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId);
         Task<Broker?> GetBrokerByIdAsync(int id);
+        Task<Image?> GetImagebyBrokerId(int brokerId);
+        Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
+        Task<bool> OwnsImage(int brokerId, int imageId);
         Task UpdateAsync(Broker broker);
     }
 }

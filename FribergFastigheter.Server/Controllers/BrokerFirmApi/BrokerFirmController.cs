@@ -14,7 +14,7 @@ using System.Net;
 namespace FribergFastigheter.Server.Controllers.BrokerApi
 {
 	/// <summary>
-	/// An API controller for the broker firm API.
+	/// An API controller for the broker firm image API.
 	/// </summary>
 	/// <!-- Author: Jimmie -->
 	/// <!-- Co Authors: -->

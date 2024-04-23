@@ -19,6 +19,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
+    /// 
     [Route("api/BrokerFirm/Housing/Image")]
     [ApiController]
     public class BrokerHousingImageController : ControllerBase
@@ -26,24 +27,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         #region Fields
 
         /// <summary>
-        /// The injected broker repository.
-        /// </summary>
-        private readonly IBrokerFirmRepository _brokerRepository;
-
-        /// <summary>
-        /// The injected broker firm repository.
-        /// </summary>
-        private readonly IBrokerFirmRepository _brokerFirmRepository;
-
-        /// <summary>
         /// The injected housing repository.
         /// </summary>
         private readonly IHousingRepository _housingRepository;
-
-        /// <summary>
-        /// The injected Auto Mapper.
-        /// </summary>
-        private readonly IMapper _mapper;
 
         /// <summary>
         /// The injected imageService properties.
@@ -58,18 +44,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// Constructor.
         /// </summary>
         /// <param name="housingRepository">The injected housing repository.</param>
-        /// <param name="mapper">The injected Auto Mapper.</param>
         /// <param name="imageService">The injected imageService properties.</param>
-        /// <param name="brokerFirmRepository">The injected broker firm repository.</param>
-        /// <param name="brokerRepository">The injected broker repository.</param>
-        public BrokerHousingImageController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService, 
-            IBrokerFirmRepository brokerFirmRepository, IBrokerFirmRepository brokerRepository)
+        public BrokerHousingImageController(IHousingRepository housingRepository, IImageService imageService)
         {
             _housingRepository = housingRepository;
-            _mapper = mapper;
-            _imageService = imageService;
-            _brokerFirmRepository = brokerFirmRepository;
-            _brokerRepository = brokerRepository;
+            _imageService = imageService;   
         }
 
         #endregion
