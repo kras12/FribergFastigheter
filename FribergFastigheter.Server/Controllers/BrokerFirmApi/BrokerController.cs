@@ -146,7 +146,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
 			}
-            else if (! await _brokerRepository.BelongsToBrokerFirm(brokerId, brokerFirmId))
+            else if (! await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
