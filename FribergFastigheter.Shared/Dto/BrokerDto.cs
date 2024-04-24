@@ -27,6 +27,11 @@ namespace FribergFastigheter.Shared.Dto
         public string Email { get; set; } = "";
 
         /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        public string Description { get; set; } = "";
+
+        /// <summary>
         /// The first name of the broker.
         /// </summary>
         public string FirstName { get; set; } = "";
