@@ -77,6 +77,12 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AnyAsync(x => x.BrokerFirmId == brokerFirmId && x.Brokers.Any(x => x.BrokerId == brokerId));
         }
 
+        public async Task<bool> Exists(int brokerFirmId)
+        {
+            return await applicationDbContext.BrokerFirms
+                .AnyAsync(x => x.BrokerFirmId == brokerFirmId);
+        }
+
         #endregion
     }
 }
