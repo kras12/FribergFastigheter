@@ -9,7 +9,6 @@ namespace FribergFastigheter.Shared.Dto
     /// <!-- Co Authors: -->
     public class ErrorMessageDto
     {
-
         #region Constructors
 
         /// <summary>
@@ -32,7 +31,6 @@ namespace FribergFastigheter.Shared.Dto
         /// The error message.
         /// </summary>
         public string ErrorMessage { get; set; } = "";
-
 
         /// <summary>
         /// The status code.
