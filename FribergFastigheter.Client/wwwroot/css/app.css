@@ -169,7 +169,8 @@ label {
 
 /*==================================================*/
 /* Images                                           */
-/*==================================================*/  
+/*==================================================*/ 
+
 
 /* Image */
 img
@@ -184,16 +185,41 @@ img.cover-image
     box-shadow: var(--default-box-shadow);
 }
 
-.side_image {
-    margin-top: 2em;
+.profile-img {
+    height: 15rem;
+    width: 15rem;
+    transition: transform .2s;
+    object-fit: contain;
+    box-shadow: 1px 1px 10px 3px grey;
+}
+
+.profile-img:hover {
+    transform: scale(1.1);
 }
 
 /*==================================================*/
-/* Image Slideshow                                  */
+/* Brokercard                                       */
 /*==================================================*/
 
-/* Slideshow container */
-.image-slideshow-container
+.broker-list {
+    display:flex;
+    flex-direction: column;
+    row-gap: 1.5rem;
+}
+.broker-list .broker-card {
+    display: flex;
+    align-items: flex-start;
+}
+    .broker-list .broker-card .broker-info {
+        flex: auto;
+        padding: 3rem;
+    }
+
+    /*==================================================*/
+    /* Image Slideshow                                  */
+    /*==================================================*/
+    /* Slideshow container */
+    .image-slideshow-container
 {
     display: flex;
     flex-direction: column;

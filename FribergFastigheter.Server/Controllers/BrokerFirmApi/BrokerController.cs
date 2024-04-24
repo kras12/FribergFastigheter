@@ -31,6 +31,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         private readonly IImageService _imageService;
 
         /// <summary>
+        /// The injected brokerfirm repository.
+        /// </summary>
+        private readonly IBrokerFirmRepository _brokerFirmRepository;
+
+        /// <summary>
         /// The injected housing repository.
         /// </summary>
         private readonly IBrokerRepository _brokerRepository;
@@ -50,11 +55,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="brokerRepository">The injected broker repository.</param>
         /// <param name="mapper">The injected Auto Mapper.</param>
         /// <param name="imageService">The injected imageService properties.</param>
-        public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IImageService imageService)
+        public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IImageService imageService, IBrokerFirmRepository brokerFirmRepository)
         {
             _brokerRepository = brokerRepository;
             _mapper = mapper;
             _imageService = imageService;
+            _brokerFirmRepository = brokerFirmRepository;
         }
 
         #endregion
@@ -72,10 +78,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<BrokerDto>>> Get([Required] int brokerFirmId)
         {
+            if(await _brokerFirmRepository.Exists(brokerFirmId) == false)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced brokerfirm doesn't exist."));
+            }
+            
             var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(brokerFirmId))
                 .Select(x => _mapper.Map<BrokerDto>(x))
                 .ToList();
 
+
+            _imageService.SetImageData(HttpContext, brokers.Select(x => x.BrokerFirm)
+                .Where(x => x.Logotype != null)
+                .DistinctBy(x => x.BrokerFirmId)
+                .Select(x => x.Logotype).Cast<ImageDto>().ToList());
+            
             _imageService.SetImageData(HttpContext, brokers
                 .Where(x => x.ProfileImage != null)
                 .Select(x => x.ProfileImage).Cast<ImageDto>().ToList());
@@ -84,7 +101,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
         /// <summary>
-        /// An API endpoint for fetching a housing object. 
+        /// An API endpoint for fetching a broker object. 
         /// </summary>
         /// <param name="brokerId">The ID of the broker to fetch.</param>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>

@@ -1,4 +1,37 @@
 ﻿@page "/brokermember/broker/list"
 
-<h3>BrokerList</h3>
+<div class="vertical-page-container">
+<h3>Mäklare</h3>
 
+<div class="broker-list">
+    @if(BrokerList.Count > 0)
+        {
+            @foreach (var broker in BrokerList)
+                {
+                    <div class="broker-card">
+                        <a href="#">
+                            <img class="profile-img" src="@broker.ProfileImage.Url" />
+                        </a>
+                        <div class="broker-info">
+                            <a href="#">
+                                <h4>@broker.FirstName @broker.LastName</h4>
+                            </a>
+                            <h5>
+                                Mäklarbyrå: @broker.BrokerFirm.Name
+                            </h5>
+                            <h5>
+                                Telefonnummer: @broker.PhoneNumber
+                            </h5>
+                            <h5>
+                                Email: @broker.Email
+                            </h5>
+                        </div>
+                     </div>
+                }
+        }
+        else
+        {
+            <p>Kan inte hitta några mäklare.</p>
+        }
+    </div>
+</div>
