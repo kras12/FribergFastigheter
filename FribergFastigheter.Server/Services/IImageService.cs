@@ -12,7 +12,11 @@ namespace FribergFastigheter.Server.Services
         Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName);
         Task<FileStreamResult> PrepareImageFilesZipDownloadAsync(List<string> imageFileNames);
         Task<string> SaveImageToDiskAsync(IFormFile imageFile);
-        void SetImageData(HttpContext httpContext, ImageDto image);
-        void SetImageData(HttpContext httpContext, List<ImageDto> imageList, bool includeImageData = false);
+        void PrepareDto(HttpContext httpContext, BrokerDto broker);
+        void PrepareDto(HttpContext httpContext, List<BrokerDto> brokers);
+        void PrepareDto(HttpContext httpContext, BrokerFirmDto brokerFirm);
+        void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms);
+        void PrepareDto(HttpContext httpContext, HousingDto housing);
+        void PrepareDto(HttpContext httpContext, List<HousingDto> housings); 
     }
 }
