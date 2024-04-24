@@ -67,7 +67,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The broker profile image.
         /// </summary>
-        public ImageViewModel? ProfileImage { get; set; } = new();
+        public ImageViewModel? ProfileImage { get; set; } 
 
         #endregion
     }
