@@ -1,3 +1,4 @@
+using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
 using FribergFastigheter.Client.Services.HousingApi;
 using Microsoft.AspNetCore.Components.Web;
@@ -29,6 +30,9 @@ namespace FribergFastigheter.Client
             {
                 client.BaseAddress = new Uri(builder.Configuration["FribergFastigheterApiBaseUrl"]!);
             });
+
+            // Auto Mapper
+            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
 
             // API Services
             builder.Services.AddTransient<IHousingApiService, HousingApiService>();
