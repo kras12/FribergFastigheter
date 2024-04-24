@@ -4,15 +4,28 @@ using FribergFastigheter.Shared.Dto;
 
 namespace FribergFastigheter.Client.AutoMapper
 {
-    public class DtoToViewModelAutoMapperProfile : Profile
-    {
-        public DtoToViewModelAutoMapperProfile()
-        {
-            CreateMap<BrokerDto, BrokerViewModel>()
-                .ForMember(dest => dest.ProfileImage, opt => opt
-                .PreCondition(x => x.ProfileImage != null));
+	/// <summary>
+	/// An auto mapper profile that contains mappings for converting DTO classes to view model classes.
+	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
+	public class DtoToViewModelAutoMapperProfile : Profile
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public DtoToViewModelAutoMapperProfile()
+		{
+			CreateMap<HousingDto, HousingViewModel>();
+			CreateMap<HousingCategoryDto, HousingCategoryViewModel>();
+			CreateMap<MunicipalityDto, MunicipalityViewModel>();
+			CreateMap<ImageDto, ImageViewModel>();
 
-            CreateMap<ImageDto, ImageViewModel>();
-        }
-    }
+			CreateMap<BrokerFirmDto, BrokerFirmViewModel>()
+				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));
+
+			CreateMap<BrokerDto, BrokerViewModel>()
+				.ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null));
+		}
+	}
 }
