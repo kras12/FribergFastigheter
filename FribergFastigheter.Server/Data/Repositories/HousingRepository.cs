@@ -101,7 +101,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 			int? limitHousings = null, int? limitImagesPerHousing = null)
         {
             var query = applicationDbContext.Housings
-                .Include(x => x.Broker)
+                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm)
                 .Include(x => x.BrokerFirm)
                 .Include(x => x.Category)
                 .Include(x => x.Municipality)
