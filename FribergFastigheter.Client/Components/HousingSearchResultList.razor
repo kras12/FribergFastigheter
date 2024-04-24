@@ -1,0 +1,71 @@
+﻿@using FribergFastigheter.Client.HelperClasses
+<div class="d-flex flex-column gap-4 full-width">
+    @{
+        int iteration = 0;
+    }
+    @foreach (var house in Housings)
+    {
+        iteration++;
+        <a href="%">
+            <div class="card">
+            <div class="card-header housing-result-header d-flex flex-row justify-content-between">
+                <div>@house.Broker.FullName</div>
+                <div>@iteration</div>
+                <div>
+                    @if (house.Broker.BrokerFirm.Logotype != null)
+                    {
+                        <img class="broker-firm-logotype" src="@house.Broker.BrokerFirm.Logotype.Url" />
+                    }
+                </div>
+            </div>
+            <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
+                @foreach (var image in house.Images)
+                {
+                    <img class="housing-image" src="@image.Url" />
+                }
+            </div>
+
+            @* TODO - Replace H-tags with other elements and styles? *@
+            <h2 class="card-title">@(StringFormatHelper.FormatPrice(house.Price))</h2>
+            <h3 class="card-subtitle mb-2 text-muted">@house.Address</h3>
+            <h4 class="card-subtitle mb-2 text-muted">@house.Municipality.MunicipalityName</h4>
+            <div class="card-body">
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width">
+                        <span>Boyta: @house.LivingArea</span>
+                        @if (house.RoomCount != null)
+                        {
+                            <span>Antal rum: @house.RoomCount</span>
+                        }
+                        @if (house.AncillaryArea != null)
+                        {
+                            <span>Övrig yta: @house.AncillaryArea</span>
+                        }
+                        @if (house.LandArea != null)
+                        {
+                            <span>Landyta: @house.LandArea</span>
+                        }
+                        @if (house.BuildYear != null)
+                        {
+                            <span>Byggår: @house.BuildYear</span>
+                        }
+                        @if (house.MonthlyFee != null)
+                        {
+                            <span>Månadskostnad: @house.MonthlyFee</span>
+                        }
+                        @if (house.YearlyRunningCost != null)
+                        {
+                            <span>Årlig kostnad: @house.YearlyRunningCost</span>
+                        }
+                    </div>
+                    <div>
+                        <p class="card-text">
+                            @($"{@house.Description.Substring(0, Math.Min(house.Description.Length, 300))}(...)")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </a>
+    }
+</div>
