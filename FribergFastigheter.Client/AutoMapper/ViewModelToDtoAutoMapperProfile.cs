@@ -14,7 +14,6 @@ namespace FribergFastigheter.Client.AutoMapper
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// 
         public ViewModelToDtoAutoMapperProfile()
 		{
             // TODO - Likely obsolete and can be deleted later
