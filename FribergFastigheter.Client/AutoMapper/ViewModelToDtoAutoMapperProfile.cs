@@ -18,7 +18,10 @@ namespace FribergFastigheter.Client.AutoMapper
         public ViewModelToDtoAutoMapperProfile()
         {
             CreateMap<BrokerViewModel, BrokerDto>()
-                .ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null));
+                .ForMember(dest => dest.ProfileImage, opt => opt
+                .PreCondition(x => x.ProfileImage != null));
+
+            CreateMap<ImageViewModel, ImageDto>();
         }
     }
 }
