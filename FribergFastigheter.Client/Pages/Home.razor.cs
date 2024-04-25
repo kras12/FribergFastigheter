@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Net.Http.Json;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheter.Client.Services.HousingApi;
 using FribergFastigheter.Client.Models;
 using AutoMapper;
+using FribergFastigheter.Client.Services.FribergFastigheterApi;
 
 namespace FribergFastigheter.Client.Pages
 {
@@ -35,18 +35,6 @@ namespace FribergFastigheter.Client.Pages
         /// </summary>
         [Inject]
         private IHousingApiService HousingApi { get; set; }
-
-        /// <summary>
-        /// The injected service for the housing category API.
-        /// </summary>
-        [Inject]
-        private IHousingCategoryApiService HousingCategoryApi { get; set; }
-
-        /// <summary>
-        /// The injected service for the municipality API.
-        /// </summary>
-        [Inject]
-        private IMunicipalityApiService MunicipalityCategoryApi { get; set; }
 
 #pragma warning restore CS8618
         #endregion
@@ -79,7 +67,7 @@ namespace FribergFastigheter.Client.Pages
 		{
 			await base.OnInitializedAsync();
 
-            var categories = await HousingCategoryApi.GetCategories();
+            var categories = await HousingApi.GetHousingCategories();
 
             if (categories != null)
             {
@@ -88,7 +76,7 @@ namespace FribergFastigheter.Client.Pages
                 HousingSearchInputViewModel.SelectedCategoryId = HousingSearchInputViewModel.HousingCategories.First().HousingCategoryId;
             }
 
-            var municipalities = await MunicipalityCategoryApi.GetMunicipalities();
+            var municipalities = await HousingApi.GetMunicipalities();
 
             if (municipalities != null)
             {

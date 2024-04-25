@@ -1,6 +1,6 @@
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
-using FribergFastigheter.Client.Services.HousingApi;
+using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -23,27 +23,24 @@ namespace FribergFastigheter.Client
 				builder.Configuration.Bind("Local", options.ProviderOptions);
 			});
             builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
-            // Add http clients
+
+            // Add API services with typed http clients
             /// <!-- Author: Jimmie -->
             /// <!-- Co Authors: -->
-            builder.Services.AddHttpClient<FribergApiHttpClientService>(client =>
+            builder.Services.AddHttpClient<IHousingApiService, HousingApiService>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["FribergFastigheterApiBaseUrl"]!);
+            });
+
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
+            builder.Services.AddHttpClient<IBrokerFirmApiService, BrokerFirmApiService>(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["FribergFastigheterApiBaseUrl"]!);
             });
 
             // Auto Mapper
-            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
-
-            // API Services
-            builder.Services.AddTransient<IHousingApiService, HousingApiService>();
-            builder.Services.AddTransient<IHousingBrokerApiService, HousingBrokerApiService>();
-            builder.Services.AddTransient<IHousingBrokerFirmApiService, HousingBrokerFirmApiService>();
-            builder.Services.AddTransient<IBrokerApiService, BrokerApiService>();
-            builder.Services.AddTransient<IBrokerFirmApiService, BrokerFirmApiService>();
-            builder.Services.AddTransient<IBrokerHousingApiService, BrokerHousingApiService>();
-            builder.Services.AddTransient<IBrokerHousingImageApiService, BrokerHousingImageApiService>();
-            builder.Services.AddTransient<IHousingCategoryApiService, HousingCategoryApiService>();
-            builder.Services.AddTransient<IMunicipalityApiService, MunicipalityApiService>();
+            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));            
 
             await builder.Build().RunAsync();
 		}
