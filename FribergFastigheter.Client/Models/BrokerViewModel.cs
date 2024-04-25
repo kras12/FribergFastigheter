@@ -45,6 +45,17 @@ namespace FribergFastigheter.Client.Models
         public string FirstName { get; set; } = "";
 
         /// <summary>
+        /// The full name of the broker.
+        /// </summary>
+        public string FullName
+        {
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
+
+        /// <summary>
         /// The last name of the broker.
         /// </summary>
         public string LastName { get; set; } = "";

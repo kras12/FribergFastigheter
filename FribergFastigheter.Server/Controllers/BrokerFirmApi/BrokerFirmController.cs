@@ -80,10 +80,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
-			if (result.Logotype != null)
-            {
-                _imageservice.SetImageData(HttpContext, result.Logotype);
-            }
+            _imageservice.PrepareDto(HttpContext, result);
 
 			return Ok(result);
 		}

@@ -101,13 +101,49 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 				.WithMany()
 				.OnDelete(DeleteBehavior.Restrict);
 
-			AddEntitySeeds(modelBuilder);
+			modelBuilder.Entity<Housing>()
+				.Navigation(x => x.Broker)
+				.AutoInclude();
+
+            modelBuilder.Entity<Housing>()
+                .Navigation(x => x.BrokerFirm)
+                .AutoInclude();
+
+            modelBuilder.Entity<Housing>()
+                .Navigation(x => x.Images)
+                .AutoInclude();
+
+            modelBuilder.Entity<Housing>()
+                .Navigation(x => x.Municipality)
+                .AutoInclude();
+
+            modelBuilder.Entity<Housing>()
+                .Navigation(x => x.Category)
+                .AutoInclude();
+
+            AddEntitySeeds(modelBuilder);
 
 			modelBuilder.Entity<BrokerFirm>()
 				.HasMany(x => x.Brokers)
 				.WithOne(x => x.BrokerFirm)
-				.OnDelete(DeleteBehavior.Cascade);	
-		}
+				.OnDelete(DeleteBehavior.Cascade);
+
+			modelBuilder.Entity<BrokerFirm>()
+				.Navigation(x => x.Brokers)
+				.AutoInclude();
+
+            modelBuilder.Entity<BrokerFirm>()
+                .Navigation(x => x.Logotype)
+                .AutoInclude();
+
+            modelBuilder.Entity<Broker>()
+                .Navigation(x => x.BrokerFirm)
+                .AutoInclude();
+
+            modelBuilder.Entity<Broker>()
+                .Navigation(x => x.ProfileImage)
+                .AutoInclude();
+        }
 
 		/// <summary>
 		/// Adds entity seeds to the model creation

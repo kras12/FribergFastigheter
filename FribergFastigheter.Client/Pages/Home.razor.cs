@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Net.Http.Json;
 using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Client.Services.HousingApi;
+using FribergFastigheter.Client.Models;
+using AutoMapper;
 
 namespace FribergFastigheter.Client.Pages
 {
@@ -21,10 +23,18 @@ namespace FribergFastigheter.Client.Pages
 		private IHousingApiService ApiService { get; set; }
 #pragma warning restore CS8618
 
-		/// <summary>
-		/// A test property to test the API.
-		/// </summary>
-		public List<HousingDto> Housings { get; set; } = new();
+#pragma warning disable CS8618
+        /// <summary>
+        /// The injected auto mapper.
+        /// </summary>
+        [Inject]
+		private IMapper AutoMapper { get; set; }
+#pragma warning restore CS8618
+
+        /// <summary>
+        /// A test property to test the API.
+        /// </summary>
+        public List<HousingViewModel> Housings { get; set; } = new();
 
 		#endregion
 
@@ -38,11 +48,11 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-            var result = await ApiService.SearchHousings(limitHousings: 10, limitImageCountPerHousing: 6);
+            var result = await ApiService.SearchHousings(limitHousings: 10, limitImageCountPerHousing: 3);
 
 			if (result != null)
 			{
-				Housings = result;
+				Housings = result.Select(x => AutoMapper.Map<HousingViewModel>(x)).ToList();
 			}
 		}
 

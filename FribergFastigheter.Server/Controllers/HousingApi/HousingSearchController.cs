@@ -67,10 +67,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            _imageService.SetImageData(HttpContext,
-                housings
-                    .SelectMany(x => x.Images).ToList(),
-                includeImageData);
+            _imageService.PrepareDto(HttpContext, housings);
 
             return Ok(housings);
         }
@@ -95,7 +92,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			}
 
             var result = _mapper.Map<HousingDto>(housing);
-            _imageService.SetImageData(HttpContext, result.Images);
+            _imageService.PrepareDto(HttpContext, result);
 
             return Ok(result);
         }
