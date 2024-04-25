@@ -9,7 +9,35 @@ namespace FribergFastigheter.Client.Models
     /// <!-- Co Authors: -->
     public class HousingCategoryViewModel
     {
+        #region Constructors
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public HousingCategoryViewModel()
+        {
+            
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="housingCategoryId">The ID of the category</param>
+        /// <param name="categoryName">The name of the category.</param>
+        public HousingCategoryViewModel(int housingCategoryId, string categoryName)
+        {
+            CategoryName = categoryName;
+            HousingCategoryId = housingCategoryId;
+        }
+
+        #endregion
+
         #region Properties
+
+        /// <summary>
+        /// The default category for including all categories.
+        /// </summary>
+        public static HousingCategoryViewModel AllCategories { get; } = new HousingCategoryViewModel(0, "Alla");
 
         /// <summary>
         /// The name of the category.

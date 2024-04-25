@@ -1,17 +1,15 @@
 ﻿@using FribergFastigheter.Client.HelperClasses
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
 <div class="d-flex flex-column gap-4 full-width">
-    @{
-        int iteration = 0;
-    }
     @foreach (var house in Housings)
     {
-        iteration++;
         <a href="%">
             <div class="card">
             <div class="card-header housing-result-header d-flex flex-row justify-content-between">
                 <div>@house.Broker.FullName</div>
-                <div>@iteration</div>
-                <div>
+                <div>@house.Category.CategoryName</div>
+                <div class="d-flex flex-row justify-content-end">
                     @if (house.Broker.BrokerFirm.Logotype != null)
                     {
                         <img class="broker-firm-logotype" src="@house.Broker.BrokerFirm.Logotype.Url" />

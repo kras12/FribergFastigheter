@@ -6,6 +6,8 @@ namespace FribergFastigheter.Client.Components
     /// <summary>
     /// Component that shows a housing search listing
     /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
     public partial class HousingSearchResultList : ComponentBase
     {
         #region Properties
