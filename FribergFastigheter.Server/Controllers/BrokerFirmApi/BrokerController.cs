@@ -97,7 +97,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .Where(x => x.ProfileImage != null)
                 .Select(x => x.ProfileImage).Cast<ImageDto>().ToList());
 
-            return Ok(brokers);
+            return Ok(brokers); 
         }
 
         /// <summary>

@@ -8,14 +8,16 @@ using AutoMapper;
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 {
     /// <summary>
-    /// The list brokers page.
+    /// Code behind for page listing Brokers by Brokerfirm.
     /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     public partial class ListBrokerPage : ComponentBase
     {
         #region Properties
 
         
-        public int BrokerFirmId { get; set; } = 1;
+        public int BrokerFirmId { get; set; } = 3000;
         public List<BrokerViewModel> BrokerList { get; set; } = new List<BrokerViewModel>();
         [Inject]
         public IBrokerApiService BrokerApiService { get; set; }
@@ -23,10 +25,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         public IMapper Mapper { get; set; }
 
         #endregion
-        #region Fields
-
-
-        #endregion
+ 
 
         #region Constructors
 

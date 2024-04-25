@@ -21,10 +21,6 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public int ImageId { get; set; }
 
-        /// <summary>
-        /// The image type.
-        /// </summary>
-        public int ImageId { get; set; }
 
         public ImageTypes ImageType { get; set; }
         /// <summary>
