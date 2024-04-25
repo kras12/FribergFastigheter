@@ -63,6 +63,23 @@ a {
 }
 
 /*==================================================*/
+/* Cards                                            */
+/*==================================================*/
+
+a:has(.card) {
+    text-decoration: none;
+}
+
+.card:hover, card:focus {
+    background-color: #dbdbdb;
+}
+
+.housing-result-header div:first-child,
+.housing-result-header div:last-child {
+    min-width: 160px;
+}
+
+/*==================================================*/
 /* Containers                                       */
 /*==================================================*/
 
@@ -171,6 +188,11 @@ label {
 /* Images                                           */
 /*==================================================*/ 
 
+
+/* Broker Firm Logotype */
+.broker-firm-logotype {
+    height: 20px;
+}
 
 /* Image */
 img
@@ -451,7 +473,7 @@ td {
 
 dl {
     display: flex;
-    max-width: 23rem;
+    /*max-width: 23rem;*/
 }
 
 dt {

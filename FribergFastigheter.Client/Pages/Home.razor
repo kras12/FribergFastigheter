@@ -34,16 +34,6 @@
             </div>
         </form>
     </div
-    <div class="d-flex flex-column gap-4 full-width">
-        @foreach (var house in Housings)
-        {
-            <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">            
-                @foreach (var image in house.Images)
-                {
-                    <img class="housing-image" src="@image.Url" />
-                }
-            </div>
-        }
-    </div> 
+    <FribergFastigheter.Client.Components.HousingSearchResultList Housings="Housings" />
 </div>
 

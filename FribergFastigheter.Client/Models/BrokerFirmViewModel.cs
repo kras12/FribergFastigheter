@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client.Models
         public string Description { get; set; } = "";
 
         /// <summary>
-        /// The file name of the logotype.
+        /// The url of the logotype.
         /// </summary>
         public ImageViewModel? Logotype { get; set; }
 

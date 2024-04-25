@@ -59,22 +59,17 @@ namespace FribergFastigheter.Server.Data.Repositories
         public async Task<Broker?> GetBrokerByIdAsync(int id)
         {
             return await applicationDbContext.Brokers
-                .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
-                .Include(x => x.ProfileImage)
                 .AsNoTracking().FirstOrDefaultAsync(b => b.BrokerId == id);
-
         }
 
         public async Task<List<Broker>> GetAllBrokersAsync()
         {
-            return await applicationDbContext.Brokers.Include(x => x.BrokerFirm).AsNoTracking().ToListAsync();
+            return await applicationDbContext.Brokers.AsNoTracking().ToListAsync();
         }
 
         public Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
         {
             return applicationDbContext.Brokers
-                .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
-                .Include(x => x.ProfileImage)
                 .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
 				.AsNoTracking()
 				.ToListAsync();

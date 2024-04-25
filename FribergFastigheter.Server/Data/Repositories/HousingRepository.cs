@@ -85,11 +85,6 @@ namespace FribergFastigheter.Server.Data.Repositories
 		public async Task<Housing?> GetHousingByIdAsync(int id)
         {
            return await applicationDbContext.Housings
-                .Include(x => x.Broker)
-                .Include(x => x.BrokerFirm)
-                .Include(x => x.Category)
-                .Include(x => x.Municipality)
-                .Include(x => x.Images)
                 .Where(x => x.HousingId == id)
 				.AsNoTracking()
 				.FirstOrDefaultAsync();
@@ -101,11 +96,6 @@ namespace FribergFastigheter.Server.Data.Repositories
 			int? limitHousings = null, int? limitImagesPerHousing = null)
         {
             var query = applicationDbContext.Housings
-                .Include(x => x.Broker)
-                .Include(x => x.BrokerFirm)
-                .Include(x => x.Category)
-                .Include(x => x.Municipality)
-                .Include(x => x.Images)
 				.AsNoTracking()
 				.AsQueryable();
 

@@ -48,47 +48,215 @@ namespace FribergFastigheter.Server.Services
 
         #endregion
 
-        #region Methods
+        #region PrepareTransferMethods
 
         /// <summary>
-        /// Method for converting images to Base64.
+        /// Sets necessary data to a DTO object to make it ready to be sent to the client. 
         /// </summary>
-        /// <param name="image">The image object to be converted.</param>
         /// <param name="httpContext">The HttpContext for the request.</param>
-        /// /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
-        /// <param name="httpContext"></param>
-        /// <param name="embeddImageData"></param>
-        public void SetImageData(HttpContext httpContext, ImageDto image)
+        /// <param name="image">The DTO object to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private void PrepareDto(HttpContext httpContext, ImageDto image)
         {
-            image.ImageType = GetImageType(image.FileName);
-            image.Url = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/Housing/Image/{image.FileName}";
+            PrepareDto(httpContext, new List<ImageDto> { image });
         }
 
         /// <summary>
-        /// Method for converting a list of images to Base64.
+        /// Sets necessary data to DTO objects to make them ready to be sent to the client. 
         /// </summary>
         /// <param name="httpContext">The HttpContext for the request.</param>
-        /// <param name="imageList">The List of image objects to be converted.</param>
-        /// <param name="embeddImageData">True to embedd the image file data.</param>
+        /// <param name="images">The DTO objects to process.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public void SetImageData(HttpContext httpContext, List<ImageDto> imageList, bool includeImageData = false)
+        private void PrepareDto(HttpContext httpContext, List<ImageDto> images)
         {
-            foreach (ImageDto image in imageList)
+            foreach (ImageDto image in images)
             {
-                SetImageData(httpContext, image);
+                image.ImageType = GetImageType(image.FileName);
+                image.Url = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/Housing/Image/{image.FileName}";
             }
         }
 
         /// <summary>
-		/// Method for saving images to disk.
+        /// Sets necessary data to a DTO object to make it ready to be sent to the client. 
+        /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="brokerFirm">The DTO object to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void PrepareDto(HttpContext httpContext, BrokerDto broker)
+        {
+            PrepareDto(httpContext, new List<BrokerDto> { broker });
+        }
+
+        /// <summary>
+        /// Sets necessary data to DTO objects to make them ready to be sent to the client. 
+        /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="brokers">The DTO objects to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void PrepareDto(HttpContext httpContext, List<BrokerDto> brokers)
+        {
+            foreach (var broker in brokers)
+            {
+                if (broker.ProfileImage != null)
+                {
+                    PrepareDto(httpContext, broker.ProfileImage);
+                }
+
+                if (broker.BrokerFirm.Logotype != null && string.IsNullOrEmpty(broker.BrokerFirm.Logotype.Url))
+                {
+                    PrepareDto(httpContext, broker.BrokerFirm);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets necessary data to a DTO object to make it ready to be sent to the client. 
+        /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="brokerFirm">The DTO object to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void PrepareDto(HttpContext httpContext, BrokerFirmDto brokerFirm)
+        {
+            PrepareDto(httpContext, new List<BrokerFirmDto>() { brokerFirm });
+        }
+
+        /// <summary>
+        /// Sets necessary data to DTO objects to make them ready to be sent to the client. 
+        /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="brokerFirms">The DTO objects to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms)
+        {
+            foreach (var brokerFirm in brokerFirms)
+            {
+                if (brokerFirm.Logotype != null)
+                {
+                    PrepareDto(httpContext, brokerFirm.Logotype);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets necessary data to a DTO object to make it ready to be sent to the client. 
+        /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="brokerFirm">The DTO object to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void PrepareDto(HttpContext httpContext, HousingDto housing)
+        {
+            PrepareDto(httpContext, new List<HousingDto> { housing });
+        }
+
+        /// <summary>
+        /// Sets necessary data to DTO objects to make them ready to be sent to the client. 
+        /// </summary>
+        /// <param name="httpContext">The HttpContext for the request.</param>
+        /// <param name="housings">The DTO objects to process.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void PrepareDto(HttpContext httpContext, List<HousingDto> housings)
+        {
+            foreach (var housing in housings)
+            {
+                if (housing.Broker.ProfileImage != null && string.IsNullOrEmpty(housing.Broker.ProfileImage.Url))
+                {
+                    PrepareDto(httpContext, new List<BrokerDto>() { housing.Broker });
+                }
+
+                if (housing.Images.Count > 0)
+                {
+                    PrepareDto(httpContext, housing.Images);
+                }
+            }
+        }
+
+        /// <summary>
+		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
 		/// </summary>
-		/// <param name="imageFile">The file to save to the disk.</param>
+		/// <param name="imageFileName">The file name of the image.</param>
+		/// <returns>A <see cref="FileContentResult"/> if the file was found or null if not.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName)
+        {
+            var filePath = Path.Combine(UploadFolderPath, imageFileName);
+
+            if (!File.Exists(filePath))
+            {
+                throw new IOException($"The file '{imageFileName}' doesn't exists");
+            }
+
+            return new FileContentResult(await File.ReadAllBytesAsync(filePath), GetImageContentType(GetImageType(imageFileName)))
+            {
+                FileDownloadName = imageFileName
+            };
+        }
+
+        /// <summary>
+		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
+		/// </summary>
+		/// <param name="imageFileNames">A collection of image file names.</param>
+		/// <returns>A <see cref="FileStreamResult"/> if the files was found or null if not.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<FileStreamResult> PrepareImageFilesZipDownloadAsync(List<string> imageFileNames)
+        {
+            if (imageFileNames.Count == 0)
+            {
+                throw new ArgumentException($"The collection '{imageFileNames}' can't be empty.", nameof(imageFileNames));
+            }
+
+            MemoryStream memoryStream = new();
+
+            using (ZipArchive archive = new(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
+            {
+                foreach (var imageFileName in imageFileNames)
+                {
+                    var filePath = Path.Combine(UploadFolderPath, imageFileName);
+
+                    if (!File.Exists(filePath))
+                    {
+                        throw new IOException($"The file '{imageFileName}' doesn't exists");
+                    }
+                    var entry = archive.CreateEntry(imageFileName);
+
+                    using (var entryStream = entry.Open())
+                    {
+                        using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                        {
+                            await fileStream.CopyToAsync(entryStream);
+                        }
+                    }
+                }
+            }
+
+            memoryStream.Position = 0;
+            return new FileStreamResult(memoryStream, "application/zip")
+            {
+                FileDownloadName = $"images-{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss_fff")}-{new Random().Next(100_000, 1_000_000)}.zip"
+            };
+        }
+
+        #endregion
+
+        #region DiskMethods
+
+        /// <summary>
+        /// Method for saving images to disk.
+        /// </summary>
+        /// <param name="imageFile">The file to save to the disk.</param>
         /// <returns>The file name of the saved file.</returns>
         /// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<string> SaveImageToDiskAsync(IFormFile imageFile)
+        /// <!-- Co Authors: -->
+        public async Task<string> SaveImageToDiskAsync(IFormFile imageFile)
         {
             #region Checks           
 
@@ -100,7 +268,7 @@ namespace FribergFastigheter.Server.Services
             #endregion
 
             string filePath = RandomUniqueFilePath(GetImageType(imageFile.FileName));
-            
+
             using (var sourceStream = imageFile.OpenReadStream())
             {
                 using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
@@ -127,14 +295,18 @@ namespace FribergFastigheter.Server.Services
             }
         }
 
-		/// <summary>
-		/// Generates a unique and nonexisting file name.
-		/// </summary>
-		/// <param name="imageType">The image type.</param>
-		/// <returns>The generated file name.</returns>
-		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: Jimmmie -->
-		private string RandomUniqueFilePath(ImageTypes imageType)
+        #endregion
+
+        #region OtherMethods
+
+        /// <summary>
+        /// Generates a unique and nonexisting file name.
+        /// </summary>
+        /// <param name="imageType">The image type.</param>
+        /// <returns>The generated file name.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: Jimmmie -->
+        private string RandomUniqueFilePath(ImageTypes imageType)
         {
 			Random random = new Random();
 			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -224,74 +396,7 @@ namespace FribergFastigheter.Server.Services
                 default:
                     throw new NotSupportedException($"The image type is not supported: {imageType}");
             }
-        }
-
-        /// <summary>
-		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
-		/// </summary>
-		/// <param name="imageFileName">The file name of the image.</param>
-		/// <returns>A <see cref="FileContentResult"/> if the file was found or null if not.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName)
-        {
-            var filePath = Path.Combine(UploadFolderPath, imageFileName);
-
-            if (!File.Exists(filePath))
-            {
-                throw new IOException($"The file '{imageFileName}' doesn't exists");
-            }
-
-            return new FileContentResult(await File.ReadAllBytesAsync(filePath), GetImageContentType(GetImageType(imageFileName)))
-            {
-                FileDownloadName = imageFileName
-            };
-        }
-
-        /// <summary>
-		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
-		/// </summary>
-		/// <param name="imageFileNames">A collection of image file names.</param>
-		/// <returns>A <see cref="FileStreamResult"/> if the files was found or null if not.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<FileStreamResult> PrepareImageFilesZipDownloadAsync(List<string> imageFileNames)
-        {
-            if (imageFileNames.Count == 0)
-            {
-                throw new ArgumentException($"The collection '{imageFileNames}' can't be empty.", nameof(imageFileNames));
-            }
-
-            MemoryStream memoryStream = new();
-
-            using (ZipArchive archive = new(memoryStream, ZipArchiveMode.Create, leaveOpen: true))
-            {
-                foreach (var imageFileName in imageFileNames)
-                {
-                    var filePath = Path.Combine(UploadFolderPath, imageFileName);
-
-                    if (!File.Exists(filePath))
-                    {
-                        throw new IOException($"The file '{imageFileName}' doesn't exists");
-                    }
-                    var entry = archive.CreateEntry(imageFileName);
-
-                    using (var entryStream = entry.Open())
-                    {
-                        using (var fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read))
-                        {
-                            await fileStream.CopyToAsync(entryStream);
-                        }
-                    }
-                }                
-            }
-
-            memoryStream.Position = 0;
-            return new FileStreamResult(memoryStream, "application/zip")
-            {
-                FileDownloadName = $"images-{DateTime.Now.ToString("yyyy_MM_dd-HH_mm_ss_fff")}-{new Random().Next(100_000, 1_000_000)}.zip"
-            };
-        }
+        }      
 
         #endregion
     }

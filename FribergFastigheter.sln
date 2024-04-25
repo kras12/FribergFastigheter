@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BulkFileDownloader", "BulkI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergFastigheter.Client", "FribergFastigheter.Client\FribergFastigheter.Client.csproj", "{FA313152-C119-402F-98F1-B1FE9119D75F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FribergFastigheter.Shared", "FribergFastigheter.Shared\FribergFastigheter.Shared.csproj", "{10B6B90E-3517-4264-B52E-759E2C719ADA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FribergFastigheter.Shared", "FribergFastigheter.Shared\FribergFastigheter.Shared.csproj", "{10B6B90E-3517-4264-B52E-759E2C719ADA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

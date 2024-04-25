@@ -31,6 +31,9 @@ namespace FribergFastigheter.Client
                 client.BaseAddress = new Uri(builder.Configuration["FribergFastigheterApiBaseUrl"]!);
             });
 
+            // Auto Mapper
+            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
+
             // API Services
             builder.Services.AddTransient<IHousingApiService, HousingApiService>();
             builder.Services.AddTransient<IHousingBrokerApiService, HousingBrokerApiService>();
