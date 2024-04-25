@@ -32,7 +32,7 @@ namespace FribergFastigheter.Client.Services.HousingApi
 
         #endregion
 
-        #region OpenAPiMethods
+        #region Methods
 
         /// <summary>
         /// Fetches data for a broker. 
