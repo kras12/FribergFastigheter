@@ -5,15 +5,6 @@
     /// </summary>
     public static class StringFormatHelper
     {
-        #region Constants
-
-        /// <summary>
-        /// The default format string for displaying price with 2 decimals, thousands separator, and currency.
-        /// </summary>
-        private const string PriceOutputFormatString = "{0:N2} kr";
-
-        #endregion
-
         #region Methods
 
         /// <summary>
