@@ -221,6 +221,21 @@ namespace FribergFastigheter.Server.Data.Repositories
 			return DeleteImages(housingId, new List<int> { imageId });       
 		}
 
+		
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+		public Task<List<HousingCategory>> GetHousingCategories()
+		{
+			return applicationDbContext.HousingCategories.ToListAsync();
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<List<Municipality>> GetMunicipalities()
+        {
+            return applicationDbContext.Municipalities.ToListAsync();
+        }
+
         #endregion
     }
 }

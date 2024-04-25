@@ -25,5 +25,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task<int> DeleteImage(int housingId, int imageId);
         Task<Image?> GetImagebyId(int housingId, int imageId);
         Task AddImages(int housingId, List<Image> imageIds);
+        Task<List<HousingCategory>> GetHousingCategories();
+        Task<List<Municipality>> GetMunicipalities();
     }
 }
