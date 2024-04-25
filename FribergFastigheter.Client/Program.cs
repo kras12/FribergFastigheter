@@ -42,6 +42,8 @@ namespace FribergFastigheter.Client
             builder.Services.AddTransient<IBrokerFirmApiService, BrokerFirmApiService>();
             builder.Services.AddTransient<IBrokerHousingApiService, BrokerHousingApiService>();
             builder.Services.AddTransient<IBrokerHousingImageApiService, BrokerHousingImageApiService>();
+            builder.Services.AddTransient<IHousingCategoryApiService, HousingCategoryApiService>();
+            builder.Services.AddTransient<IMunicipalityApiService, MunicipalityApiService>();
 
             await builder.Build().RunAsync();
 		}
