@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client
 				// For more information, see https://aka.ms/blazor-standalone-auth
 				builder.Configuration.Bind("Local", options.ProviderOptions);
 			});
-
+            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
             // Add http clients
             /// <!-- Author: Jimmie -->
             /// <!-- Co Authors: -->

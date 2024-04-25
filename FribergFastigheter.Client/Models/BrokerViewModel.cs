@@ -1,20 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FribergFastigheter.Shared.Dto;
+using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models
 {
-    /// <summary>
-    /// A view model class that represents a broker.
-    /// </summary>
-    /// <!-- Author: Marcus -->
-    /// <!-- Co Authors: -->
     public class BrokerViewModel
     {
+        #region Constructors
+
+    /// <summary>
+        /// A constructor.
+    /// </summary>
+        public BrokerViewModel()
+    {
+            
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
         /// The firm that the broker belongs to.
         /// </summary>
-        public BrokerFirmViewModel BrokerFirm { get; set; }
+        public BrokerFirmDto BrokerFirm { get; set; }
 
         /// <summary>
         /// The ID of the broker.
@@ -25,6 +33,11 @@ namespace FribergFastigheter.Client.Models
         /// The email of the broker.
         /// </summary>
         public string Email { get; set; } = "";
+
+        /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        public string Description { get; set; } = "";
 
         /// <summary>
         /// The first name of the broker.

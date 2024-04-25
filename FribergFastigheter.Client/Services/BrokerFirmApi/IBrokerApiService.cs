@@ -48,7 +48,7 @@ namespace FribergFastigheter.Client.Services.HousingApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<BrokerDto?> GetBrokers([Required] int brokerFirmId);
+        public Task<List<BrokerDto?>> GetBrokers([Required] int brokerFirmId);
 
         /// <summary>
         /// Updates a broker.
