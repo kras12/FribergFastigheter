@@ -2,63 +2,63 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: -->
 <div class="d-flex flex-column gap-4 full-width">
-    @foreach (var house in Housings)
+    @foreach (var housing in Housings)
     {
         <a href="%">
             <div class="card">
             <div class="card-header housing-result-header d-flex flex-row justify-content-between">
-                <div>@house.Broker.FullName</div>
-                <div>@house.Category.CategoryName</div>
+                <div>@housing.Broker.FullName</div>
+                <div>@housing.Category.CategoryName</div>
                 <div class="d-flex flex-row justify-content-end">
-                    @if (house.Broker.BrokerFirm.Logotype != null)
+                    @if (housing.Broker.BrokerFirm.Logotype != null)
                     {
-                        <img class="broker-firm-logotype" src="@house.Broker.BrokerFirm.Logotype.Url" />
+                        <img class="broker-firm-logotype" src="@housing.Broker.BrokerFirm.Logotype.Url" />
                     }
                 </div>
             </div>
             <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
-                @foreach (var image in house.Images)
+                @foreach (var image in housing.Images)
                 {
                     <img class="housing-image" src="@image.Url" />
                 }
             </div>
 
             @* TODO - Replace H-tags with other elements and styles? *@
-            <h2 class="card-title">@(StringFormatHelper.FormatPrice(house.Price))</h2>
-            <h3 class="card-subtitle mb-2 text-muted">@house.Address</h3>
-            <h4 class="card-subtitle mb-2 text-muted">@house.Municipality.MunicipalityName</h4>
+            <h2 class="card-title">@(StringFormatHelper.FormatPrice(housing.Price))</h2>
+            <h3 class="card-subtitle mb-2 text-muted">@housing.Address</h3>
+            <h4 class="card-subtitle mb-2 text-muted">@housing.Municipality.MunicipalityName</h4>
             <div class="card-body">
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width">
-                        <span>Boyta: @house.LivingArea</span>
-                        @if (house.RoomCount != null)
+                        <span>Boyta: @housing.LivingArea</span>
+                        @if (housing.RoomCount != null)
                         {
-                            <span>Antal rum: @house.RoomCount</span>
+                            <span>Antal rum: @housing.RoomCount</span>
                         }
-                        @if (house.AncillaryArea != null)
+                        @if (housing.AncillaryArea != null)
                         {
-                            <span>Övrig yta: @house.AncillaryArea</span>
+                            <span>Övrig yta: @housing.AncillaryArea</span>
                         }
-                        @if (house.LandArea != null)
+                        @if (housing.LandArea != null)
                         {
-                            <span>Landyta: @house.LandArea</span>
+                            <span>Landyta: @housing.LandArea</span>
                         }
-                        @if (house.BuildYear != null)
+                        @if (housing.BuildYear != null)
                         {
-                            <span>Byggår: @house.BuildYear</span>
+                            <span>Byggår: @housing.BuildYear</span>
                         }
-                        @if (house.MonthlyFee != null)
+                        @if (housing.MonthlyFee != null)
                         {
-                            <span>Månadskostnad: @house.MonthlyFee</span>
+                            <span>Månadskostnad: StringFormatHelper.FormatPrice(@housing.MonthlyFee)</span>
                         }
-                        @if (house.YearlyRunningCost != null)
+                        @if (housing.YearlyRunningCost != null)
                         {
-                            <span>Årlig kostnad: @house.YearlyRunningCost</span>
+                            <span>Årlig kostnad: StringFormatHelper.FormatPrice(@housing.YearlyRunningCost)</span>
                         }
                     </div>
                     <div>
                         <p class="card-text">
-                            @($"{@house.Description.Substring(0, Math.Min(house.Description.Length, 300))}(...)")
+                            @housing.TruncatedDescription(300)
                         </p>
                     </div>
                 </div>

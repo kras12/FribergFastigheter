@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FribergFastigheter.Client.Pages;
+using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models
 {
@@ -60,6 +61,20 @@ namespace FribergFastigheter.Client.Models
         /// The yearly running cost of the housing object.
         /// </summary>
         public decimal? YearlyRunningCost { get; set; } = null;
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Returns a truncated description.
+        /// </summary>
+        /// <param name="maxNumberOfChars">The max number of characters allowed.</param>
+        /// <returns>A truncated <see cref="string"/>.</returns>
+        public string TruncatedDescription(int maxNumberOfChars)
+        {
+            return $"{Description.Substring(0, Math.Min(Description.Length, maxNumberOfChars))}(...)";
+        }
 
         #endregion
     }
