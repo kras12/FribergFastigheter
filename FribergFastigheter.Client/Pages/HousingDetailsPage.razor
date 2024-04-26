@@ -1,3 +1,10 @@
 ﻿@page "/housing/{id:int}"
+@using FribergFastigheter.Client.Components
 
-<h3>Housing</h3>
+<div class="vertical-page-container">
+	@if (_housingViewModel != null)
+	{
+		<h3>@_housingViewModel.Address - @_housingViewModel.Municipality.MunicipalityName</h3>
+		<HousingDetails Housing="_housingViewModel"></HousingDetails>
+	}
+</div>
