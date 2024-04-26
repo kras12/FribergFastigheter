@@ -1,0 +1,70 @@
+﻿@using FribergFastigheter.Client.HelperClasses
+@using FribergFastigheter.Client.Components
+
+<div class="card">
+    <div class="card-header housing-result-header d-flex flex-row justify-content-between">
+        <div>@Housing.Broker.FullName</div>
+        <div>@Housing.Category.CategoryName</div>
+        <div class="d-flex flex-row justify-content-end">
+            @if (Housing.Broker.BrokerFirm.Logotype != null)
+            {
+                <img class="broker-firm-logotype" src="@Housing.Broker.BrokerFirm.Logotype.Url" />
+            }
+        </div>
+    </div>
+    @* <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
+        @foreach (var image in Housing.Images)
+        {
+            <img class="housing-image" src="@image.Url" />
+        }
+    </div> *@
+    <ImageSlideShow Images="ImageSlides"></ImageSlideShow>
+
+    @* TODO - Replace H-tags with other elements and styles? *@
+    <h2 class="card-title">@(StringFormatHelper.FormatPrice(Housing.Price))</h2>
+    <h3 class="card-subtitle mb-2 text-muted">@Housing.Address</h3>
+    <h4 class="card-subtitle mb-2 text-muted">@Housing.Municipality.MunicipalityName</h4>
+    <div class="card-body">
+        <div class="d-flex flex-column gap-3">
+            <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width">
+                <span>Boyta: @Housing.LivingArea</span>
+                @if (Housing.RoomCount != null)
+                {
+                    <span>Antal rum: @Housing.RoomCount</span>
+                }
+                @if (Housing.AncillaryArea != null)
+                {
+                    <span>Övrig yta: @Housing.AncillaryArea</span>
+                }
+                @if (Housing.LandArea != null)
+                {
+                    <span>Landyta: @Housing.LandArea</span>
+                }
+                @if (Housing.BuildYear != null)
+                {
+                    <span>Byggår: @Housing.BuildYear</span>
+                }
+                @if (Housing.MonthlyFee != null)
+                {
+                    <span>Månadskostnad: @StringFormatHelper.FormatPrice(@Housing.MonthlyFee.Value)</span>
+                }
+                @if (Housing.YearlyRunningCost != null)
+                {
+                    <span>Årlig kostnad: @StringFormatHelper.FormatPrice(@Housing.YearlyRunningCost.Value)</span>
+                }
+            </div>
+            <div>
+                <p class="card-text">
+                    @{
+                        var paragraphs = Housing.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var paragraph in paragraphs)
+                        {
+                            <p>@($"{paragraph}{Environment.NewLine}")</p>
+                        }
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

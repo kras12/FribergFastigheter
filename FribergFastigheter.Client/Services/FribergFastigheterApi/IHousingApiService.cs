@@ -30,6 +30,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         Task<BrokerFirmDto?> GetBrokerFirmById(int id);
 
         /// <summary>
+        /// Fetches a housing object by ID.
+        /// </summary>
+        /// <param name="housingId">The ID of the housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+        public Task<HousingDto?> GetHousingById(int housingId);
+
+        /// <summary>
         /// Fetches all housing categories.
         /// </summary>
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
