@@ -49,11 +49,11 @@
                         }
                         @if (housing.MonthlyFee != null)
                         {
-                            <span>Månadskostnad: StringFormatHelper.FormatPrice(@housing.MonthlyFee)</span>
+                            <span>Månadskostnad: @(StringFormatHelper.FormatPrice(@housing.MonthlyFee.Value))</span>
                         }
                         @if (housing.YearlyRunningCost != null)
                         {
-                            <span>Årlig kostnad: StringFormatHelper.FormatPrice(@housing.YearlyRunningCost)</span>
+                            <span>Årlig kostnad: @(StringFormatHelper.FormatPrice(@housing.YearlyRunningCost.Value))</span>
                         }
                     </div>
                     <div>
