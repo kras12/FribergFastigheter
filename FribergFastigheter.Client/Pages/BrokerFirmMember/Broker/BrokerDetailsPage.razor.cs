@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models;
-using FribergFastigheter.Client.Services.HousingApi;
+using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 
@@ -17,7 +17,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         public int BrokerFirmId { get; set; } = 1;
         BrokerViewModel Broker { get; set; }
         [Inject]
-        public IBrokerApiService BrokerApiService { get; set; }
+        public IBrokerFirmApiService BrokerApiService { get; set; }
         [Inject]
         public IMapper Mapper { get; set; }
 

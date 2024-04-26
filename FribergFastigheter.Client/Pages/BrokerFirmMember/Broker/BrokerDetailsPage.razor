@@ -1,4 +1,7 @@
 ﻿@page "/brokermember/broker/{id:int}"
 @using FribergFastigheter.Client.Components
 
-<FribergFastigheter.Client.Components.BrokerDetails Broker="Broker" />
+@if(Broker != null)
+{
+    <FribergFastigheter.Client.Components.BrokerDetails Broker="Broker" />
+}
