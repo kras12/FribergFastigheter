@@ -21,7 +21,6 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public int ImageId { get; set; }
 
-
         public ImageTypes ImageType { get; set; }
         /// <summary>
         /// The url of the image.
