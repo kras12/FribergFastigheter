@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 {
+
     /// <summary>
     /// The broker details page.
     /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     public partial class BrokerDetailsPage : ComponentBase
     {
         #region Properties
