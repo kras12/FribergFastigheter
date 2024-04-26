@@ -111,12 +111,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
 			}
 
-			var housings = (await _housingRepository.GetAllHousingAsync(municipalityId, brokerId, brokerFirmId, limitImagesPerHousing: 3))
+			var housings = (await _housingRepository.GetAllHousingsAsync(brokerId: brokerId, brokerFirm: brokerFirmId, municipalityId: municipalityId, limitImagesPerHousing: 3))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-			_imageService.PrepareDto(HttpContext, housings);      
-			
+			_imageService.PrepareDto(HttpContext, housings);
+            
             return Ok(housings);
         }
 
@@ -145,7 +145,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			}
 
             var result = _mapper.Map<HousingDto>(housing);
-            _imageService.PrepareDto(HttpContext, result);
+			_imageService.PrepareDto(HttpContext, result);
 
             return Ok(result);
         }

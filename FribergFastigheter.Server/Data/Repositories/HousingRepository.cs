@@ -92,9 +92,34 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<List<Housing>> GetAllHousingAsync(int? municipalityId = null, int? brokerId = null, int? brokerFirm = null, 
-			int? limitHousings = null, int? limitImagesPerHousing = null)
+		public async Task<List<Housing>> GetAllHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
+            int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null,
+			double? minLivingArea = null, double? maxLivingArea = null)
         {
+			#region Checks
+
+			if (minPrice != null && minPrice < 0)
+			{
+				throw new ArgumentException("The min price can't be negative.", nameof(minPrice));
+			}
+
+			if (maxPrice != null && (maxPrice < 0) || (minPrice != null && maxPrice < minPrice))
+			{
+                throw new ArgumentException("The max price can't be negative or less than the min price.", nameof(maxPrice));
+            }
+
+            if (minLivingArea != null && minLivingArea < 0)
+            {
+                throw new ArgumentException("The min living area can't be negative.", nameof(minPrice));
+            }
+
+            if (maxLivingArea != null && (maxLivingArea < 0) || (minLivingArea != null && maxLivingArea < minLivingArea))
+            {
+                throw new ArgumentException("The max living area can't be negative or less than the min living area.", nameof(maxLivingArea));
+            }
+
+            #endregion
+
             var query = applicationDbContext.Housings
 				.AsNoTracking()
 				.AsQueryable();
@@ -104,7 +129,12 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.Municipality.MunicipalityId == municipalityId);
             }
 
-			if (brokerId != null)
+            if (housingCategoryId != null)
+            {
+                query = query.Where(x => x.Category.HousingCategoryId == housingCategoryId);
+            }
+
+            if (brokerId != null)
 			{
 				query = query.Where(x => x.Broker.BrokerId == brokerId);
 			}
@@ -114,7 +144,27 @@ namespace FribergFastigheter.Server.Data.Repositories
 				query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirm);
 			}
 
-			if (limitHousings != null && limitHousings.Value > 0)
+            if (minPrice != null)
+            {
+				query = query.Where(x => x.Price >= minPrice.Value);
+            }
+
+            if (maxPrice != null)
+            {
+                query = query.Where(x => x.Price <= maxPrice.Value);
+            }
+
+			if (minLivingArea != null)
+			{
+				query = query.Where(x => x.LivingArea >= minLivingArea.Value);
+			}
+
+			if (maxLivingArea != null)
+			{
+				query = query.Where(x => x.LivingArea <= maxLivingArea.Value);
+			}
+
+            if (limitHousings != null && limitHousings.Value > 0)
 			{
 				query = query.Take(limitHousings.Value);
 			}
@@ -220,6 +270,21 @@ namespace FribergFastigheter.Server.Data.Repositories
 		{
 			return DeleteImages(housingId, new List<int> { imageId });       
 		}
+
+		
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+		public Task<List<HousingCategory>> GetHousingCategories()
+		{
+			return applicationDbContext.HousingCategories.ToListAsync();
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<List<Municipality>> GetMunicipalities()
+        {
+            return applicationDbContext.Municipalities.ToListAsync();
+        }
 
         #endregion
     }

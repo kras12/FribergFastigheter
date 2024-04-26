@@ -45,25 +45,33 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
             _imageService = imageService;
         }
 
-		#endregion
+        #endregion
 
-		#region ApiEndPoints
+        #region ApiEndPoints
 
-		/// <summary>
-		/// An API endpoint for searching housing objects. 
-		/// </summary>
-		/// <param name="municipalityId">An optional municipality filter.</param>
-		/// <param name="limitHousings">An optional max limit for number of retrieved housings.</param>
-		/// <param name="limitImageCountPerHousing">An optional max limit for number of retrieved images per housing.</param>
-		/// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
-		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: Jimmie -->
-		[HttpGet]
+        /// <summary>
+        /// An API endpoint for searching housing objects. 
+        /// </summary>
+        /// <param name="municipalityId">An optional municipality filter.</param>
+        /// <param name="categoryId">An optional housing category filter.</param>
+        /// <param name="limitHousings">An optional max limit for number of retrieved housings.</param>
+        /// <param name="limitImageCountPerHousing">An optional max limit for number of retrieved images per housing.</param>
+        /// <param name="minPrice">An optional min price filter.</param>
+        /// <param name="maxPrice">An optional max price filter.</param>
+        /// <param name="minLivingArea">An optional min living area filter.</param>
+        /// <param name="maxLivingArea">An optional max living area filter.</param>
+        /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: Jimmie -->
+        [HttpGet]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null, int? limitHousings = null, int? limitImageCountPerHousing = null, 
-            bool includeImageData = false)
+        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null, int? housingCategoryId = null, 
+            int? limitHousings = null, int? limitImageCountPerHousing = null,
+            decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null)
         {
-            var housings = (await _housingRepo.GetAllHousingAsync(municipalityId: municipalityId, limitHousings: limitHousings, limitImagesPerHousing: limitImageCountPerHousing))
+            var housings = (await _housingRepo.GetAllHousingsAsync(municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
+                    limitHousings: limitHousings, limitImagesPerHousing: limitImageCountPerHousing, 
+                    minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 

@@ -1,13 +1,13 @@
 ﻿using System.Text;
 
-namespace FribergFastigheter.Client.Services
+namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
     /// <summary>
     /// Base class for all Friberg Fastigheter API services.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class FribergApiServiceBase
+    public class ApiServiceBase
     {
         #region Fields
 
@@ -23,10 +23,10 @@ namespace FribergFastigheter.Client.Services
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="httpClient">The injected HTTP client service.</param>
-        protected FribergApiServiceBase(FribergApiHttpClientService httpClientService)
+        /// <param name="httpClient">The injected HTTP client.</param>
+        protected ApiServiceBase(HttpClient httpClient)
         {
-            _httpClient = httpClientService.HttpClient;
+            _httpClient = httpClient;
         }
 
         #endregion

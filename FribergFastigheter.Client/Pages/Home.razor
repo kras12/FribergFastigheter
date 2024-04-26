@@ -1,39 +1,65 @@
 ﻿@page "/"
-
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-@* <div class="alert alert-warning" role="alert">
-    Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
-</div> *@
-
-
-
-
-<div>Fetched: @Housings.Count</div>
-
-
+<h1>Sök bostäder</h1>
 
 <div class="vertical-page-container">
     <div>
-        @* <EditForm>
-            <InputText></InputText>
-            <InputSelect></InputSelect>
-            <select />
-            <button>Sök</button>
-        </EditForm> *@
-        <form>
-            <div class="d-flex flex-row gap-2">
-                <input type="text" />
-                <select>
-                    <option name="1" value="1" selected>1</option>
-                    <option name="2" value="2">2</option>
-                </select>
-                <button>Sök</button>
+        <EditForm Model="HousingSearchInputViewModel" OnValidSubmit="SearchHousings">
+            <div class="d-flex flex-column gap-2">
+                <div class="d-flex flex-column">   
+                    <label>Kategori</label>
+                    <InputSelect @bind-Value="HousingSearchInputViewModel.SelectedCategoryId">
+                        @foreach (var category in HousingSearchInputViewModel.HousingCategories)
+                        {
+                            <option value="@category.HousingCategoryId">@category.CategoryName</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="d-flex flex-column">   
+                    <label>Kommun</label>
+                    <InputSelect @bind-Value="HousingSearchInputViewModel.SelectedMunicipalityId">
+                        @foreach (var municipality in HousingSearchInputViewModel.Municipalities)
+                        {
+                            <option value="@municipality.MunicipalityId">@municipality.MunicipalityName</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="d-flex flex-row gap-2">
+                    <div class="d-flex flex-column">   
+                        <label>Min pris</label>
+                        <InputNumber @bind-Value="HousingSearchInputViewModel.MinPrice"></InputNumber>
+                    </div>
+                    <div class="d-flex flex-column">   
+                        <label>Max pris</label>
+                        <InputNumber @bind-Value="HousingSearchInputViewModel.MaxPrice"></InputNumber>
+                    </div>
+                </div>
+                <div class="d-flex flex-row gap-2">
+                    <div class="d-flex flex-column">   
+                        <label>Min yta</label>
+                        <InputNumber @bind-Value="HousingSearchInputViewModel.MinLivingArea"></InputNumber>
+                    </div>
+                    <div class="d-flex flex-column">   
+                        <label>Max yta</label>
+                        <InputNumber @bind-Value="HousingSearchInputViewModel.MaxLivingArea"></InputNumber>
+                    </div>
+                </div>
+                <div class="d-flex flex-row justify-content-center">
+                    <button>Sök</button>    
+                </div>                
             </div>
-        </form>
+        </EditForm>       
     </div
-    <FribergFastigheter.Client.Components.HousingSearchResultList Housings="Housings" />
+    @if (HousingResultList.Count > 0)
+    {
+        <FribergFastigheter.Client.Components.HousingSearchResultList Housings="HousingResultList" />
+    }
+    else if (_haveSearchedHousings)
+    {
+        <p class="text-center">Inga bostäder hittades.</p>
+    }
 </div>
 

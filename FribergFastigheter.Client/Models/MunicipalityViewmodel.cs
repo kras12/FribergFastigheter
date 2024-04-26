@@ -9,6 +9,29 @@ namespace FribergFastigheter.Client.Models
     /// <!-- Co Authors: -->
     public class MunicipalityViewModel
     {
+        #region Constructors
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public MunicipalityViewModel()
+        {
+            
+        }
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="municipalityId">The ID of the municipality.</param>
+        /// <param name="municipalityName">The name of the municipality</param>
+        public MunicipalityViewModel(int municipalityId, string municipalityName)
+        {
+            MunicipalityId = municipalityId;
+            MunicipalityName = municipalityName;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -20,6 +43,11 @@ namespace FribergFastigheter.Client.Models
         /// The name of the municipality.
         /// </summary>
         public string MunicipalityName { get; set; } = "";
+
+        /// <summary>
+        /// The default municipality for including all municipalities.
+        /// </summary>
+        public static MunicipalityViewModel AllMunicipalities { get; } = new MunicipalityViewModel(0, "Alla");
 
         #endregion
     }
