@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The firm that the broker belongs to.
         /// </summary>
-        public BrokerFirmDto BrokerFirm { get; set; }
+        public BrokerFirmDto BrokerFirm { get; set; } = new();
 
         /// <summary>
         /// The ID of the broker.
@@ -67,7 +67,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The broker profile image.
         /// </summary>
-        public ImageViewModel? ProfileImage { get; set; } = null;
+        public ImageViewModel? ProfileImage { get; set; } = new();
 
         #endregion
     }

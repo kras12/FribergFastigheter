@@ -14,12 +14,12 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The broker of the housing object.
         /// </summary>
-        public BrokerViewModel Broker { get; set; }
+        public BrokerViewModel Broker { get; set; } = new();
 
         /// <summary>
         /// The category of the housing object.
         /// </summary>
-        public HousingCategoryViewModel Category { get; set; }
+        public HousingCategoryViewModel Category { get; set; } = new();
 
         /// <summary>
         /// The ID of the housing object.
@@ -34,7 +34,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The municipality of the housing object.
         /// </summary>
-        public MunicipalityViewModel Municipality { get; set; }
+        public MunicipalityViewModel Municipality { get; set; } = new();
 
         #endregion
     }
