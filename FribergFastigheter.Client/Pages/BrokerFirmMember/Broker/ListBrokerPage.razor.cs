@@ -17,7 +17,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         #region Properties
 
         
-        public int BrokerFirmId { get; set; } = 3000;
+        public int BrokerFirmId { get; set; } = 1;
         public List<BrokerViewModel> BrokerList { get; set; } = new List<BrokerViewModel>();
         [Inject]
         public IBrokerApiService BrokerApiService { get; set; }
@@ -33,7 +33,6 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         {
             
         }
-
         #endregion
 
         #region Methods
