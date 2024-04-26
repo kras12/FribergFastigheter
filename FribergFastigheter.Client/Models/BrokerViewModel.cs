@@ -69,6 +69,18 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public ImageViewModel? ProfileImage { get; set; } = null;
 
+        public string ProfileImageOrPlaceholder 
+        {
+            get
+            {
+                if(ProfileImage == null)
+                {
+                    return "/Graphics/profile-image-placeholder.jpg";
+                }
+                return ProfileImage.Url;
+            } 
+        }
+
         #endregion
     }
 }
