@@ -83,6 +83,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         }
 
         /// <summary>
+        /// Fetches a housing object by ID.
+        /// </summary>
+        /// <param name="housingId">The ID of the housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+        public async Task<HousingDto?> GetHousingById(int housingId)
+        {
+            return await _httpClient.GetFromJsonAsync<HousingDto?>($"{HousingSearchApiEndoint}/{housingId}");
+        }
+
+        /// <summary>
         /// Fetches all housing categories.
         /// </summary>
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
