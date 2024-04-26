@@ -219,6 +219,12 @@ img.cover-image
     transform: scale(1.1);
 }
 
+.profile-img-details {
+    height: 15rem;
+    width: 15rem;
+    object-fit: contain;
+    box-shadow: 1px 1px 10px 3px grey;
+}
 /*==================================================*/
 /* Brokercard                                       */
 /*==================================================*/
@@ -228,15 +234,20 @@ img.cover-image
     flex-direction: column;
     row-gap: 1.5rem;
 }
-.broker-list .broker-card {
-    display: flex;
-    align-items: flex-start;
-}
+    .broker-list .broker-card {
+        display: flex;
+        align-items: flex-start;
+    }
     .broker-list .broker-card .broker-info {
         flex: auto;
         padding: 3rem;
+        
     }
-
+.broker-details {
+    width: 50%;
+    box-shadow: 1px 1px 10px 3px grey;
+    padding: 1rem;
+}
     /*==================================================*/
     /* Image Slideshow                                  */
     /*==================================================*/

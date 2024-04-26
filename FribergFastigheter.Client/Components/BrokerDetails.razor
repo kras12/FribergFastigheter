@@ -1,0 +1,38 @@
+﻿
+
+<div class="vertical-page-container">
+    <div class="d-flex flex-row full-width justify-content-between">
+        <div></div>
+        <div><h2>@Broker.FirstName @Broker.LastName</h2></div>
+        <div>
+            @if(Broker.BrokerFirm.Logotype != null)
+        
+            {
+                <img src="@Broker.BrokerFirm.Logotype.Url" />
+            } 
+        </div>
+    </div>
+    <div class="broker-list">
+        <div class="broker-card">
+            <div class="broker-info">
+                <h4>Info:</h4>
+                <h5>Mäklarbyrå: @Broker.BrokerFirm.Name</h5>
+                <h5>Telefonnummer: @Broker.PhoneNumber</h5>
+                <h5>Email: @Broker.Email</h5>
+            </div>
+            <img class="profile-img-details" src="@Broker.ProfileImageOrPlaceholder" />
+        </div>
+    </div>
+        <h4>Beskrivning</h4>
+    <div class="broker-details">
+        
+        @if (String.IsNullOrEmpty(@Broker.Description))
+        {
+            <i>Mäklaren har inte fyllt i någon beskrivning.</i>
+        }
+        else
+        {
+        <p>@Broker.Description</p>
+        }
+    </div>
+</div>

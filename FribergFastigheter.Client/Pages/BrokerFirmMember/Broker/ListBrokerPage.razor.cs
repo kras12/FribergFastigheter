@@ -8,14 +8,17 @@ using FribergFastigheter.Client.Services.FribergFastigheterApi;
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 {
     /// <summary>
-    /// The list brokers page.
+    /// Code behind for page listing Brokers by Brokerfirm.
     /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     public partial class ListBrokerPage : ComponentBase
     {
         #region Properties
 
         
         public int BrokerFirmId { get; set; } = 1;
+        public BrokerFirmViewModel BrokerFirm { get; set; }
         public List<BrokerViewModel> BrokerList { get; set; } = new List<BrokerViewModel>();
         [Inject]
         public IBrokerFirmApiService BrokerFirmApiService { get; set; }
@@ -35,7 +38,6 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         {
             
         }
-
         #endregion
 
         #region Methods
@@ -46,7 +48,11 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
             List<BrokerViewModel> result = (await BrokerFirmApiService.GetBrokers(BrokerFirmId))
                 .Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
             BrokerList = result;
+
+            BrokerFirm = Mapper.Map<BrokerFirmViewModel>(await BrokerFirmApiService.GetBrokerFirmById(BrokerFirmId));      
         }
+
+
 
         #endregion
 
