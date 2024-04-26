@@ -24,7 +24,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The url of the logotype.
         /// </summary>
-        public ImageViewModel? Logotype { get; set; } = new();
+        public ImageViewModel? Logotype { get; set; }
 
         /// <summary>
         /// The name of the broker firm.
