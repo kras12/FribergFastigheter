@@ -71,7 +71,7 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         /// <param name="maxNumberOfChars">The max number of characters allowed.</param>
         /// <returns>A truncated <see cref="string"/>.</returns>
-        public string TruncatedDescription(int maxNumberOfChars)
+        public string GetTruncatedDescription(int maxNumberOfChars)
         {
             return $"{Description.Substring(0, Math.Min(Description.Length, maxNumberOfChars))}(...)";
         }
