@@ -63,10 +63,6 @@ a:has(.card) {
     text-decoration: none;
 }
 
-.card:hover, card:focus {
-    background-color: #dbdbdb;
-}
-
 .housing-result-header div:first-child,
 .housing-result-header div:last-child {
     min-width: 160px;
