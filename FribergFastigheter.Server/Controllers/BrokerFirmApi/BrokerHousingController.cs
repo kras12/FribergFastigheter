@@ -111,7 +111,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
 			}
 
-			var housings = (await _housingRepository.GetAllHousingsAsync(brokerId: brokerId, brokerFirm: brokerFirmId, municipalityId: municipalityId, limitImagesPerHousing: 3))
+			var housings = (await _housingRepository.GetHousingsAsync(brokerId: brokerId, brokerFirm: brokerFirmId, municipalityId: municipalityId, limitImagesPerHousing: 3))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
