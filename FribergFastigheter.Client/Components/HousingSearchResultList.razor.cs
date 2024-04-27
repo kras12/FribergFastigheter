@@ -13,7 +13,7 @@ namespace FribergFastigheter.Client.Components
         #region Properties
 
         [Parameter]
-        public List<HousingViewModel> Housings { get; set; } = new();
+        public HousingSearchResultViewModel SearchResult { get; set; }
 
         #endregion
 

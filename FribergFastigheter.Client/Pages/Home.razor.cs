@@ -9,7 +9,7 @@ using FribergFastigheter.Client.Services.FribergFastigheterApi;
 namespace FribergFastigheter.Client.Pages
 {
     /// <summary>
-    /// The website home page component.
+    /// The website home page.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
@@ -17,7 +17,15 @@ namespace FribergFastigheter.Client.Pages
     {
         #region Fields
 
+        /// <summary>
+        /// True if the user have performed a housing search.
+        /// </summary>
         private bool _haveSearchedHousings = false;
+
+        /// <summary>
+        /// Contains the input used for the last housing search.
+        /// </summary>
+        private HousingSearchInputViewModel _lastHousingSearchInput { get; set; } = new();
 
         #endregion
 
@@ -42,19 +50,63 @@ namespace FribergFastigheter.Client.Pages
         #region OtherProperties
 
         /// <summary>
-        /// The housing objects that were found in the search.
+        /// The result of the housing search.
         /// </summary>
-        public List<HousingViewModel> HousingResultList { get; set; } = new();
+        public HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;
 
         /// <summary>
-        /// The view model for the housing search form.
+        /// Binds the input data from the housing search form.
         /// </summary>
         [SupplyParameterFromForm]
-        public HousingSearchInputViewModel HousingSearchInputViewModel { get; set; } = new();
+        public HousingSearchInputViewModel HousingSearchFormInput { get; set; } = new();
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Fetches and loads the housing categories. 
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private Task LoadHousingCategories()
+        {
+            return Task.Run(
+               async () =>
+               {
+                   var categories = await HousingApi.GetHousingCategories();
+
+                   if (categories != null)
+                   {
+                       HousingSearchFormInput.HousingCategories.Add(HousingCategoryViewModel.AllCategories);
+                       HousingSearchFormInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(categories));
+                       HousingSearchFormInput.SelectedCategoryId = HousingSearchFormInput.HousingCategories.First().HousingCategoryId;
+                   }
+               });
+        }
+
+        /// <summary>
+		/// Fetches and loads the municipalties.
+		/// </summary>
+		/// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+		private Task LoadMunicipalities()
+        {
+            return Task.Run(
+               async () =>
+               {
+                   var municipalities = await HousingApi.GetMunicipalities();
+
+                   if (municipalities != null)
+                   {
+                       HousingSearchFormInput.Municipalities.Add(MunicipalityViewModel.AllMunicipalities);
+                       HousingSearchFormInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(municipalities));
+                       HousingSearchFormInput.SelectedMunicipalityId = HousingSearchFormInput.Municipalities.First().MunicipalityId;
+                   }
+               });
+        }
 
         /// <summary>
         /// Method invoked when the component is ready to start, having received its
@@ -66,24 +118,7 @@ namespace FribergFastigheter.Client.Pages
         protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-
-            var categories = await HousingApi.GetHousingCategories();
-
-            if (categories != null)
-            {
-                HousingSearchInputViewModel.HousingCategories.Add(HousingCategoryViewModel.AllCategories);
-                HousingSearchInputViewModel.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(categories));
-                HousingSearchInputViewModel.SelectedCategoryId = HousingSearchInputViewModel.HousingCategories.First().HousingCategoryId;
-            }
-
-            var municipalities = await HousingApi.GetMunicipalities();
-
-            if (municipalities != null)
-            {
-                HousingSearchInputViewModel.Municipalities.Add(MunicipalityViewModel.AllMunicipalities);
-                HousingSearchInputViewModel.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(municipalities));
-                HousingSearchInputViewModel.SelectedMunicipalityId = HousingSearchInputViewModel.Municipalities.First().MunicipalityId;
-            }
+            await Task.WhenAll(LoadHousingCategories(), LoadMunicipalities());
         }
 
         /// <summary>
@@ -92,24 +127,28 @@ namespace FribergFastigheter.Client.Pages
         /// <returns><see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        private async Task SearchHousings()
+        private async Task SearchHousings(int? pageNumber = null)
         {
-            int? municipalityFilter = HousingSearchInputViewModel.SelectedMunicipalityId != MunicipalityViewModel.AllMunicipalities.MunicipalityId ? HousingSearchInputViewModel.SelectedMunicipalityId : null;
-            int? categoryFilter = HousingSearchInputViewModel.SelectedCategoryId != HousingCategoryViewModel.AllCategories.HousingCategoryId ? HousingSearchInputViewModel.SelectedCategoryId : null;
+            int? municipalityFilter = HousingSearchFormInput.SelectedMunicipalityId != MunicipalityViewModel.AllMunicipalities.MunicipalityId ? HousingSearchFormInput.SelectedMunicipalityId : null;
+            int? categoryFilter = HousingSearchFormInput.SelectedCategoryId != HousingCategoryViewModel.AllCategories.HousingCategoryId ? HousingSearchFormInput.SelectedCategoryId : null;
+            int? offsetRows = pageNumber != null ? (pageNumber - 1) * _lastHousingSearchInput.NumberOfResultsPerPage : null;
 
-            var housings = await HousingApi.SearchHousings(limitHousings: 10, limitImageCountPerHousing: 3,
+			var result = await HousingApi.SearchHousings(maxNumberOfResultsPerPage: HousingSearchFormInput.NumberOfResultsPerPage, limitImageCountPerHousing: 3,
                 municipalityId: municipalityFilter, housingCategoryId: categoryFilter, 
-                minPrice: HousingSearchInputViewModel.MinPrice, maxPrice: HousingSearchInputViewModel.MaxPrice,
-                minLivingArea: HousingSearchInputViewModel.MinLivingArea, maxLivingArea: HousingSearchInputViewModel.MaxLivingArea);
+                minPrice: HousingSearchFormInput.MinPrice, maxPrice: HousingSearchFormInput.MaxPrice,
+                minLivingArea: HousingSearchFormInput.MinLivingArea, maxLivingArea: HousingSearchFormInput.MaxLivingArea, 
+                offsetRows: offsetRows);
 
-            HousingResultList.Clear();
+            _lastHousingSearchInput = AutoMapper.Map<HousingSearchInputViewModel>(this.HousingSearchFormInput);            
+            HousingSearchResult = null;
 
-            if (housings != null)
+            if (result != null)
             {
-                HousingResultList = housings.Select(x => AutoMapper.Map<HousingViewModel>(x)).ToList();
+                HousingSearchResult = AutoMapper.Map<HousingSearchResultViewModel>(result);
             }
 
             _haveSearchedHousings = true;
+            
         }
 
         #endregion

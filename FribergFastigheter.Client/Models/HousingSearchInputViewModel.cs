@@ -42,6 +42,11 @@ namespace FribergFastigheter.Client.Models
         public List<MunicipalityViewModel> Municipalities { get; set; } = new();
 
         /// <summary>
+        /// The number of results to fetch per page.
+        /// </summary>
+        public int NumberOfResultsPerPage { get; set; } = 25;
+
+        /// <summary>
         /// The selected housing category.
         /// </summary>
         public int SelectedCategoryId { get; set; }
