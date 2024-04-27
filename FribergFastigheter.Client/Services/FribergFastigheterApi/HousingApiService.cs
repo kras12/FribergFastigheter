@@ -124,34 +124,40 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="minPrice">An optional min price filter.</param>
         /// <param name="maxPrice">An optional max price filter.</param>
         /// <param name="minLivingArea">An optional min living area filter.</param>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/>.</returns>
+        /// <param name="maxLivingArea">An optional max living area filter.</param>
+        /// <param name="offsetRows">An optional number of rows to skip.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="HousingSearchResultDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        /// <param name="maxLivingArea">An optional max living area filter.</param>
-        public async Task<List<HousingDto>?> SearchHousings(int? limitHousings = null, int? limitImageCountPerHousing = null,
+        public async Task<HousingSearchResultDto?> SearchHousings(int? limitHousings = null, int? limitImageCountPerHousing = null,
             int? municipalityId = null, int? housingCategoryId = null, decimal? minPrice = null,
-            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null)
+            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
             #region Checks
 
             if (minPrice != null && minPrice < 0)
             {
-                throw new ArgumentException("The min price can't be negative.", nameof(minPrice));
+                throw new ArgumentOutOfRangeException(nameof(minPrice), "The min price can't be negative.");
             }
 
             if (maxPrice != null && maxPrice < 0 || minPrice != null && maxPrice < minPrice)
             {
-                throw new ArgumentException("The max price can't be negative or less than the min price.", nameof(maxPrice));
+                throw new ArgumentOutOfRangeException(nameof(maxPrice), "The max price can't be negative or less than the min price.");
             }
 
             if (minLivingArea != null && minLivingArea < 0)
             {
-                throw new ArgumentException("The min living area can't be negative.", nameof(minPrice));
+                throw new ArgumentOutOfRangeException(nameof(minPrice), "The min living area can't be negative.");
             }
 
             if (maxLivingArea != null && maxLivingArea < 0 || minLivingArea != null && maxLivingArea < minLivingArea)
             {
-                throw new ArgumentException("The max living area can't be negative or less than the min living area.", nameof(maxLivingArea));
+                throw new ArgumentOutOfRangeException(nameof(maxLivingArea), "The max living area can't be negative or less than the min living area.");
+            }
+
+            if (offsetRows != null && offsetRows < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offsetRows), "The offset rows value can't be negative.");
             }
 
             #endregion
@@ -198,7 +204,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 queries.Add(new KeyValuePair<string, string>("maxLivingArea", maxLivingArea.Value.ToString()));
             }
 
-            return await _httpClient.GetFromJsonAsync<List<HousingDto>>($"{HousingSearchApiEndoint}{BuildQueryString(queries)}");
+            if (offsetRows != null)
+            {
+                queries.Add(new KeyValuePair<string, string>("offsetRows", offsetRows.Value.ToString()));
+            }
+
+            return await _httpClient.GetFromJsonAsync<HousingSearchResultDto>($"{HousingSearchApiEndoint}{BuildQueryString(queries)}");
         }
 
         #endregion
