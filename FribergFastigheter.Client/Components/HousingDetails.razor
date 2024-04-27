@@ -1,32 +1,30 @@
 ﻿@using FribergFastigheter.Client.HelperClasses
 @using FribergFastigheter.Client.Components
-
-<div class="card">
-    <div class="card-header housing-result-header d-flex flex-row justify-content-between">
-        <div>@Housing.Broker.FullName</div>
-        <div>@Housing.Category.CategoryName</div>
-        <div class="d-flex flex-row justify-content-end">
-            @if (Housing.Broker.BrokerFirm.Logotype != null)
-            {
-                <img class="broker-firm-logotype" src="@Housing.Broker.BrokerFirm.Logotype.Url" />
-            }
+@* 
+<!-- Author: Jimmie -->
+<!-- Co Authors: --> 
+*@
+<div class="vertical-page-section">
+    <div id="housing-image-details-container" class="card vertical-page-section" hidden="@IsImageGalleryActive">
+        <div class="card-header housing-result-header d-flex flex-row justify-content-between full-width">
+            <div>@Housing.Broker.FullName</div>
+            <div>@Housing.Category.CategoryName</div>
+            <div class="d-flex flex-row justify-content-end">
+                @if (Housing.Broker.BrokerFirm.Logotype != null)
+                {
+                    <img class="broker-firm-logotype" src="@Housing.Broker.BrokerFirm.Logotype.Url" />
+                }
+            </div>
+        </div>    
+        <div class="vertical-page-section">
+            <ImageSlideShow Images="ImageSlides" ShowNavigationalDots="true"></ImageSlideShow>
+            <button @onclick="@(() => OpenImageGallery())">Bildgalleri</button>
         </div>
-    </div>
-    @* <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
-        @foreach (var image in Housing.Images)
-        {
-            <img class="housing-image" src="@image.Url" />
-        }
-    </div> *@
-    <ImageSlideShow Images="ImageSlides"></ImageSlideShow>
-
-    @* TODO - Replace H-tags with other elements and styles? *@
-    <h2 class="card-title">@(StringFormatHelper.FormatPrice(Housing.Price))</h2>
-    <h3 class="card-subtitle mb-2 text-muted">@Housing.Address</h3>
-    <h4 class="card-subtitle mb-2 text-muted">@Housing.Municipality.MunicipalityName</h4>
-    <div class="card-body">
-        <div class="d-flex flex-column gap-3">
-            <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width">
+        <div class="card-header full-width">
+            <div class="card-title display-4 text-center">@(StringFormatHelper.FormatPrice(Housing.Price))</div>
+            <div class="card-subtitle display-6 text-center text-muted mb-2">@Housing.Address</div>
+            <div class="card-subtitle display-6 text-center text-muted mb-2">@Housing.Municipality.MunicipalityName</div>
+            <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width fs-5">
                 <span>Boyta: @Housing.LivingArea</span>
                 @if (Housing.RoomCount != null)
                 {
@@ -53,18 +51,29 @@
                     <span>Årlig kostnad: @StringFormatHelper.FormatPrice(@Housing.YearlyRunningCost.Value)</span>
                 }
             </div>
-            <div>
-                <p class="card-text">
-                    @{
-                        var paragraphs = Housing.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        </div>
+        <div class="card-body">
+            @{
+                var paragraphs = Housing.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
-                        foreach (var paragraph in paragraphs)
-                        {
-                            <p>@($"{paragraph}{Environment.NewLine}")</p>
-                        }
-                    }
-                </p>
-            </div>
+                foreach (var paragraph in paragraphs)
+                {
+                    <p class="card-text">@($"{paragraph}{Environment.NewLine}")</p>
+                }
+            }
+        </div>
+    </div>
+    <div id="housing-image-gallery-container" class="card vertical-page-section pt-0" hidden="@(!IsImageGalleryActive)">
+        <div class="card-header w-100">
+            <div class="text-center">Bildgalleri</div>
+        </div>
+        <div></div>
+        <button class="center" @onclick="@(() => CloseImageGallery())">Stäng</button>
+        <div class="tiled-image-gallery tiled-image-gallery__image-size_medium full-width">
+        @foreach (var image in Housing.Images)
+        {
+            <img class="housing-image" src="@image.Url" />
+        }
         </div>
     </div>
 </div>
