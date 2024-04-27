@@ -52,27 +52,32 @@ namespace FribergFastigheter.Client.Models
         [DisplayName("File Name")]
         public string FileName { get; } = "";
 
-        /// <summary>
-        /// An optional image caption. 
-        /// </summary>
-        public string? ImageCaption { get; set; } = null;
+		/// <summary>
+		/// Returns true if there is an image caption.
+		/// </summary>
+		public bool HaveCaption
+		{
+			get
+			{
+				return !string.IsNullOrEmpty(ImageCaption);
+			}
+		}
 
-        /// <summary>
-        /// Returns true if there is an image caption.
-        /// </summary>
-        public bool HaveCaption
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(ImageCaption);
-            }
-        }
+		/// <summary>
+		/// An optional image caption. 
+		/// </summary>
+		public string? ImageCaption { get; set; } = null;
 
         /// <summary>
         /// The ID for the image.
         /// </summary>
         [DisplayName("Image ID")]
         public int? ImageId { get; }
+
+		/// <summary>
+		/// Returns true if the image is currently being shown.
+		/// </summary>
+		public bool IsActive { get; set; } = false;
 
 		/// <summary>
 		/// An optional link to another page.
@@ -85,7 +90,6 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         [DisplayName("Url")]
         public string Url { get; } = "";
-
 
         #endregion
     }
