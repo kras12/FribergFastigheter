@@ -20,12 +20,16 @@ namespace FribergFastigheter.Client.AutoMapper
 			CreateMap<HousingCategoryDto, HousingCategoryViewModel>();
 			CreateMap<MunicipalityDto, MunicipalityViewModel>();
 			CreateMap<ImageDto, ImageViewModel>();
+			CreateMap<PaginationDto, PaginationViewModel>();
 
 			CreateMap<BrokerFirmDto, BrokerFirmViewModel>()
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));
 
 			CreateMap<BrokerDto, BrokerViewModel>()
 				.ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null));
-		}
+
+            CreateMap<HousingSearchResultDto, HousingSearchResultViewModel>()
+				.ForMember(dest => dest.Pagination, opt => opt.PreCondition(x => x.Pagination != null));
+        }
 	}
 }
