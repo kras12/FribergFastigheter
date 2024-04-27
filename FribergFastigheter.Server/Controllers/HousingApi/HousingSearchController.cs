@@ -60,24 +60,39 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <param name="maxPrice">An optional max price filter.</param>
         /// <param name="minLivingArea">An optional min living area filter.</param>
         /// <param name="maxLivingArea">An optional max living area filter.</param>
-        /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
+        /// <param name="offsetRows">An optional number of rows to skip.</param>
+        /// <returns>A <see cref="HousingSearchResultDto"/> object containing the results.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
         [HttpGet]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HousingDto>>> GetHousings(int? municipalityId = null, int? housingCategoryId = null, 
+        [ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<HousingSearchResultDto>> GetHousings(int? municipalityId = null, int? housingCategoryId = null, 
             int? limitHousings = null, int? limitImageCountPerHousing = null,
-            decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null)
+            decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
-            var housings = (await _housingRepo.GetAllHousingsAsync(municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
+            var result = new HousingSearchResultDto();
+
+            result.Housings = (await _housingRepo.GetHousingsAsync(municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
                     limitHousings: limitHousings, limitImagesPerHousing: limitImageCountPerHousing, 
-                    minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea))
+                    minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            _imageService.PrepareDto(HttpContext, housings);
+            _imageService.PrepareDto(HttpContext, result.Housings);
 
-            return Ok(housings);
+            if (limitHousings != null && result.Housings.Count > 0)
+            {
+                result.Pagination = new PaginationDto();
+
+                result.Pagination.TotalResults = await _housingRepo.GetHousingsCountAsync(municipalityId: municipalityId, housingCategoryId: housingCategoryId,
+                    minPrice: minPrice, maxPrice: maxPrice,
+                    minLivingArea: minLivingArea, maxLivingArea: maxLivingArea);
+
+                result.Pagination.PageSize = limitHousings.Value;
+                result.Pagination.CurrentPage = offsetRows != null ? offsetRows.Value / limitHousings.Value + 1 : 1;
+            }
+
+            return Ok(result);
         }
 
         /// <summary>
