@@ -17,6 +17,11 @@ namespace FribergFastigheter.Client.Models
 		/// </summary>
 		public List<BrokerViewModel> Brokers { get; set; } = new();
 
+		/// <summary>
+		/// An optional URL linking to the housing object.
+		/// </summary>
+		public string? Url { get; set; } = null;
+
 		#endregion
 	}
 }

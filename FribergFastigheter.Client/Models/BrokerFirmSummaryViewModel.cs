@@ -31,6 +31,11 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public string Name { get; set; } = "";
 
-        #endregion
-    }
+		/// <summary>
+		/// An optional URL linking to the housing object.
+		/// </summary>
+		public string? Url { get; set; } = null;
+
+		#endregion
+	}
 }

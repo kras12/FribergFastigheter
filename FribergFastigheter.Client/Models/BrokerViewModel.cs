@@ -81,6 +81,11 @@ namespace FribergFastigheter.Client.Models
             } 
         }
 
-        #endregion
-    }
+		/// <summary>
+		/// An optional URL linking to the housing object.
+		/// </summary>
+		public string? Url { get; set; } = null;
+
+		#endregion
+	}
 }

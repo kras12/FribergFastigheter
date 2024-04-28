@@ -67,6 +67,8 @@ namespace FribergFastigheter.Client.Pages
 			BrokerHousings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousingsByBrokerId(Broker.BrokerId, 3));
 			// TODO - Find a better way to retrieve the URLS
 			BrokerHousings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
+			BrokerHousings.Select(x => x.Broker).ToList().ForEach(x => x.Url = $"Broker/{x.BrokerId}");
+			BrokerHousings.Select(x => x.Broker.BrokerFirm).ToList().ForEach(x => x.Url = $"BrokerFirm/{x.BrokerFirmId}");
 		}
 
 		#endregion
