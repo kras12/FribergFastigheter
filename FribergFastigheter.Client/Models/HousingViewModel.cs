@@ -36,6 +36,11 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public MunicipalityViewModel Municipality { get; set; } = new();
 
+        /// <summary>
+        /// An optional URL linking to the housing object.
+        /// </summary>
+        public string? Url { get; set; } = null;
+
         #endregion
     }
 }
