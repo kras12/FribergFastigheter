@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client.AutoMapper
 			CreateMap<ImageDto, ImageViewModel>();
 			CreateMap<PaginationDto, PaginationViewModel>();
 
-			CreateMap<BrokerFirmDto, BrokerFirmSummaryViewModel>()
+			CreateMap<BrokerFirmDto, BrokerFirmViewModel>()
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));
 
 			CreateMap<BrokerFirmSummaryDto, BrokerFirmSummaryViewModel>()
