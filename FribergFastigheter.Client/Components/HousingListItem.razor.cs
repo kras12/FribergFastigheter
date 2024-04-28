@@ -6,11 +6,11 @@ using System.Net.Http.Headers;
 namespace FribergFastigheter.Client.Components
 {
     /// <summary>
-    /// Component that shows a housing search result list item.
+    /// A component that represents a housing list item. 
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public partial class HousingSearchResultListItem : ComponentBase
+    public partial class HousingListItem : ComponentBase
     {
         #region Properties
 #pragma warning disable CS8618 
