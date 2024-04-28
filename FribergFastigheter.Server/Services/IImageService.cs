@@ -14,8 +14,8 @@ namespace FribergFastigheter.Server.Services
         Task<string> SaveImageToDiskAsync(IFormFile imageFile);
         void PrepareDto(HttpContext httpContext, BrokerDto broker);
         void PrepareDto(HttpContext httpContext, List<BrokerDto> brokers);
-        void PrepareDto(HttpContext httpContext, BrokerFirmDto brokerFirm);
-        void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms);
+        void PrepareDto(HttpContext httpContext, BrokerFirmSummaryDto brokerFirm);
+        void PrepareDto(HttpContext httpContext, List<BrokerFirmSummaryDto> brokerFirms);
         void PrepareDto(HttpContext httpContext, HousingDto housing);
         void PrepareDto(HttpContext httpContext, List<HousingDto> housings); 
     }

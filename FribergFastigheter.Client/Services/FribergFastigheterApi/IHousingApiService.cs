@@ -32,16 +32,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// Fetches data for a broker firm. 
 		/// </summary>
 		/// <param name="id">The ID of the broker firm.</param>
-		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmSummaryDto"/> object.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public Task<BrokerFirmDto?> GetBrokerFirmById(int id);
+		public Task<BrokerFirmSummaryDto?> GetBrokerFirmById(int id);
 
 		/// <summary>
 		/// Fetches data for a broker firm. 
 		/// </summary>
 		/// <param name="id">The ID of the broker firm.</param>
-		/// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerFirmDto"/> objects.</returns>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerFirmSummaryDto"/> objects.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		/// <summary>

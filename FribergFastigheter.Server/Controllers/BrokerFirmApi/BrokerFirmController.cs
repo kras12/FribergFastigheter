@@ -64,13 +64,13 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// An API endpoint for fetching a broker firm object.
 		/// </summary>
 		/// <param name="id">The ID of the broker firm to fetch.</param>
-		/// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
+		/// <returns>An embedded collection of <see cref="BrokerFirmSummaryDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		[HttpGet("{id:int}")]
-		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<BrokerFirmSummaryDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
+		public async Task<ActionResult<IEnumerable<BrokerFirmSummaryDto>>> GetById(int id)
 		{
 			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
 
@@ -79,7 +79,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
 			}
 
-			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
+			var result = _mapper.Map<BrokerFirmSummaryDto>(brokerFirm);
             _imageservice.PrepareDto(HttpContext, result);
 
 			return Ok(result);

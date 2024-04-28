@@ -14,7 +14,7 @@ namespace FribergFastigheter.Shared.Dto
         /// <summary>
         /// The firm that the broker belongs to.
         /// </summary>
-        public BrokerFirmDto BrokerFirm { get; set; }
+        public BrokerFirmSummaryDto BrokerFirm { get; set; }
 
         /// <summary>
         /// The ID of the broker.

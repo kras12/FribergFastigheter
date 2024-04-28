@@ -120,9 +120,9 @@ namespace FribergFastigheter.Server.Services
         /// <param name="brokerFirm">The DTO object to process.</param>
         /// /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public void PrepareDto(HttpContext httpContext, BrokerFirmDto brokerFirm)
+        public void PrepareDto(HttpContext httpContext, BrokerFirmSummaryDto brokerFirm)
         {
-            PrepareDto(httpContext, new List<BrokerFirmDto>() { brokerFirm });
+            PrepareDto(httpContext, new List<BrokerFirmSummaryDto>() { brokerFirm });
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace FribergFastigheter.Server.Services
         /// <param name="brokerFirms">The DTO objects to process.</param>
         /// /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms)
+        public void PrepareDto(HttpContext httpContext, List<BrokerFirmSummaryDto> brokerFirms)
         {
             foreach (var brokerFirm in brokerFirms)
             {

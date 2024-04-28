@@ -127,12 +127,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// Fetches a broker firm.
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmSummaryDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId)
+        public Task<BrokerFirmSummaryDto?> GetBrokerFirmById([Required] int brokerFirmId)
         {
-            return _httpClient.GetFromJsonAsync<BrokerFirmDto>($"{BrokerFirmApiEndPoint}/{brokerFirmId}");
+            return _httpClient.GetFromJsonAsync<BrokerFirmSummaryDto>($"{BrokerFirmApiEndPoint}/{brokerFirmId}");
         }
 
         #endregion
