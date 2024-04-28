@@ -102,16 +102,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return await _httpClient.GetFromJsonAsync<BrokerDto>(BrokerByIdApiEndpoint.Replace(IdPlaceHolder, id.ToString()));
         }
 
-        /// <summary>
-        /// Fetches data for a broker firm. 
-        /// </summary>
-        /// <param name="id">The ID of the broker firm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmSummaryDto"/> object.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<BrokerFirmSummaryDto?> GetBrokerFirmById(int id)
+		/// <summary>
+		/// Fetches data for a broker firm. 
+		/// </summary>
+		/// <param name="id">The ID of the broker firm.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<BrokerFirmDto?> GetBrokerFirmById(int id)
         {
-            return await _httpClient.GetFromJsonAsync<BrokerFirmSummaryDto>(BrokerFirmByIdApiEndpoint.Replace(IdPlaceHolder, id.ToString()));
+            return await _httpClient.GetFromJsonAsync<BrokerFirmDto>(BrokerFirmByIdApiEndpoint.Replace(IdPlaceHolder, id.ToString()));
         }
 
 		/// <summary>

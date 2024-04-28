@@ -22,6 +22,9 @@ namespace FribergFastigheter.Server.AutoMapper
 			CreateMap<Municipality, MunicipalityDto>();
 			CreateMap<Image, ImageDto>();
 
+			CreateMap<BrokerFirm, BrokerFirmDto>()
+				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));
+
 			CreateMap<BrokerFirm, BrokerFirmSummaryDto>()
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));
 

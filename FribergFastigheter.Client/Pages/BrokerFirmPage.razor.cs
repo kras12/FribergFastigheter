@@ -35,7 +35,7 @@ namespace FribergFastigheter.Client.Pages
 		/// <summary>
 		/// The broker firm.
 		/// </summary>
-		public BrokerFirmViewModel? BrokerFirm { get; set; } = null;
+		public BrokerFirmSummaryViewModel? BrokerFirm { get; set; } = null;
 
 		/// <summary>
 		/// The ID of the broker firm.

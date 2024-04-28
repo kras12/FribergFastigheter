@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FribergFastigheter.Shared.Dto;
+using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models
 {
@@ -7,30 +8,15 @@ namespace FribergFastigheter.Client.Models
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class BrokerFirmViewModel
+    public class BrokerFirmViewModel : BrokerFirmSummaryViewModel
     {
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// The ID of the broker firm.
-        /// </summary>
-        public int BrokerFirmId { get; set; }
+		/// <summary>
+		/// The brokers at the firm.
+		/// </summary>
+		public List<BrokerViewModel> Brokers { get; set; } = new();
 
-        /// <summary>
-        /// The description of the broker firm. 
-        /// </summary>
-        public string Description { get; set; } = "";
-
-        /// <summary>
-        /// The url of the logotype.
-        /// </summary>
-        public ImageViewModel? Logotype { get; set; }
-
-        /// <summary>
-        /// The name of the broker firm.
-        /// </summary>
-        public string Name { get; set; } = "";
-
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -119,20 +119,20 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return _httpClient.PutAsJsonAsync($"{BrokerApiEndPoint}/{id}", broker);
         }
 
-        #endregion
+		#endregion
 
-        #region BrokerFirmMethods
+		#region BrokerFirmMethods
 
-        /// <summary>
-        /// Fetches a broker firm.
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the brokerfirm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmSummaryDto"/> object.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<BrokerFirmSummaryDto?> GetBrokerFirmById([Required] int brokerFirmId)
+		/// <summary>
+		/// Fetches a broker firm.
+		/// </summary>
+		/// <param name="brokerFirmId">The ID of the brokerfirm.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId)
         {
-            return _httpClient.GetFromJsonAsync<BrokerFirmSummaryDto>($"{BrokerFirmApiEndPoint}/{brokerFirmId}");
+            return _httpClient.GetFromJsonAsync<BrokerFirmDto>($"{BrokerFirmApiEndPoint}/{brokerFirmId}");
         }
 
         #endregion

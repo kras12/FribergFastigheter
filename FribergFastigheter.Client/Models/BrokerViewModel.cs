@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The firm that the broker belongs to.
         /// </summary>
-        public BrokerFirmViewModel BrokerFirm { get; set; } = new();
+        public BrokerFirmSummaryViewModel BrokerFirm { get; set; } = new();
 
         /// <summary>
         /// The ID of the broker.

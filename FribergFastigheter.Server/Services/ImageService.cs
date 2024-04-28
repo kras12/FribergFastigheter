@@ -178,14 +178,46 @@ namespace FribergFastigheter.Server.Services
             }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Sets necessary data to a DTO object to make it ready to be sent to the client. 
+		/// </summary>
+		/// <param name="httpContext">The HttpContext for the request.</param>
+		/// <param name="brokerFirm">The DTO object to process.</param>
+		/// /// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public void PrepareDto(HttpContext httpContext, BrokerFirmDto brokerFirm)
+		{
+			PrepareDto(httpContext, new List<BrokerFirmDto>() { brokerFirm });
+		}
+
+		/// <summary>
+		/// Sets necessary data to DTO objects to make them ready to be sent to the client. 
+		/// </summary>
+		/// <param name="httpContext">The HttpContext for the request.</param>
+		/// <param name="brokerFirms">The DTO objects to process.</param>
+		/// /// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms)
+		{
+			foreach (var brokerFirm in brokerFirms)
+			{
+				if (brokerFirm.Logotype != null)
+				{
+					PrepareDto(httpContext, brokerFirm.Logotype);
+				}
+
+                PrepareDto(httpContext, brokerFirm.Brokers);
+			}
+		}
+
+		/// <summary>
 		/// Gets an <see cref="ActionResult"/> derived object to support downloading of an image file.
 		/// </summary>
 		/// <param name="imageFileName">The file name of the image.</param>
 		/// <returns>A <see cref="FileContentResult"/> if the file was found or null if not.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName)
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<FileContentResult> PrepareImageFileDownloadAsync(string imageFileName)
         {
             var filePath = Path.Combine(UploadFolderPath, imageFileName);
 
