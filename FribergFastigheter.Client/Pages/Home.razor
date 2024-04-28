@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using FribergFastigheter.Client.Components
 @* 
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
@@ -75,7 +76,7 @@
     </div
     @if (HousingSearchResult != null)
     {
-        <FribergFastigheter.Client.Components.HousingSearchResultList Housings="HousingSearchResult.Housings" />
+        <HousingList Housings="HousingSearchResult.Housings" />
         
         @if (HousingSearchResult.Pagination != null)
         {
