@@ -47,25 +47,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 
 		#endregion
 
-		#region ApiEndPoints
-
-		/// <summary>
-		/// An API endpoint for fetching the broker associated with a housing object.
-		/// </summary>
-		/// <param name="housingId">The ID of the housing object.</param>
-		/// <returns>A <see cref="BrokerDto"/> object if successful. An <see cref="ErrorMessageDto>"/> if not.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		[HttpGet("{housingId:int}/Broker")]
-		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<BrokerDto>> GetBroker(int housingId)
-		{
-			var broker = _mapper.Map<BrokerDto>(await _housingRepository.GetBroker(housingId));
-			_imageService.PrepareDto(HttpContext, broker);
-
-			return Ok(broker);
-		}
+		#region ApiEndPoints		
 
 		/// <summary>
 		/// An API endpoint for searching housing objects. 

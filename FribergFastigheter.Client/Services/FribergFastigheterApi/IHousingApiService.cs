@@ -10,15 +10,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     public interface IHousingApiService
     {
 		/// <summary>
-		/// Fetches data for a broker associated with a housing object.
-		/// </summary>
-		/// <param name="id">The ID of the housing object.</param>
-		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object if successful.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public Task<BrokerDto?> GetBrokerByHousingId(int id);
-
-		/// <summary>
 		/// Fetches data for a broker. 
 		/// </summary>
 		/// <param name="id">The ID of the broker.</param>

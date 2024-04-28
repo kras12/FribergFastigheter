@@ -35,7 +35,7 @@ namespace FribergFastigheter.Client.Pages
 		/// <summary>
 		/// The broker firm.
 		/// </summary>
-		public BrokerFirmSummaryViewModel? BrokerFirm { get; set; } = null;
+		public BrokerFirmViewModel? BrokerFirm { get; set; } = null;
 
 		/// <summary>
 		/// The ID of the broker firm.
@@ -57,7 +57,13 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-			BrokerFirm = AutoMapper.Map<BrokerFirmViewModel>(await HousingApiService.GetBrokerFirmById(BrokerFirmId));
+			var result = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
+			BrokerFirm = null;
+
+			if (result != null)
+			{
+				BrokerFirm = AutoMapper.Map<BrokerFirmViewModel>(result);
+			}			
 		}
 
 		#endregion

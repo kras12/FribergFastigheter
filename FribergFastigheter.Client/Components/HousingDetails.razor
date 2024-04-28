@@ -7,7 +7,8 @@
 <div class="vertical-page-section">
     <div id="housing-image-details-container" class="card vertical-page-section" hidden="@IsImageGalleryActive">
         <div class="card-header housing-result-header d-flex flex-row justify-content-between full-width">
-            <a href="Housing/@Housing.HousingId/Broker">
+            @* TODO - Move Urls into the view model *@
+            <a href="Broker/@Housing.Broker.BrokerId">
                 <div>@Housing.Broker.FullName</div>
             </a>
             <div>@Housing.Category.CategoryName</div>

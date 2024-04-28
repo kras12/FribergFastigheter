@@ -34,12 +34,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <summary>
 		/// The relative housing search API endpoint address.
 		/// </summary>
-		private const string HousingByIdApiEndoint = $"api/Housing/{IdPlaceHolder}";
-
-		/// <summary>
-		/// The relative housing API endpoint address.
-		/// </summary>
-		private const string HousingByIdBrokerApiEndPoint = $"api/Housing/{IdPlaceHolder}/Broker";
+		private const string HousingByIdApiEndoint = $"api/Housing/{IdPlaceHolder}";		
 
 		/// <summary>
 		/// The relative housing category list API endpoint address.
@@ -76,19 +71,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
 		#endregion
 
-		#region Methods
-
-		/// <summary>
-		/// Fetches data for a broker associated with a housing object.
-		/// </summary>
-		/// <param name="id">The ID of the housing object.</param>
-		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object if successful.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<BrokerDto?> GetBrokerByHousingId(int id)
-		{
-			return await _httpClient.GetFromJsonAsync<BrokerDto>(HousingByIdBrokerApiEndPoint.Replace(IdPlaceHolder, id.ToString()));
-		}
+		#region Methods		
 
 		/// <summary>
 		/// Fetches data for a broker. 
