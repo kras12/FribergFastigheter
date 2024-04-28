@@ -1,11 +1,24 @@
 ﻿@page "/brokerfirm/{BrokerFirmId:int}"
+@using FribergFastigheter.Client.Components
 @*
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
-<div class="vertical-page-container">
+<div class="vertical-page-container gap-5">
 	@if (BrokerFirm != null)
 	{
-		@BrokerFirm.Name
+		<div>
+			@* @BrokerFirm.Name *@
+			@if (BrokerFirm.Logotype != null)
+			{
+				<img src="@BrokerFirm.Logotype.Url" />
+			}	
+		</div>
+		<div class="d-flex flex-column gap-4 full-width">
+			@foreach (var broker in BrokerFirm.Brokers)
+			{
+				<BrokerDetails Broker="broker"></BrokerDetails>
+			}  
+		</div>
 	}
 </div>
