@@ -9,48 +9,71 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public interface IHousingApiService
     {
-        /// <summary>
-        /// Fetches data for a broker. 
-        /// </summary>
-        /// <param name="id">The ID of the broker.</param>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerDto"/> objects.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        /// <param name="includeImageData"></param>
-        Task<BrokerDto?> GetBrokerById(int id);
+		/// <summary>
+		/// Fetches data for a broker associated with a housing object.
+		/// </summary>
+		/// <param name="id">The ID of the housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object if successful.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<BrokerDto?> GetBrokerByHousingId(int id);
+
+		/// <summary>
+		/// Fetches data for a broker. 
+		/// </summary>
+		/// <param name="id">The ID of the broker.</param>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerDto"/> objects.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		/// <param name="includeImageData"></param>
+		Task<BrokerDto?> GetBrokerById(int id);
+
+		/// <summary>
+		/// Fetches data for a broker firm. 
+		/// </summary>
+		/// <param name="id">The ID of the broker firm.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<BrokerFirmDto?> GetBrokerFirmById(int id);
+
+		/// <summary>
+		/// Fetches data for a broker firm. 
+		/// </summary>
+		/// <param name="id">The ID of the broker firm.</param>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerFirmDto"/> objects.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		/// <summary>
+		/// Fetches a housing object by ID.
+		/// </summary>
+		/// <param name="housingId">The ID of the housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+		public Task<HousingDto?> GetHousingById(int housingId);
+
+		/// <summary>
+		/// Fetches all housing categories.
+		/// </summary>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<List<HousingCategoryDto>?> GetHousingCategories();
 
         /// <summary>
-        /// Fetches data for a broker firm. 
+        /// Fetches housing objects that is being handled by a broker.
         /// </summary>
-        /// <param name="id">The ID of the broker firm.</param>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerFirmDto"/> objects.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        /// <param name="includeImageData"></param>
-        Task<BrokerFirmDto?> GetBrokerFirmById(int id);
+        /// <param name="brokerId">The ID of the broker.</param>
+        /// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
+        public Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
 
-        /// <summary>
-        /// Fetches a housing object by ID.
-        /// </summary>
-        /// <param name="housingId">The ID of the housing object.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
-        public Task<HousingDto?> GetHousingById(int housingId);
-
-        /// <summary>
-        /// Fetches all housing categories.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<List<HousingCategoryDto>?> GetHousingCategories();
-
-        /// <summary>
-        /// Fetches all municipalities.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<List<MunicipalityDto>?> GetMunicipalities();
+		/// <summary>
+		/// Fetches all municipalities.
+		/// </summary>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<List<MunicipalityDto>?> GetMunicipalities();
 
         /// <summary>
         /// Fetches all housings that matches the filters and options.

@@ -14,32 +14,52 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public class HousingApiService : ApiServiceBase, IHousingApiService
     {
-        #region Constants
+		#region Constants
 
         /// <summary>
-        /// The broker API endpoint address.
+        /// The relative housings by broker ID API endpoint address.
         /// </summary>
-        private const string BrokerApiEndpoint = "api/Housing/Broker";
+        private const string HousingsByBrokerApiEndpoint = $"api/Housing/Broker/{IdPlaceHolder}/Housing";
 
-        /// <summary>
-        /// The broker firm API endpoint address.
-        /// </summary>
-        private const string BrokerFirmApiEndpoint = "api/Housing/BrokerFirm";
+		/// <summary>
+		/// The relative broker API endpoint address.
+		/// </summary>
+		private const string BrokerByIdApiEndpoint = $"api/Housing/Broker/{IdPlaceHolder}";
 
-        /// <summary>
-        /// The housing category API endpoint address.
-        /// </summary>
-        private const string HousingCategoryApiEndpoint = "api/Housing/Category";
+		/// <summary>
+		/// The relative broker firm API endpoint address.
+		/// </summary>
+		private const string BrokerFirmByIdApiEndpoint = $"api/Housing/BrokerFirm/{IdPlaceHolder}";
 
-        /// <summary>
-        /// The housing search API endpoint address.
-        /// </summary>
-        private const string HousingSearchApiEndoint = "api/Housing/Search";
+		/// <summary>
+		/// The relative housing search API endpoint address.
+		/// </summary>
+		private const string HousingByIdApiEndoint = $"api/Housing/{IdPlaceHolder}";
 
-        /// <summary>
-        /// The municipality API endpoint address.
-        /// </summary>
-        private const string MunicipalityApiEndpoint = "api/Housing/Municipality";
+		/// <summary>
+		/// The relative housing API endpoint address.
+		/// </summary>
+		private const string HousingByIdBrokerApiEndPoint = $"api/Housing/{IdPlaceHolder}/Broker";
+
+		/// <summary>
+		/// The relative housing category list API endpoint address.
+		/// </summary>
+		private const string HousingCategoryListApiEndpoint = "api/Housing/Category";
+
+		/// <summary>
+		/// The relative housing search API endpoint address.
+		/// </summary>
+		private const string HousingSearchApiEndoint = "api/Housing/Search";
+
+		/// <summary>
+		/// The ID placeholder used in API endpoint addresses.
+		/// </summary>
+		private const string IdPlaceHolder = "{id}";
+
+		/// <summary>
+		/// The relative municipality list API endpoint address.
+		/// </summary>
+		private const string MunicipalityListApiEndpoint = "api/Housing/Municipality";
 
         #endregion
 
@@ -54,20 +74,32 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         }
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        /// <summary>
-        /// Fetches data for a broker. 
-        /// </summary>
-        /// <param name="id">The ID of the broker.</param>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="BrokerDto"/> objects.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<BrokerDto?> GetBrokerById(int id)
+		/// <summary>
+		/// Fetches data for a broker associated with a housing object.
+		/// </summary>
+		/// <param name="id">The ID of the housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object if successful.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<BrokerDto?> GetBrokerByHousingId(int id)
+		{
+			return await _httpClient.GetFromJsonAsync<BrokerDto>(HousingByIdBrokerApiEndPoint.Replace(IdPlaceHolder, id.ToString()));
+		}
+
+		/// <summary>
+		/// Fetches data for a broker. 
+		/// </summary>
+		/// <param name="id">The ID of the broker.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object if successful.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<BrokerDto?> GetBrokerById(int id)
         {
-            return await _httpClient.GetFromJsonAsync<BrokerDto>($"{BrokerApiEndpoint}/{id}");
+            return await _httpClient.GetFromJsonAsync<BrokerDto>(BrokerByIdApiEndpoint.Replace(IdPlaceHolder, id.ToString()));
         }
 
         /// <summary>
@@ -79,17 +111,35 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public async Task<BrokerFirmDto?> GetBrokerFirmById(int id)
         {
-            return await _httpClient.GetFromJsonAsync<BrokerFirmDto>($"{BrokerFirmApiEndpoint}/{id}");
+            return await _httpClient.GetFromJsonAsync<BrokerFirmDto>(BrokerFirmByIdApiEndpoint.Replace(IdPlaceHolder, id.ToString()));
         }
 
-        /// <summary>
-        /// Fetches a housing object by ID.
-        /// </summary>
-        /// <param name="housingId">The ID of the housing object.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
-        public async Task<HousingDto?> GetHousingById(int housingId)
+		/// <summary>
+		/// Fetches housing objects that is being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
+		public async Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
+		{
+			List<KeyValuePair<string, string>> queries = new();
+
+			if (limitImagesPerHousing != null)
+			{
+				queries.Add(new KeyValuePair<string, string>("limitImagesPerHousing", limitImagesPerHousing.Value.ToString()));
+			}
+
+			return await _httpClient.GetFromJsonAsync<List<HousingDto>?>($"{HousingsByBrokerApiEndpoint.Replace(IdPlaceHolder, brokerId.ToString())}{BuildQueryString(queries)}");
+		}
+
+		/// <summary>
+		/// Fetches a housing object by ID.
+		/// </summary>
+		/// <param name="housingId">The ID of the housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+		public async Task<HousingDto?> GetHousingById(int housingId)
         {
-            return await _httpClient.GetFromJsonAsync<HousingDto?>($"{HousingSearchApiEndoint}/{housingId}");
+            return await _httpClient.GetFromJsonAsync<HousingDto?>(HousingByIdApiEndoint.Replace(IdPlaceHolder, housingId.ToString()));
         }
 
         /// <summary>
@@ -100,7 +150,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public async Task<List<HousingCategoryDto>?> GetHousingCategories()
         {
-            return await _httpClient.GetFromJsonAsync<List<HousingCategoryDto>>($"{HousingCategoryApiEndpoint}");
+            return await _httpClient.GetFromJsonAsync<List<HousingCategoryDto>>($"{HousingCategoryListApiEndpoint}");
         }
 
         /// <summary>
@@ -111,14 +161,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public async Task<List<MunicipalityDto>?> GetMunicipalities()
         {
-            return await _httpClient.GetFromJsonAsync<List<MunicipalityDto>>($"{MunicipalityApiEndpoint}");
+            return await _httpClient.GetFromJsonAsync<List<MunicipalityDto>>($"{MunicipalityListApiEndpoint}");
         }
 
         /// <summary>
         /// Fetches all housings that matches the filters and options.
         /// </summary>
         /// <param name="limitHousings">Sets the max limit of housing objects to return.</param>
-        /// <param name="limitImageCountPerHousing">Sets the max limit of images to return per housing object.</param>
+        /// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
         /// <param name="municipalityId">Sets a filter on municipality.</param>
         /// <param name="housingCategoryId"></param>
         /// <param name="minPrice">An optional min price filter.</param>
@@ -129,7 +179,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingSearchResultDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<HousingSearchResultDto?> SearchHousings(int? limitHousings = null, int? limitImageCountPerHousing = null,
+        public async Task<HousingSearchResultDto?> SearchHousings(int? limitHousings = null, int? limitImagesPerHousing = null,
             int? municipalityId = null, int? housingCategoryId = null, decimal? minPrice = null,
             decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
@@ -179,9 +229,9 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 queries.Add(new KeyValuePair<string, string>("limitHousings", limitHousings.Value.ToString()));
             }
 
-            if (limitImageCountPerHousing != null)
+            if (limitImagesPerHousing != null)
             {
-                queries.Add(new KeyValuePair<string, string>("limitImageCountPerHousing", limitImageCountPerHousing.Value.ToString()));
+                queries.Add(new KeyValuePair<string, string>("limitImagesPerHousing", limitImagesPerHousing.Value.ToString()));
             }
 
             if (minPrice != null)
