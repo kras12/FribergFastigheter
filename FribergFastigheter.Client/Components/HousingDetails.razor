@@ -4,18 +4,25 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
+@{
+    string brokerLinkUrl = !string.IsNullOrEmpty(Housing.Broker.Url) ? Housing.Broker.Url : "";
+    string brokerLinkClass = !string.IsNullOrEmpty(Housing.Broker.Url) ? "" : "inactive-link";
+    string brokerFirmLinkUrl = !string.IsNullOrEmpty(Housing.Broker.BrokerFirm.Url) ? Housing.Broker.BrokerFirm.Url : "";
+    string brokerFirmLinkClass = !string.IsNullOrEmpty(Housing.Broker.BrokerFirm.Url) ? "" : "inactive-link";
+}
 <div class="vertical-page-section">
     <div id="housing-image-details-container" class="card vertical-page-section" hidden="@IsImageGalleryActive">
         <div class="card-header housing-result-header d-flex flex-row justify-content-between full-width">
-            @* TODO - Move Urls into the view model *@
-            <a href="Broker/@Housing.Broker.BrokerId">
+            <a href="@brokerLinkUrl" class="@brokerLinkClass">
                 <div>@Housing.Broker.FullName</div>
             </a>
             <div>@Housing.Category.CategoryName</div>
             <div class="d-flex flex-row justify-content-end">
                 @if (Housing.Broker.BrokerFirm.Logotype != null)
                 {
-                    <img class="broker-firm-logotype" src="@Housing.Broker.BrokerFirm.Logotype.Url" />
+                    <a href="@brokerFirmLinkUrl" class="@brokerFirmLinkClass">
+                        <img class="broker-firm-logotype" src="@Housing.Broker.BrokerFirm.Logotype.Url" />
+                    </a>
                 }
             </div>
         </div>    
