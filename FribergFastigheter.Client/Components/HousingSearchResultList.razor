@@ -2,64 +2,8 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: -->
 <div class="d-flex flex-column gap-4 full-width">
-    @foreach (var housing in SearchResult.Housings)
+    @foreach (var housing in Housings)
     {
-        <a href="housing/@housing.HousingId">
-            <div class="card">
-            <div class="card-header housing-result-header d-flex flex-row justify-content-between">
-                <div>@housing.Broker.FullName</div>
-                <div>@housing.Category.CategoryName</div>
-                <div class="d-flex flex-row justify-content-end">
-                    @if (housing.Broker.BrokerFirm.Logotype != null)
-                    {
-                        <img class="broker-firm-logotype" src="@housing.Broker.BrokerFirm.Logotype.Url" />
-                    }
-                </div>
-            </div>
-            <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
-                @foreach (var image in housing.Images)
-                {
-                    <img class="housing-image" src="@image.Url" />
-                }
-            </div>
-            <div class="card-header full-width">
-                <div class="card-title display-4 text-center">@(StringFormatHelper.FormatPrice(housing.Price))</div>
-                <div class="card-subtitle display-6 text-center text-muted mb-2">@housing.Address</div>
-                <div class="card-subtitle display-6 text-center text-muted mb-2">@housing.Municipality.MunicipalityName</div>
-                <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width fs-5">
-                    <span>Boyta: @housing.LivingArea</span>
-                    @if (housing.RoomCount != null)
-                    {
-                        <span>Antal rum: @housing.RoomCount</span>
-                    }
-                    @if (housing.AncillaryArea != null)
-                    {
-                        <span>Övrig yta: @housing.AncillaryArea</span>
-                    }
-                    @if (housing.LandArea != null)
-                    {
-                        <span>Landyta: @housing.LandArea</span>
-                    }
-                    @if (housing.BuildYear != null)
-                    {
-                        <span>Byggår: @housing.BuildYear</span>
-                    }
-                    @if (housing.MonthlyFee != null)
-                    {
-                        <span>Månadskostnad: @StringFormatHelper.FormatPrice(@housing.MonthlyFee.Value)</span>
-                    }
-                    @if (housing.YearlyRunningCost != null)
-                    {
-                        <span>Årlig kostnad: @StringFormatHelper.FormatPrice(@housing.YearlyRunningCost.Value)</span>
-                    }
-                </div>
-            </div>
-            <div class="card-body">
-                <p class="card-text">
-                    @housing.GetTruncatedDescription(300)
-                </p>
-            </div>
-        </div>
-        </a>
-    }
+        <HousingSearchResultListItem Housing="housing"></HousingSearchResultListItem>       
+    }  
 </div>

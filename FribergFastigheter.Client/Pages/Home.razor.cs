@@ -145,6 +145,8 @@ namespace FribergFastigheter.Client.Pages
             if (result != null)
             {
                 HousingSearchResult = AutoMapper.Map<HousingSearchResultViewModel>(result);
+                // TODO - Find a better way to retrieve the URLS
+                HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
             }
 
             _haveSearchedHousings = true;

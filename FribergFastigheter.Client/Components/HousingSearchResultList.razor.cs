@@ -12,12 +12,11 @@ namespace FribergFastigheter.Client.Components
     {
         #region Properties
 
+        /// <summary>
+        /// A collection of housing objects to show. 
+        /// </summary>
         [Parameter]
-        public HousingSearchResultViewModel SearchResult { get; set; }
-
-        #endregion
-
-        #region Methods        
+        public List<HousingViewModel> Housings { get; set; } = new();
 
         #endregion
     }

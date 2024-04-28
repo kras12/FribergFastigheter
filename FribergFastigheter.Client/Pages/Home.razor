@@ -75,7 +75,7 @@
     </div
     @if (HousingSearchResult != null)
     {
-        <FribergFastigheter.Client.Components.HousingSearchResultList SearchResult="HousingSearchResult" />
+        <FribergFastigheter.Client.Components.HousingSearchResultList Housings="HousingSearchResult.Housings" />
         
         @if (HousingSearchResult.Pagination != null)
         {
