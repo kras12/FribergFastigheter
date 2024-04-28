@@ -80,6 +80,32 @@ namespace FribergFastigheter.Server.Data.Repositories
 			await applicationDbContext.SaveChangesAsync();
         }
 
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<Broker> GetBroker(int housingId)
+		{
+			return await applicationDbContext.Housings
+				 .Where(x => x.HousingId == housingId)
+				 .AsNoTracking()
+                 .Select(x => x.Broker)
+				 .FirstAsync();
+		}
+
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
+		{
+            var result = await GetHousingsInternalAsync(brokerId).ToListAsync();
+
+			// TODO - Look for a more optimized way to fetch a limited number of images
+			if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
+			{
+				result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
+			}
+
+			return result;
+		}
+
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
 		public async Task<Housing?> GetHousingByIdAsync(int id)
