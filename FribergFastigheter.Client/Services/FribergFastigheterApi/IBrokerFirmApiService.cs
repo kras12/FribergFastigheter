@@ -63,18 +63,18 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task UpdateBroker([Required] int id, [Required] UpdateBrokerDto broker);
 
-        #endregion
+		#endregion
 
-        #region BrokerFirmMethods
+		#region BrokerFirmMethods
 
-        /// <summary>
-        /// Fetches a broker firm.
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the brokerfirm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId);
+		/// <summary>
+		/// Fetches a broker firm.
+		/// </summary>
+		/// <param name="brokerFirmId">The ID of the brokerfirm.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId);
 
         #endregion
 

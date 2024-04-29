@@ -6,12 +6,11 @@ using Microsoft.AspNetCore.Components;
 namespace FribergFastigheter.Client.Pages
 {
 	/// <summary>
-	/// The housing broker page. 
-	/// This page displays the information about the housing object's broker.
+	/// The broker firm details page. 
 	/// </summary>
 	/// <!-- Author: Jimmie -->
 	/// <!-- Co Authors: -->
-	public partial class BrokerDetailsPage : ComponentBase
+	public partial class BrokerFirmPage : ComponentBase
 	{
 		#region InjectedServiceProperties
 #pragma warning disable CS8618
@@ -34,20 +33,15 @@ namespace FribergFastigheter.Client.Pages
 		#region Properties
 
 		/// <summary>
-		/// The broker associated with the housing object.
+		/// The broker firm.
 		/// </summary>
-		public BrokerViewModel? Broker { get; set; } = null;
+		public BrokerFirmViewModel? BrokerFirm { get; set; } = null;
 
 		/// <summary>
-		/// The ID of the broker.
+		/// The ID of the broker firm.
 		/// </summary>
 		[Parameter]
-		public int BrokerId { get; set; }
-
-		/// <summary>
-		/// The housing objects that is handled by the broker. 
-		/// </summary>
-		public List<HousingViewModel>? BrokerHousings { get; set; } = null;
+		public int BrokerFirmId { get; set; }
 
 		#endregion
 
@@ -63,12 +57,13 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-			Broker = AutoMapper.Map<BrokerViewModel>(await HousingApiService.GetBrokerById(BrokerId));
-			BrokerHousings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousingsByBrokerId(Broker.BrokerId, 3));
-			// TODO - Find a better way to retrieve the URLS
-			BrokerHousings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
-			BrokerHousings.Select(x => x.Broker).ToList().ForEach(x => x.Url = $"Broker/{x.BrokerId}");
-			BrokerHousings.Select(x => x.Broker.BrokerFirm).ToList().ForEach(x => x.Url = $"BrokerFirm/{x.BrokerFirmId}");
+			var result = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
+			BrokerFirm = null;
+
+			if (result != null)
+			{
+				BrokerFirm = AutoMapper.Map<BrokerFirmViewModel>(result);
+			}			
 		}
 
 		#endregion

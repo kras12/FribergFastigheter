@@ -1,9 +1,13 @@
-﻿<div class="image-slideshow-container">
+﻿@* 
+<!-- Author: Jimmie -->
+<!-- Co Authors: --> 
+*@
+<div class="image-slideshow-container">
 	@if (Images.Count > 0)
 	{
 		@foreach (var image in Images)
 		{
-			<div class="image-slide image-fade">
+			<div class="image-slide image-fade" hidden="@(!image.IsActive)">
 				@if (image.LinksToUrl is not null)
 				{
 					<a href="@image.LinksToUrl">
@@ -24,62 +28,24 @@
 				}
 			</div>
 		}
-		<a class="previous-slider-button" onclick="ShowNextSlide(-1)">&#10094;</a>
-		<a class="next-slider-button" onclick="ShowNextSlide(1)">&#10095;</a>
-		<div class="text-align-center">
-			@for (int i = 0; i < Images.Count; i++)
-			{
-				<span class="navigation-dot" onclick="SetNextSlide(@i)"></span>
-			}
-		</div>
+		<a class="previous-slider-button" @onclick="@(() => ShowPreviousSlide())">&#10094;</a>
+		<a class="next-slider-button" @onclick="@(() => ShowNextSlide())">&#10095;</a>
+		@if (ShowNavigationalDots)
+		{
+			<div class="text-center">
+				@for (int i = 0; i < Images.Count; i++)
+				{
+					// Needed because how lambdas works here
+					int indexSlide = i;
+					<span class="navigation-dot @(Images[i].IsActive ? "active" : "not-active")" @onclick="@(() => SetSlide(indexSlide))"></span>
+				}
+			</div>
+		}
+		else
+		{
+			<div class="text-center">
+				@(_currentSlideIndex + 1) av @(Images.Count)
+			</div>
+		}
 	}	
 </div>
-
-<script defer type="text/javascript">
-
-	let imageSlideIndex = 0;
-	let imageSlides = document.getElementsByClassName("image-slide");
-	let navigationDots = document.getElementsByClassName("navigation-dot");
-
-	setInterval(() => (
-		ShowNextSlide(1)
-	), 5000);
-
-	ShowSlide();
-
-	function SetSlideIndex(index) {
-		imageSlideIndex = index;
-
-		if (imageSlideIndex >= imageSlides.length) {
-			imageSlideIndex = 0;
-		}
-		else if (imageSlideIndex < 0) {
-			imageSlideIndex = imageSlides.length - 1;
-		}
-	}
-
-	function ShowNextSlide(offset) {
-		SetSlideIndex(imageSlideIndex + offset);
-		ShowSlide();
-	}
-
-	function SetNextSlide(index) {
-		SetSlideIndex(index);
-		ShowSlide();
-	}
-
-	function ShowSlide() {
-		for (let i = 0; i < imageSlides.length; i++) {
-			imageSlides[i].classList.remove("active");
-		}
-
-		for (i = 0; i < navigationDots.length; i++) {
-			navigationDots[i].classList.remove("active");
-		}
-
-		imageSlides[imageSlideIndex].classList.add("active");
-		navigationDots[imageSlideIndex].classList.add("active");
-
-		console.log(navigationDots[imageSlideIndex]);
-	}
-</script>

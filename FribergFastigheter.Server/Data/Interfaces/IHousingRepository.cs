@@ -13,7 +13,8 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task AddAsync(Housing housing);
 		Task DeleteAsync(int housingId);
 		Task DeleteAsync(Housing housing);
-        Task<List<Housing>> GetAllHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null, int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null);
+		Task<Broker> GetBroker(int housingId);
+		Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null, int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null);
         Task<Housing?> GetHousingByIdAsync(int id);
         Task UpdateAsync(Housing housing);
 		Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
@@ -27,5 +28,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task AddImages(int housingId, List<Image> imageIds);
         Task<List<HousingCategory>> GetHousingCategories();
         Task<List<Municipality>> GetMunicipalities();
-    }
+        Task<int> GetHousingsCountAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null, int? housingCategoryId = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null);
+		Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
+	}
 }

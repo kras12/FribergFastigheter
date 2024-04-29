@@ -1,0 +1,9 @@
+﻿@using FribergFastigheter.Client.HelperClasses
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+<div class="d-flex flex-column gap-4 full-width">
+    @foreach (var housing in Housings)
+    {
+        <HousingListItem Housing="housing"></HousingListItem>
+    }  
+</div>
