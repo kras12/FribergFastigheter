@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The firm that the broker belongs to.
         /// </summary>
-        public BrokerFirmDto BrokerFirm { get; set; } = new();
+        public BrokerFirmSummaryViewModel BrokerFirm { get; set; } = new();
 
         /// <summary>
         /// The ID of the broker.
@@ -81,6 +81,11 @@ namespace FribergFastigheter.Client.Models
             } 
         }
 
-        #endregion
-    }
+		/// <summary>
+		/// An optional URL linking to the housing object.
+		/// </summary>
+		public string? Url { get; set; } = null;
+
+		#endregion
+	}
 }

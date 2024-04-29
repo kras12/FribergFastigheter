@@ -111,7 +111,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
 			}
 
-			var housings = (await _housingRepository.GetAllHousingsAsync(brokerId: brokerId, brokerFirm: brokerFirmId, municipalityId: municipalityId, limitImagesPerHousing: 3))
+			var housings = (await _housingRepository.GetHousingsAsync(brokerId: brokerId, brokerFirm: brokerFirmId, municipalityId: municipalityId, limitImagesPerHousing: 3))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
@@ -120,15 +120,33 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             return Ok(housings);
         }
 
-        /// <summary>
-        /// An API endpoint for fetching a housing object. 
-        /// </summary>
-        /// <param name="id">The ID of the housing to fetch.</param>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-        /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: Marcus -->
-        [HttpGet("{id:int}")]
+		/// <summary>
+		/// An API endpoint for fetching the broker associated with a housing object.
+		/// </summary>
+		/// <param name="housingId">The ID of the housing object.</param>
+		/// <returns>A <see cref="BrokerDto"/> object if successful. An <see cref="ErrorMessageDto>"/> if not.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		[HttpGet("{housingId:int}/Broker")]
+		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<BrokerDto>> GetBroker(int housingId)
+		{
+			var broker = _mapper.Map<BrokerDto>(await _housingRepository.GetBroker(housingId));
+			_imageService.PrepareDto(HttpContext, broker);
+
+			return Ok(broker);
+		}
+
+		/// <summary>
+		/// An API endpoint for fetching a housing object. 
+		/// </summary>
+		/// <param name="id">The ID of the housing to fetch.</param>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+		/// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: Marcus -->
+		[HttpGet("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<IEnumerable<HousingDto>>> GetById(int id, [Required] int brokerFirmId)
@@ -149,6 +167,31 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             return Ok(result);
         }
+
+		/// <summary>
+		/// An API endpoint for retrieving housing objects being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		[HttpGet("/Broker/{brokerId:int}/Housing")]
+		[ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<HousingSearchResultDto>> GetHousingsByBrokerId([Required] int brokerId, [Required] int brokerFirmId)
+		{
+			if (! await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId))
+			{
+				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
+			}
+
+			var result = new HousingSearchResultDto();
+			result.Housings = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerId(brokerId));
+			_imageService.PrepareDto(HttpContext, result.Housings);
+
+			return Ok(result);
+		}
 
 		/// <summary>
 		/// An API endpoint for creating housing objects. 

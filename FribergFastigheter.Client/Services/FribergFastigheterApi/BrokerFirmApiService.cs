@@ -23,30 +23,50 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string BrokerApiEndPoint = "api/BrokerFirm/Broker";
 
-        /// <summary>
-        /// The broker firm API endpoint address.
-        /// </summary>
-        private const string BrokerFirmApiEndPoint = "api/BrokerFirm";
+		/// <summary>
+		/// The broker API endpoint address.
+		/// </summary>
+		private const string BrokerByIdApiEndPoint = $"api/BrokerFirm/Broker/{IdPlaceHolder}";
+
+		/// <summary>
+		/// The broker firm API endpoint address.
+		/// </summary>
+		private const string BrokerFirmByIdApiEndPoint = $"api/BrokerFirm/{IdPlaceHolder}";
 
         // <summary>
         /// The housing API endpoint address.
         /// </summary>
         private const string HousingApiEndPoint = "api/BrokerFirm/Housing";
 
-        // <summary>
-        /// The housing image API endpoint address.
-        /// </summary>
-        private const string HousingImageApiEndPoint = "api/BrokerFirm/Housing/Image";
+		// <summary>
+		/// The housing API endpoint address.
+		/// </summary>
+		private const string HousingByIdApiEndPoint = $"api/BrokerFirm/Housing/{IdPlaceHolder}";
 
-        #endregion
+		// <summary>
+		/// The housing image API endpoint address.
+		/// </summary>
+		private const string HousingImageApiEndPoint = "api/BrokerFirm/Housing/Image";
 
-        #region Constructors
+		// <summary>
+		/// The housing image API endpoint address.
+		/// </summary>
+		private const string HousingImageByIdApiEndPoint = $"api/BrokerFirm/Housing/Image/{IdPlaceHolder}";
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="httpClient">The injected HTTP client.</param>
-        public BrokerFirmApiService(HttpClient httpClient) : base(httpClient)
+		/// <summary>
+		/// The ID placeholder used in API endpoint addresses.
+		/// </summary>
+		private const string IdPlaceHolder = "{id}";
+
+		#endregion
+
+		#region Constructors
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="httpClient">The injected HTTP client.</param>
+		public BrokerFirmApiService(HttpClient httpClient) : base(httpClient)
         {
 
         }
@@ -78,7 +98,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task DeleteBroker(int id, [Required] int brokerFirmId)
         {
-            return _httpClient.DeleteAsync($"{BrokerApiEndPoint}/{id}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
+            return _httpClient.DeleteAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
         }
 
         /// <summary>
@@ -91,7 +111,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task<BrokerDto?> GetBrokerById([Required] int id, [Required] int brokerFirmId)
         {
-            return _httpClient.GetFromJsonAsync<BrokerDto>($"{BrokerApiEndPoint}/{id}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
+            return _httpClient.GetFromJsonAsync<BrokerDto>($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
         }
 
         /// <summary>
@@ -116,23 +136,23 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task UpdateBroker([Required] int id, [Required] UpdateBrokerDto broker)
         {
-            return _httpClient.PutAsJsonAsync($"{BrokerApiEndPoint}/{id}", broker);
+            return _httpClient.PutAsJsonAsync(BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString()), broker);
         }
 
-        #endregion
+		#endregion
 
-        #region BrokerFirmMethods
+		#region BrokerFirmMethods
 
-        /// <summary>
-        /// Fetches a broker firm.
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the brokerfirm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId)
+		/// <summary>
+		/// Fetches a broker firm.
+		/// </summary>
+		/// <param name="brokerFirmId">The ID of the brokerfirm.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId)
         {
-            return _httpClient.GetFromJsonAsync<BrokerFirmDto>($"{BrokerFirmApiEndPoint}/{brokerFirmId}");
+            return _httpClient.GetFromJsonAsync<BrokerFirmDto>(BrokerFirmByIdApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
         }
 
         #endregion
@@ -162,7 +182,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task DeleteHousing(int id, [Required] int brokerFirmId)
         {
-            return _httpClient.DeleteAsync($"{HousingApiEndPoint}/{id}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
+            return _httpClient.DeleteAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
         }
 
         /// <summary>
@@ -176,7 +196,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="includeImageData"></param>
         public Task<HousingDto?> GetHousingById([Required] int id, [Required] int brokerFirmId)
         {
-            return _httpClient.GetFromJsonAsync<HousingDto>($"{HousingApiEndPoint}/{id}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
+            return _httpClient.GetFromJsonAsync<HousingDto>($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
         }
 
         /// <summary>
@@ -202,7 +222,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task UpdateHousing([Required] int id, [Required] int brokerFirmId, [Required] UpdateHousingDto housing)
         {
-            return _httpClient.PutAsJsonAsync($"{HousingApiEndPoint}/{id}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", housing);
+            return _httpClient.PutAsJsonAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", housing);
         }
 
         #endregion
@@ -226,7 +246,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 new KeyValuePair<string, string>("housingId", housingId.ToString())
             };
 
-            return _httpClient.DeleteAsync($"{HousingImageApiEndPoint}/{id}/{BuildQueryString(queries)}");
+            return _httpClient.DeleteAsync($"{HousingImageByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString(queries)}");
         }
 
         /// <summary>

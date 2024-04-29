@@ -1,26 +1,25 @@
-﻿/*==================================================*/
-/* Global Variables                                 */
-/*==================================================*/
+﻿/*===========================================================*/
+/* Global Variables Example for overriding stiles in app.css */
+/*===========================================================*/
+/*
 :root {
 
-    /* The default box shadow */
-    --default-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.2);
+    The default box shadow
+    --image-slider-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.2);
 
-    /* The element overlay color */
-    --element-overlay-color: #df540f;
+    The image slider button
+    --image-slider-button-color: #68767b;
+    --image-slider-button-hover-background-color: #e3e3e3;
 
-    /* The image slider button */
-    --image-slider-button-color: var(--default-orange-color);
-    --image-slider-button-hover-background-color: #adadad;
-
-    /* The image slider navigational dot */
-    --image-slider-nav-dot-color:var(--default-orange-color);
+    The image slider navigational dot
+    --image-slider-nav-dot-color: #e3e3e3;
     --image-slider-nav-dot-hover-color: #68767b;
 
-     /* The image slider caption */
+     The image slider caption
     --image-slider-slide-caption-color: white;
-    --image-slider-slide-caption-background-color: var(--default-orange-color);
+    --image-slider-slide-caption-background-color: #68767b;
 }
+*/
 
 /*==================================================*/
 /* Image Slideshow                                  */
@@ -63,32 +62,24 @@
 .image-slideshow-container .image-slide
 {
     border-radius: 10px;
-    box-shadow: var(--default-box-shadow);
-    display: none;
+    box-shadow: var(--image-slider-box-shadow, 0px 0px 4px 0px rgba(0, 0, 0, 0.2));
 }
-
-/* Slideshow container - Image slide - Active */
-.image-slideshow-container .image-slide.active
-{
-    display: block;
-}
-
 
 /* Slideshow container - Image slide - Caption */
 .image-slideshow-container .image-slide .image-slide-caption
 {
-    background-color: var(--image-slider-slide-caption-background-color);
+    background-color: var(--image-slider-slide-caption-background-color, #68767b);
 	text-align: center;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
-	color: var(--image-slider-slide-caption-color);
+	color: var(--image-slider-slide-caption-color, white);
 }
 
 
 /* Slideshow container - Image slide - Buttons */
 .image-slideshow-container :is(.previous-slider-button, .next-slider-button)
 {
-    color: var(--image-slider-button-color);
+    color: var(--image-slider-button-color, #68767b);
     font-size: larger;
     font-weight: bold;
     border-radius: 10px;
@@ -97,6 +88,7 @@
     padding: 1rem;
     position: absolute;
     top: 50%;
+    text-decoration: none;
     transition: 0.6s ease;
     user-select: none;
     width: auto;
@@ -105,7 +97,8 @@
 /* Slideshow container - Image slide - Buttons - Hover */
 .image-slideshow-container :is(.previous-slider-button, .next-slider-button):hover
 {
-   background-color: var(--image-slider-button-hover-background-color);
+   background-color: var(--image-slider-button-hover-background-color, #e3e3e3);
+   color: black;
 }
 
 /* Slideshow container - Image slide - Next button */
@@ -121,8 +114,7 @@
   height: 15px;
   width: 15px;
   margin: 0 2px;
-  background-color: #bbb;
-  background-color: var(--image-slider-nav-dot-color);
+  background-color: var(--image-slider-nav-dot-color, #e3e3e3);
   border-radius: 50%;
   display: inline-block;
   transition: background-color 0.6s ease;
@@ -131,6 +123,5 @@
 /* Slideshow container - Navigation dots - Hover */
 .image-slideshow-container :is(.navigation-dot.active, .navigation-dot:hover)
 {
-    background-color: #717171;
-    background-color: var(--image-slider-nav-dot-hover-color);
+    background-color: var(--image-slider-nav-dot-hover-color, #68767b);
 }

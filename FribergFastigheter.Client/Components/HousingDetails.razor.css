@@ -1,0 +1,10 @@
+﻿/* Tiled Image Gallery - Image */
+.tiled-image-gallery img {
+        object-fit: cover;
+}
+
+/* Inactive links */
+.inactive-link {
+    pointer-events: none;
+    cursor: default;
+}

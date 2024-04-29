@@ -1,0 +1,10 @@
+﻿/* Card - Hover */
+.card:hover, card:focus {
+    background-color: #dbdbdb;
+}
+
+/* Inactive links */
+.inactive-link {
+    pointer-events: none;
+    cursor: default;
+}

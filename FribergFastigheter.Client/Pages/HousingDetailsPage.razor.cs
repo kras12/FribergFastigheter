@@ -13,7 +13,7 @@ namespace FribergFastigheter.Client.Pages
         #region Fields
 
         /// <summary>
-        /// The housing view model.
+        /// The housing object.
         /// </summary>
         private HousingViewModel? _housingViewModel = null;
 
@@ -61,7 +61,11 @@ namespace FribergFastigheter.Client.Pages
             if (result != null)
             {
                 _housingViewModel = AutoMapper.Map<HousingViewModel>(result);
-            }
+
+				// TODO - Find a better way to retrieve the URLS
+				_housingViewModel.Broker.Url = $"Broker/{_housingViewModel.Broker.BrokerId}";
+				_housingViewModel.Broker.BrokerFirm.Url = $"BrokerFirm/{_housingViewModel.Broker.BrokerFirm.BrokerFirmId}";
+			}
         }
 
         #endregion
