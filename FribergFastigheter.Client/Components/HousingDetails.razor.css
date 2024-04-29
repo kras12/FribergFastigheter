@@ -5,6 +5,7 @@
 
 /* Inactive links */
 .inactive-link {
-    pointer-events: none;
     cursor: default;
+    pointer-events: none;    
+    text-decoration: none;
 }
