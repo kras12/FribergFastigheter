@@ -2,7 +2,7 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
-<div class="card full-width">
+<div class="card w-100">
     <div class="card-header d-flex flex-row justify-content-center">Skapa mäklare</div>
     <div class="card-body">
         <EditForm Model="CreateHousingInput" OnValidSubmit="OnValidSubmit">
@@ -84,7 +84,7 @@
                     <label>Bilder</label>
                     <InputFile OnChange="OnFileUploadChanged" multiple></InputFile>
                 </div>
-                <div class="d-flex flex-row justify-content-center">
+                <div class="d-flex flex-row justify-content-center gap-3">
                     <button class="btn btn-primary">Skapa</button>
                     <button class="btn btn-warning" @onclick="@(() => OnCancelCreateHousingButtonClicked())">Avbryt</button>
                 </div>
