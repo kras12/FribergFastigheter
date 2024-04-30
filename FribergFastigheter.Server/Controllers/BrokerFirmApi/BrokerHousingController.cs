@@ -36,15 +36,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         private readonly IHousingRepository _housingRepository;
 
         /// <summary>
-        /// The injected Auto Mapper.
-        /// </summary>
-        private readonly IMapper _mapper;
-
-        /// <summary>
         /// The injected imageService properties.
         /// </summary>
         private readonly IImageService _imageService;
 
+        /// <summary>
+        /// The injected Auto Mapper.
+        /// </summary>
+        private readonly IMapper _mapper;
 		#endregion
 
 		#region Constructors
@@ -169,6 +168,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
 		/// <summary>
+        /// An API endpoint for fetching all housing categories.
+        /// </summary>
+        /// <returns>An embedded collection of <see cref="HousingCategoryDto"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [HttpGet("Category")]
+        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<HousingCategoryDto>>> GetCategories()
+        {
+            return Ok(_mapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories()));
+        }
+
+		/// <summary>
 		/// An API endpoint for retrieving housing objects being handled by a broker.
 		/// </summary>
 		/// <param name="brokerId">The ID of the broker.</param>
@@ -194,6 +206,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		}
 
 		/// <summary>
+        /// An API endpoint for fetching all municipalities.
+        /// </summary>
+        /// <returns>An embedded collection of <see cref="MunicipalityDto"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [HttpGet("Municipality")]
+        [ProducesResponseType<MunicipalityDto>(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<MunicipalityDto>>> GetMunicipalities()
+        {
+            return Ok(_mapper.Map<List<MunicipalityDto>>(await _housingRepository.GetMunicipalities()));
+        }
+
+        /// <summary>
 		/// An API endpoint for creating housing objects. 
 		/// </summary>
 		/// param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
