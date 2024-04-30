@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 
 namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
@@ -174,12 +175,20 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm that the housing belongs to.</param>
         /// <param name="housing">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
+        /// <returns>A <see cref="Task"/> containg a <see cref="HousingDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task CreateHousing([Required] int brokerFirmId, [Required] CreateHousingDto housing)
+        public async Task<HousingDto?> CreateHousing([Required] int brokerFirmId, [Required] CreateHousingDto housing)
         {
-            return _httpClient.PostAsJsonAsync($"{HousingApiEndPoint}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", housing);
+            List<KeyValuePair<string, string>> queries = new()
+            {
+                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
+                new KeyValuePair<string, string>("returnCreatedHousing", true.ToString())
+            };
+
+            var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint}/{BuildQueryString(queries)}", housing);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<HousingDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
         /// <summary>
