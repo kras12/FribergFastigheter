@@ -27,6 +27,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         #region Fields
 
         /// <summary>
+        /// The injected Auto Mapper.
+        /// </summary>
+        private readonly IMapper _autoMapper;
+
+        /// <summary>
         /// The injected housing repository.
         /// </summary>
         private readonly IHousingRepository _housingRepository;
@@ -45,10 +50,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         /// <param name="housingRepository">The injected housing repository.</param>
         /// <param name="imageService">The injected imageService properties.</param>
-        public BrokerHousingImageController(IHousingRepository housingRepository, IImageService imageService)
+        /// <param name="autoMapper"The injected Auto Mapper.></param>
+        public BrokerHousingImageController(IHousingRepository housingRepository, IImageService imageService, IMapper autoMapper)
         {
             _housingRepository = housingRepository;
             _imageService = imageService;
+            _autoMapper = autoMapper;
         }
 
         #endregion
@@ -166,32 +173,35 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
-        /// <param name="newFiles">A collection of uploaded image files.</param>
+        /// <param name="files">A collection of uploaded image files.</param>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         [HttpPost]
-        [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Post([Required] int brokerFirmId, [Required] int housingId, IFormFileCollection newFiles)
+        public async Task<ActionResult> Post([Required] int brokerFirmId, [Required] int housingId, [FromForm] IFormFileCollection files)
         {
             if (!await _housingRepository.IsOwnedByBrokerFirm(housingId, brokerFirmId))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
             }
-            else if (newFiles.Count == 0)
+            else if (files.Count == 0)
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "No files were submitted."));
             }
 
-            List<Image> newImages = new();
+            List<Image> imageEntities = new();
 
-            foreach (var file in newFiles)
+            foreach (var file in files)
             {
-                newImages.Add(new Image(await _imageService.SaveImageToDiskAsync(file)));
+                imageEntities.Add(new Image(await _imageService.SaveImageToDiskAsync(file)));
             }
 
-            await _housingRepository.AddImages(housingId, newImages);
-            return Ok();
+            await _housingRepository.AddImages(housingId, imageEntities);
+            var imageDtos = _autoMapper.Map<List<ImageDto>>(imageEntities);
+            _imageService.PrepareDto(HttpContext, imageDtos);
+
+            return Ok(imageDtos);
         }		
 
         #endregion
