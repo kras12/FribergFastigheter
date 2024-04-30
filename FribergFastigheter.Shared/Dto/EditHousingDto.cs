@@ -7,7 +7,7 @@ namespace FribergFastigheter.Shared.Dto
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class UpdateHousingDto : HousingBaseDto
+    public class EditHousingDto : HousingBaseDto
     {
         #region Properties
 

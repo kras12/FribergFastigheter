@@ -147,7 +147,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UpdateHousing([Required] int id, [Required] int brokerFirmId, [Required] UpdateHousingDto housing);
+        public Task UpdateHousing([Required] int id, [Required] int brokerFirmId, [Required] EditHousingDto housing);
 
         #endregion
 

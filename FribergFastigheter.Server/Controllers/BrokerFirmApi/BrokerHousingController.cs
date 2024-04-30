@@ -262,7 +262,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		[HttpPut("{id:int}")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Put([Required] int id, [Required] int brokerFirmId, [FromBody] UpdateHousingDto updateHousingDto)
+		public async Task<ActionResult> Put([Required] int id, [Required] int brokerFirmId, [FromBody] EditHousingDto updateHousingDto)
         {
             if (id != updateHousingDto.HousingId || !await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
