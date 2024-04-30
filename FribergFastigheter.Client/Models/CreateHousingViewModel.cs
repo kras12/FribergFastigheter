@@ -14,22 +14,34 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The ID of the broker associated with the housing object.
         /// </summary>
-        public int BrokerId { get; set; }
+        public int BrokerFirmId { get; set; }
 
         /// <summary>
         /// The ID of the broker associated with the housing object.
         /// </summary>
-        public int BrokerFirmId { get; set; }
+        public int BrokerId { get; set; }
 
         /// <summary>
-        /// The ID of the category associated with the housing object.
+        /// A collection of housing categories to choose from.
         /// </summary>
-        public int CategoryId { get; set; }
+        public List<HousingCategoryViewModel> HousingCategories { get; set; } = new();
 
         /// <summary>
-        /// The ID of the municipality associated with the housing object.
+        /// A collection of municipalitites to choose from.
         /// </summary>
-        public int MunicipalityId { get; set; }
+        public List<MunicipalityViewModel> Municipalities { get; set; } = new();
+
+        /// <summary>
+        /// The ID of the category selected for the new housing object.
+        /// </summary>
+        [Required]
+        public int SelectedCategoryId { get; set; }
+
+        /// <summary>
+        /// The ID of the municipality elected for the new housing object.
+        /// </summary>
+        [Required]
+        public int SelectedMunicipalityId { get; set; }
 
         #endregion
     }
