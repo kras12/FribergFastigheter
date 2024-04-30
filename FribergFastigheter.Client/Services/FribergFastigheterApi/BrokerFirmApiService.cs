@@ -71,7 +71,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string HousingsByBrokerApiEndpoint = $"api/BrokerFirm/Housing/Broker/{IdPlaceHolder}/Housing";
 
-        #endregion
         /// <summary>
 		/// The relative municipality list API endpoint address.
 		/// </summary>
