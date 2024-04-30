@@ -183,6 +183,12 @@ label {
     height: 20px;
 }
 
+/* Broker Firm Logotype */
+.broker-firm-logotype-big {
+    height: 100px;
+    object-fit:contain
+}
+
 /* Image */
 img
 {

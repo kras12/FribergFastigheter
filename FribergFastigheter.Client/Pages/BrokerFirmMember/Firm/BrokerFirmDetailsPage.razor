@@ -1,0 +1,19 @@
+﻿@page "/brokermember/brokerfirm/{id:int}"
+@using FribergFastigheter.Client.Components
+
+@if(BrokerFirm != null)
+{
+    <FribergFastigheter.Client.Components.BrokerFirmDetails BrokerFirm="BrokerFirm" />
+    <div class="text-center">
+    <button class="center" @onclick="@(() => OpenBrokerList())">Alla mäklare som jobbar för @BrokerFirm.Name</button>
+    <button class="center" @onclick="@(() => OpenHousingList())">Alla hus objekt @BrokerFirm.Name har ute just nu</button>
+    </div>
+    @if(IsBrokerListorHousingListActive == false)
+    {
+        <FribergFastigheter.Client.Components.HousingList Housings="Housings" />
+    }
+    else
+    {
+        <FribergFastigheter.Client.Components.BrokerList Brokers="Brokers" />
+    }
+}
