@@ -20,5 +20,7 @@ namespace FribergFastigheter.Server.Services
         void PrepareDto(HttpContext httpContext, List<HousingDto> housings);
 		void PrepareDto(HttpContext httpContext, BrokerFirmDto brokerFirm);
 		void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms);
-	}
+        void PrepareDto(HttpContext httpContext, List<ImageDto> images);
+        void PrepareDto(HttpContext httpContext, ImageDto image);
+    }
 }
