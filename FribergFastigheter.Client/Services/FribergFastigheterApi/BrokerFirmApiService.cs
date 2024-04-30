@@ -193,7 +193,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 new KeyValuePair<string, string>("returnCreatedHousing", true.ToString())
             };
 
-            var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint}/{BuildQueryString(queries)}", housing);
+            var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint.Replace(IdPlaceHolder, housing.BrokerFirmId.ToString())}/{BuildQueryString(queries)}", housing);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<HousingDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
