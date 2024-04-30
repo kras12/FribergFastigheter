@@ -45,6 +45,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         {
             #region Checks
 
+
             if (queries.Any(x => string.IsNullOrEmpty(x.Key) || string.IsNullOrEmpty(x.Value)))
             {
                 throw new ArgumentException("The query collection contains invalid parameters.", nameof(queries));

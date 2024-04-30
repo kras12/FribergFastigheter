@@ -1,48 +1,8 @@
 ﻿@page "/brokermember/broker/list"
+@using FribergFastigheter.Client.Components
 
-<div class="vertical-page-container">
+@if (Brokers != null && BrokerFirm != null)
+{
+    <FribergFastigheter.Client.Components.BrokerList BrokerFirm="BrokerFirm" Brokers="Brokers" />
+}
 
-    <div class="d-flex flex-row full-width justify-content-between">
-        <div></div>
-        <div><h2>Mäklare</h2></div>
-        <div>
-            @if(BrokerFirm != null && BrokerFirm.Logotype != null)
-            {
-                <img src="@BrokerFirm.Logotype.Url" />
-            }
-            
-        </div>
-    </div>
-
-<div class="broker-list">
-    @if(BrokerList.Count > 0)
-        {
-            @foreach (var broker in BrokerList)
-                {
-                    <div class="broker-card">
-                    <a href="/brokermember/broker/@broker.BrokerId">
-                        <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
-                        </a>
-                        <div class="broker-info">
-                        <a href="/brokermember/broker/@broker.BrokerId">
-                                <h4>@broker.FirstName @broker.LastName</h4>
-                            </a>
-                            <h5>
-                                Mäklarbyrå: @broker.BrokerFirm.Name
-                            </h5>
-                            <h5>
-                                Telefonnummer: @broker.PhoneNumber
-                            </h5>
-                            <h5>
-                                Email: @broker.Email
-                            </h5>
-                        </div>
-                     </div>
-                }
-        }
-        else
-        {
-            <p>Kan inte hitta några mäklare.</p>
-        }
-    </div>
-</div>

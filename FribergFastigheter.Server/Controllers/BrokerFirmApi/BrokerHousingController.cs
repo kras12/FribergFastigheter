@@ -171,21 +171,39 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		[HttpGet("Broker/{brokerId:int}/Housing")]
-		[ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
+		[ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<HousingSearchResultDto>> GetHousingsByBrokerId([Required] int brokerId, [Required] int brokerFirmId)
+		public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerId([Required] int brokerId, [Required] int brokerFirmId, int? limitImagesPerHousing = null)
 		{
 			if (! await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId))
 			{
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
 			}
 
-			var result = new HousingSearchResultDto();
-			result.Housings = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerId(brokerId));
-			_imageService.PrepareDto(HttpContext, result.Housings);
+			
+			List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerId(brokerId, limitImagesPerHousing));
+			_imageService.PrepareDto(HttpContext, result);
 
 			return Ok(result);
 		}
+
+        /// <summary>
+        /// An API endpoint for retrieving housing objects being handled by a brokerfirm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+        /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
+        [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerFirmId([Required] int brokerFirmId, int? limitImagesPerHousing = null)
+        {
+            List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerFirmId(brokerFirmId, limitImagesPerHousing));
+            _imageService.PrepareDto(HttpContext, result);
+
+            return Ok(result);
+        }
 
         /// <summary>
         /// An API endpoint for fetching all municipalities.

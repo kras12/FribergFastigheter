@@ -1,7 +1,9 @@
 ﻿using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
@@ -123,10 +125,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// Fetches data for housing objects. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects.</returns>
+        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<List<HousingDto>> GetHousings([Required] int brokerFirmId);
+        public Task<List<HousingDto>?> GetHousings([Required] int brokerFirmId, int? limitImagesPerHousing = null);
 
         /// <summary>
         /// Fetches all municipalities.
@@ -172,6 +174,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         public Task UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles);
+        Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int brokerFirmId, int? limitImagesPerHousing = null);
 
         #endregion
     }

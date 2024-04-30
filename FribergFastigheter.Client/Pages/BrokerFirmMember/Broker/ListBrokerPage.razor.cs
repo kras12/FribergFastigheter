@@ -19,7 +19,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         
         public int BrokerFirmId { get; set; } = 1;
         public BrokerFirmSummaryViewModel BrokerFirm { get; set; }
-        public List<BrokerViewModel> BrokerList { get; set; } = new List<BrokerViewModel>();
+        public List<BrokerViewModel> Brokers { get; set; } = new List<BrokerViewModel>();
         [Inject]
         public IBrokerFirmApiService BrokerFirmApiService { get; set; }
         [Inject]
@@ -47,7 +47,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         { 
             List<BrokerViewModel> result = (await BrokerFirmApiService.GetBrokers(BrokerFirmId))
                 .Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
-            BrokerList = result;
+            Brokers = result;
 
             BrokerFirm = Mapper.Map<BrokerFirmSummaryViewModel>(await BrokerFirmApiService.GetBrokerFirmById(BrokerFirmId));      
         }

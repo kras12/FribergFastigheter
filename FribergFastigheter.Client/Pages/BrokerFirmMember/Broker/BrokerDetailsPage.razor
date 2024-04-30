@@ -3,5 +3,10 @@
 
 @if(Broker != null)
 {
-    <FribergFastigheter.Client.Components.BrokerDetails Broker="Broker" />
+    <FribergFastigheter.Client.Components.BrokerDetails Broker="Broker" /> 
 }
+@if(Housings != null)
+{
+    <FribergFastigheter.Client.Components.HousingList Housings="Housings" />
+}
+
