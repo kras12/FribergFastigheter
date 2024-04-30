@@ -324,10 +324,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <param name="newFiles">A collection of files to upload.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles)
+        public async Task<List<ImageDto>> UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles)
         {
             if (newFiles.Count == 0)
             {
@@ -344,10 +344,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             foreach (var file in newFiles)
             {
-                content.Add(new StreamContent(file.OpenReadStream()), "Images", file.Name);
+                content.Add(new StreamContent(file.OpenReadStream()), "files", file.Name);
             }
 
-            return _httpClient.PostAsync($"{HousingImageApiEndPoint}/{BuildQueryString(queries)}", content);
+            var response = await _httpClient.PostAsync($"{HousingImageApiEndPoint}/{BuildQueryString(queries)}", content);
+            response.EnsureSuccessStatusCode();
+            return (await response.Content.ReadFromJsonAsync<List<ImageDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }))!;
         }
 
         #endregion
