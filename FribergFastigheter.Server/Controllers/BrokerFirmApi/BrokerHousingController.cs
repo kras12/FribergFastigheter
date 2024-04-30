@@ -170,7 +170,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		[HttpGet("/Broker/{brokerId:int}/Housing")]
+		[HttpGet("Broker/{brokerId:int}/Housing")]
 		[ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<HousingSearchResultDto>> GetHousingsByBrokerId([Required] int brokerId, [Required] int brokerFirmId)
