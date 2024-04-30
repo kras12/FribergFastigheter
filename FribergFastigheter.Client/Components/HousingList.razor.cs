@@ -40,11 +40,10 @@ namespace FribergFastigheter.Client.Components
         /// <summary>
         /// Scrolls to the element.
         /// </summary>
-        /// <param name="createdHousing"></param>
-        public void ScrollToElement(HousingViewModel createdHousing)
+        /// <param name="housing">The housing object to scroll to.</param>
+        public void ScrollToElement(HousingViewModel housing)
         {
-            _scrollToELementId = $"HousingListItem-{createdHousing.HousingId}";
-            StateHasChanged();
+            _scrollToELementId = $"HousingListItem-{housing.HousingId}";
         }
 
         /// <summary>
