@@ -187,14 +187,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			return Ok(result);
 		}
 
-        /// <summary>
-        /// An API endpoint for retrieving housing objects being handled by a brokerfirm.
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-        /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
-        /// <!-- Author: Jimmie, Marcus -->
-        /// <!-- Co Authors: -->
-        [HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
+		/// <summary>
+		/// An API endpoint for retrieving housing objects being handled by a brokerfirm.
+		/// </summary>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
+		/// <!-- Author: Jimmie, Marcus -->
+		/// <!-- Co Authors: -->
+		[HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
         [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerFirmId([Required] int brokerFirmId, int? limitImagesPerHousing = null)
@@ -218,17 +218,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             return Ok(_mapper.Map<List<MunicipalityDto>>(await _housingRepository.GetMunicipalities()));
         }
 
-        /// <summary>
-        /// An API endpoint for creating housing objects. 
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-        /// <param name="newHousingDto">The serialized input data.</param>
-        /// <param name="returnCreatedHousing">True to return the created housing object.</param>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        [HttpPost]
+		/// <summary>
+		/// An API endpoint for creating housing objects. 
+		/// </summary>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+		/// <param name="newHousingDto">The serialized input data.</param>
+		/// <param name="returnCreatedHousing">True to return the created housing object.</param>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		[HttpPost("BrokerFirm/{brokerFirmId:int}/Housing")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status201Created)]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]        
 		public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateHousingDto newHousingDto, bool returnCreatedHousing)
         {
 			if (brokerFirmId != newHousingDto.BrokerFirmId)
