@@ -30,6 +30,11 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         private HousingList _housingListComponent;
 
         /// <summary>
+        /// Returns true if the create housing component is shown.
+        /// </summary>
+        private bool _isCreatingHousing = false;
+
+        /// <summary>
         /// A collection of housing objects to show in the listing.
         /// </summary>
         private List<HousingViewModel> _housings = new();
@@ -61,13 +66,30 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         #region Methods
 
         /// <summary>
-        /// Method invoked when the component is ready to start, having received its initial 
-        /// parameters from its parent in the render tree. Override this method if you will 
-        /// perform an asynchronous operation and want the component to refresh when that 
-        /// operation is completed.
+        /// Event handler for when the create housing button is clicke.d
         /// </summary>
-        /// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
-        protected override async Task OnInitializedAsync()
+        private void OnCreateHousingButtonClicked()
+        {
+            _isCreatingHousing = true;
+        }
+
+        /// <summary>
+        /// Event handler for when the housing creation process was cancelled. 
+        /// </summary>
+        private void OnHousingCreationCancelled()
+        {
+            _isCreatingHousing = false;
+            _housingListComponent.ScrollToFirstElement();
+		}
+
+		/// <summary>
+		/// Method invoked when the component is ready to start, having received its initial 
+		/// parameters from its parent in the render tree. Override this method if you will 
+		/// perform an asynchronous operation and want the component to refresh when that 
+		/// operation is completed.
+		/// </summary>
+		/// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
+		protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
             _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(_brokerFirmId, limitImagesPerHousing: 3));
@@ -80,17 +102,9 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         private void OnHousingCreated(HousingViewModel createdHousing)
         {
             _housings.Add(createdHousing);
+            _isCreatingHousing = false;
             _housingListComponent.ScrollToElement(createdHousing);
         }
-
-		/// <summary>
-		/// Event handler for the on house edited event. 
-		/// </summary>
-		/// <param name="editedHousing">The edtied housing object.</param>
-		private void OnHousingEdited(HousingViewModel editedHousing)
-		{
-			_housingListComponent.ScrollToElement(editedHousing);
-		}
 
 		#endregion
 	}

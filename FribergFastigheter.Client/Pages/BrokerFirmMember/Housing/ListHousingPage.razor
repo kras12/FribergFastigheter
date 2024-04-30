@@ -2,13 +2,13 @@
 @using FribergFastigheter.Client.Components
 
 <div class="vertical-page-container">
-	<CreateHousing BrokerFirmId="_brokerFirmId" BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated"></CreateHousing>
-	
-	@if (_housings.Count > 0)
-	{
-		<EditHousing Housing="_housings.Last()" OnHousingEdited="OnHousingEdited"></EditHousing>
-	}	
-
-	<HousingList @ref="_housingListComponent" Housings="_housings"></HousingList>
+	<div hidden="@(!_isCreatingHousing)" class="vertical-page-section">
+		<CreateHousing BrokerFirmId="_brokerFirmId" BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
+	</div>
+	<div hidden="@_isCreatingHousing" class="vertical-page-section">
+		<div class="d-flex flex-row justify-content-center">
+			<button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
+		</div>
+		<HousingList @ref="_housingListComponent" Housings="_housings"></HousingList>
+	</div>	
 </div>
-

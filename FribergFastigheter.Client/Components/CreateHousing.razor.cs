@@ -68,6 +68,12 @@ namespace FribergFastigheter.Client.Components
         [Parameter]
         public EventCallback<HousingViewModel> OnHousingCreated { get; set; }
 
+        /// <summary>
+        /// Event that is triggered when a the housing creation was cancelled. 
+        /// </summary>
+        [Parameter]
+        public EventCallback OnHousingCreationCancelled { get; set; }
+
         #endregion
 
         #region Methods
@@ -112,6 +118,15 @@ namespace FribergFastigheter.Client.Components
                        CreateHousingInput.SelectedMunicipalityId = CreateHousingInput.Municipalities.First().MunicipalityId;
                    }
                });
+        }
+
+        /// <summary>
+        /// Event handler for when the cancel housing creation button was clicked. 
+        /// </summary>
+        /// <returns></returns>
+        private Task OnCancelCreateHousingButtonClicked()
+        {
+            return OnHousingCreationCancelled.InvokeAsync(null);
         }
 
         /// <summary>

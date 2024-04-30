@@ -47,6 +47,17 @@ namespace FribergFastigheter.Client.Components
         }
 
         /// <summary>
+		/// Scrolls to the first element.
+		/// </summary>
+		public void ScrollToFirstElement()
+		{
+            if (Housings.Count > 0)
+            {
+                ScrollToElement(Housings.First());
+			}
+		}
+
+		/// <summary>
         /// Method invoked after each time the component has been rendered interactively
         /// and the UI has finished updating (for example, after elements have been added
         /// to the browser DOM). Any Microsoft.AspNetCore.Components.ElementReference fields
