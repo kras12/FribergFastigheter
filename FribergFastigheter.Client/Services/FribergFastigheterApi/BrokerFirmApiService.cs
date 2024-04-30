@@ -266,15 +266,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Updates a housing object.
         /// </summary>
-        /// <param name="id">The ID of the housing object to update.</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
         /// <param name="housing">The serialized DTO object to send.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UpdateHousing([Required] int id, [Required] int brokerFirmId, [Required] EditHousingDto housing)
+        public Task UpdateHousing([Required] EditHousingDto housing)
         {
-            return _httpClient.PutAsJsonAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", housing);
+            return _httpClient.PutAsJsonAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, housing.HousingId.ToString())}{BuildQueryString("brokerFirmId", housing.BrokerFirmId.ToString())}", housing);
         }
 
         /// <summary>
