@@ -103,6 +103,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         public Task DeleteHousing(int id, [Required] int brokerFirmId);
 
         /// <summary>
+		/// Fetches housing objects that is being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
+		public Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int brokerFirmId, int? limitImagesPerHousing = null);
+
+        /// <summary>
         /// Fetches data for a housing object.
         /// </summary>
         /// <param name="id">The ID of the housing to fetch.</param>
