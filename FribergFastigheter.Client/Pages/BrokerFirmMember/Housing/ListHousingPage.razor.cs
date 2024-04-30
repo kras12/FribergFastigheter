@@ -70,7 +70,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(_brokerFirmId));
+            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(_brokerFirmId, limitImagesPerHousing: 3));
         }
 
         /// <summary>
