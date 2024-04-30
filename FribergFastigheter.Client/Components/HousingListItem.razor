@@ -1,7 +1,6 @@
 ﻿@using FribergFastigheter.Client.HelperClasses
 <!-- Author: Jimmie -->
 <!-- Co Authors: -->
-
 @{
     string linkUrl = !string.IsNullOrEmpty(Housing.Url) ? Housing.Url : "";
     string linkClass = !string.IsNullOrEmpty(Housing.Url) ? "" : "inactive-link";
@@ -27,52 +26,63 @@
     else
     {
         <a id="@elementId" href="@linkUrl" class="@linkClass">
-        <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
-            @foreach (var image in Housing.Images)
-            {
-                <img class="housing-image" src="@image.Url" />
-            }
-        </div>
-        <div class="card-header full-width">
-            <div class="card-title display-4 text-center">@(StringFormatHelper.FormatPrice(Housing.Price))</div>
-            <div class="card-subtitle display-6 text-center text-muted mb-2">@Housing.Address</div>
-            <div class="card-subtitle display-6 text-center text-muted mb-2">@Housing.Municipality.MunicipalityName</div>
-            <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width fs-5">
-                <span>Boyta: @Housing.LivingArea</span>
-                @if (Housing.RoomCount != null)
+            <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
+                @for (int i = 0; i < Housing.Images.Count; i++)
                 {
-                    <span>Antal rum: @Housing.RoomCount</span>
-                }
-                @if (Housing.AncillaryArea != null)
-                {
-                    <span>Övrig yta: @Housing.AncillaryArea</span>
-                }
-                @if (Housing.LandArea != null)
-                {
-                    <span>Landyta: @Housing.LandArea</span>
-                }
-                @if (Housing.BuildYear != null)
-                {
-                    <span>Byggår: @Housing.BuildYear</span>
-                }
-                @if (Housing.MonthlyFee != null)
-                {
-                    <span>Månadskostnad: @StringFormatHelper.FormatPrice(@Housing.MonthlyFee.Value)</span>
-                }
-                @if (Housing.YearlyRunningCost != null)
-                {
-                    <span>Årlig kostnad: @StringFormatHelper.FormatPrice(@Housing.YearlyRunningCost.Value)</span>
+                    string className = "";
+
+                    if (i == 1)
+                    {
+                        className = "d-none d-md-none d-lg-block d-xl-block";
+                    }
+                    else if (i > 1)
+                    {
+                        className = "d-none d-xxl-block";
+                    }
+
+                    <img class="housing-image @(className)" src="@Housing.Images[i].Url" />
                 }
             </div>
-        </div>
-        <div class="card-body">
-            <p class="card-text">
-                @Housing.GetTruncatedDescription(300)
-            </p>
-        </div>
+            <div class="card-header full-width">
+                <div class="card-title display-4 text-center">@(StringFormatHelper.FormatPrice(Housing.Price))</div>
+                <div class="card-subtitle display-6 text-center text-muted mb-2">@Housing.Address</div>
+                <div class="card-subtitle display-6 text-center text-muted mb-2">@Housing.Municipality.MunicipalityName</div>
+                <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width fs-5">
+                    <span>Boyta: @Housing.LivingArea</span>
+                    @if (Housing.RoomCount != null)
+                    {
+                        <span>Antal rum: @Housing.RoomCount</span>
+                    }
+                    @if (Housing.AncillaryArea != null)
+                    {
+                        <span>Övrig yta: @Housing.AncillaryArea</span>
+                    }
+                    @if (Housing.LandArea != null)
+                    {
+                        <span>Landyta: @Housing.LandArea</span>
+                    }
+                    @if (Housing.BuildYear != null)
+                    {
+                        <span>Byggår: @Housing.BuildYear</span>
+                    }
+                    @if (Housing.MonthlyFee != null)
+                    {
+                        <span>Månadskostnad: @StringFormatHelper.FormatPrice(@Housing.MonthlyFee.Value)</span>
+                    }
+                    @if (Housing.YearlyRunningCost != null)
+                    {
+                        <span>Årlig kostnad: @StringFormatHelper.FormatPrice(@Housing.YearlyRunningCost.Value)</span>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    @Housing.GetTruncatedDescription(300)
+                </p>
+            </div>        
         </a>
         <div class="card-footer d-flex flex-row justify-content-center gap-3">
             <button type="button" class="btn btn-primary" @onclick="@(() => OnEditHousingButtonClicked())">Redigera</button>
         </div>
     }
-    </div>
+</div>
