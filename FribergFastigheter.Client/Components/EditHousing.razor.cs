@@ -66,6 +66,12 @@ namespace FribergFastigheter.Client.Components
         /// Event that is triggered when a housing object has been edited. 
         /// </summary>
         [Parameter]
+        public EventCallback<HousingViewModel> OnHousingEditCancelled { get; set; }
+
+        /// <summary>
+        /// Event that is triggered when a housing object has been edited. 
+        /// </summary>
+        [Parameter]
         public EventCallback<HousingViewModel> OnHousingEdited { get; set; }
 
 		#endregion
@@ -129,6 +135,15 @@ namespace FribergFastigheter.Client.Components
         }
 
         /// <summary>
+        /// Event handler for the cancel housing edit button. 
+        /// </summary>
+        /// <returns></returns>
+        private Task OnCancelHousingEditButtonClicked()
+        {
+            return OnHousingEditCancelled.InvokeAsync(Housing);
+        }
+
+        /// <summary>
         /// Method invoked when the component is ready to start, having received its
         /// initial parameters from its parent in the render tree.
         /// </summary>
@@ -165,7 +180,7 @@ namespace FribergFastigheter.Client.Components
             AutoMapper.Map(EditHousingInput!, Housing);
 			Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
 			Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
-            await OnHousingEdited.InvokeAsync(Housing);            
+            await OnHousingEdited.InvokeAsync(Housing);
         }        
 
         #endregion

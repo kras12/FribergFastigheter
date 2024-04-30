@@ -5,10 +5,10 @@
 @{
     string linkUrl = !string.IsNullOrEmpty(Housing.Url) ? Housing.Url : "";
     string linkClass = !string.IsNullOrEmpty(Housing.Url) ? "" : "inactive-link";
-    string linkId = ElementId != null ? ElementId : Guid.NewGuid().ToString();
+    string elementId = ElementId != null ? ElementId : Guid.NewGuid().ToString();
 }
-<a id="@linkId" href="@linkUrl" class="@linkClass">
-    <div class="card">
+<div id="@elementId" class="card">
+    <a href="@linkUrl" class="@linkClass">
         <div class="card-header housing-result-header d-flex flex-row justify-content-between">
             <div>@Housing.Broker.FullName</div>
             <div>@Housing.Category.CategoryName</div>
@@ -19,6 +19,14 @@
                 }
             </div>
         </div>
+    </a>
+    @if (_isInEditMode)
+    {
+        <EditHousing Housing="Housing" OnHousingEdited="OnHousingEdited" OnHousingEditCancelled="OnCancelEditing"></EditHousing>
+    }
+    else
+    {
+        <a id="@elementId" href="@linkUrl" class="@linkClass">
         <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
             @foreach (var image in Housing.Images)
             {
@@ -62,5 +70,9 @@
                 @Housing.GetTruncatedDescription(300)
             </p>
         </div>
+        </a>
+        <div class="card-footer d-flex flex-row justify-content-center gap-3">
+            <button type="button" class="btn btn-primary" @onclick="@(() => OnEditHousingButtonClicked())">Redigera</button>
+        </div>
+    }
     </div>
-</a>
