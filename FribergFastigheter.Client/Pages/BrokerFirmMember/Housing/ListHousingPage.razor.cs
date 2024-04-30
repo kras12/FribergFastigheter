@@ -77,10 +77,10 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         /// Event handler for the on house created event. 
         /// </summary>
         /// <param name="createdHousing"></param>
-        private async Task OnHousingCreated(HousingViewModel createdHousing)
+        private void OnHousingCreated(HousingViewModel createdHousing)
         {
             _housings.Add(createdHousing);
-            await _housingListComponent.ScrollToElement(createdHousing);
+            _housingListComponent.ScrollToElement(createdHousing);
         }        
 
         #endregion
