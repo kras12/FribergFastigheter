@@ -45,10 +45,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         {
             #region Checks
 
-            if (queries.Count == 0)
-            {
-                throw new ArgumentException("The query collection can't be empty", nameof(queries));
-            }
 
             if (queries.Any(x => string.IsNullOrEmpty(x.Key) || string.IsNullOrEmpty(x.Value)))
             {

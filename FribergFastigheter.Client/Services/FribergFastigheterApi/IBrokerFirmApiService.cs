@@ -118,7 +118,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<HousingDto?> GetHousings([Required] int brokerFirmId);
+        public Task<List<HousingDto>?> GetHousings([Required] int brokerFirmId, int? limitImagesPerHousing = null);
 
         /// <summary>
         /// Updates a housing object.
@@ -156,6 +156,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         public Task UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles);
+        Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int brokerFirmId, int? limitImagesPerHousing = null);
 
         #endregion
     }
