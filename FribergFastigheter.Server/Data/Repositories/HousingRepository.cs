@@ -106,9 +106,24 @@ namespace FribergFastigheter.Server.Data.Repositories
 			return result;
 		}
 
-		/// <!-- Author: Marcus, Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<Housing?> GetHousingByIdAsync(int id)
+        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null)
+        {
+            var result = await GetHousingsInternalAsync(brokerFirm:brokerFirmId).ToListAsync();
+
+            // TODO - Look for a more optimized way to fetch a limited number of images
+            if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
+            {
+                result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
+            }
+
+            return result;
+        }
+
+        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<Housing?> GetHousingByIdAsync(int id)
         {
            return await applicationDbContext.Housings
                 .Where(x => x.HousingId == id)
