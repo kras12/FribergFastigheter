@@ -49,10 +49,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// </summary>
 		private const string HousingCategoryListApiEndpoint = "api/BrokerFirm/Housing/Category";
 
-		// <summary>
-		/// The housing image API endpoint address.
-		/// </summary>
-		private const string HousingImageApiEndPoint = "api/BrokerFirm/Housing/Image";
+        // <summary>
+        /// The housing image API endpoint address.
+        /// </summary>
+        private const string HousingImageApiEndPoint = "api/BrokerFirm/Housing/Image";
 
 		// <summary>
 		/// The housing image API endpoint address.
@@ -69,15 +69,15 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// </summary>
 		private const string MunicipalityListApiEndpoint = "api/BrokerFirm/Housing/Municipality";
 
-		#endregion
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="httpClient">The injected HTTP client.</param>
-		public BrokerFirmApiService(HttpClient httpClient) : base(httpClient)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="httpClient">The injected HTTP client.</param>
+        public BrokerFirmApiService(HttpClient httpClient) : base(httpClient)
         {
 
         }
@@ -233,7 +233,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// Fetches data for housing objects. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<List<HousingDto>> GetHousings([Required] int brokerFirmId)
+        {
+            return _httpClient.GetFromJsonAsync<List<HousingDto>>($"{HousingApiEndPoint}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}")!;
+        }
+
         /// <summary>
         /// Fetches all municipalities.
         /// </summary>
