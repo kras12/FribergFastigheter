@@ -14,6 +14,13 @@ namespace FribergFastigheter.Client.Components
     {
         #region Properties
 #pragma warning disable CS8618 
+
+        /// <summary>
+        /// The ID of list element.
+        /// </summary>
+        [Parameter]
+        public string? ElementId { get; set; } = null;
+
         /// <summary>
         /// The housing object to show. 
         /// </summary>

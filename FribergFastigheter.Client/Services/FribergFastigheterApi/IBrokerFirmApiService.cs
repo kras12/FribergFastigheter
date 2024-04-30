@@ -1,7 +1,9 @@
 ﻿using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
@@ -85,10 +87,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm that the housing belongs to.</param>
         /// <param name="housing">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
+        /// <returns>A <see cref="Task"/> containg a <see cref="HousingDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task CreateHousing([Required] int brokerFirmId, [Required] CreateHousingDto housing);
+        public Task<HousingDto?> CreateHousing([Required] int brokerFirmId, [Required] CreateHousingDto housing);
 
         /// <summary>
         /// Deletes a housing object.
@@ -112,6 +114,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         public Task<HousingDto?> GetHousingById([Required] int id, [Required] int brokerFirmId);
 
         /// <summary>
+        /// Fetches all housing categories.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<List<HousingCategoryDto>?> GetHousingCategories();
+
+        /// <summary>
         /// Fetches data for housing objects. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
@@ -119,6 +129,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         public Task<List<HousingDto>?> GetHousings([Required] int brokerFirmId, int? limitImagesPerHousing = null);
+
+        /// <summary>
+        /// Fetches all municipalities.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<List<MunicipalityDto>?> GetMunicipalities();
 
         /// <summary>
         /// Updates a housing object.

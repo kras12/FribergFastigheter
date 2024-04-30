@@ -1,0 +1,15 @@
+﻿/* Vertical page section */
+.vertical-page-section {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    width: 100%;
+}
+
+/* Form */
+form {
+    max-width: 30rem;
+    margin-left: auto;
+    margin-right: auto;
+}

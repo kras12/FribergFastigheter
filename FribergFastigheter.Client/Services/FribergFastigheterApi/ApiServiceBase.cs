@@ -34,10 +34,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #region Methods
 
         /// <summary>
-        /// Builds the query string to send with a request.
+        /// Builds the query string to send with a request. 
         /// </summary>
         /// <param name="queries">A collection of key value pairs for the queries to include.</param>
-        /// <returns>A <see cref="string"/>.</returns>
+        /// <returns>A formatted query <see cref="string"/>, or an empty string if the collection is empty.</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->

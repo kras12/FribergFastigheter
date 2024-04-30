@@ -5,6 +5,16 @@
 
 /* Inactive links */
 .inactive-link {
-    pointer-events: none;
     cursor: default;
+    pointer-events: none;    
+    text-decoration: none;
+}
+
+/* Vertical page section */
+.vertical-page-section {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    width: 100%;
 }

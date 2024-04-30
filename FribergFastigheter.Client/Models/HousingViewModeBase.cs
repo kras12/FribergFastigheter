@@ -15,6 +15,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The address of the housing object.
         /// </summary>
+        [Required]
         public string Address { get; set; } = "";
 
         /// <summary>
@@ -30,6 +31,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The description of the housing object.
         /// </summary>
+        [Required]
         public string Description { get; set; } = "";
 
         /// <summary>
@@ -40,6 +42,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The living area (m2) of the housing object.
         /// </summary>
+        [Required]
         public double LivingArea { get; set; }
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The price of the housing object.
         /// </summary>
+        [Required]
         public decimal Price { get; set; }
 
         /// <summary>

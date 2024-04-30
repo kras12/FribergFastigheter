@@ -52,13 +52,13 @@ namespace FribergFastigheter.Client.Pages
         /// <summary>
         /// The result of the housing search.
         /// </summary>
-        public HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;
+        private HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;
 
         /// <summary>
         /// Binds the input data from the housing search form.
         /// </summary>
         [SupplyParameterFromForm]
-        public HousingSearchInputViewModel HousingSearchFormInput { get; set; } = new();
+        private HousingSearchInputViewModel HousingSearchFormInput { get; set; } = new();
 
         #endregion
 
