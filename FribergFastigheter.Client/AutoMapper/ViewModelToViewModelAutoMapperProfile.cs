@@ -20,7 +20,8 @@ namespace FribergFastigheter.Client.AutoMapper
                 .ForMember(x => x.BrokerFirmId, opt => opt.MapFrom(src => src.Broker.BrokerFirm.BrokerFirmId))
                 .ForMember(x => x.BrokerId, opt => opt.MapFrom(src => src.Broker.BrokerId))
                 .ForMember(x => x.SelectedMunicipalityId, opt => opt.MapFrom(src => src.Municipality.MunicipalityId))
-                .ForMember(x => x.SelectedCategoryId, opt => opt.MapFrom(src => src.Category.HousingCategoryId));
+                .ForMember(x => x.SelectedCategoryId, opt => opt.MapFrom(src => src.Category.HousingCategoryId))
+                .ReverseMap();
         }		
 	}
 }

@@ -76,13 +76,22 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         /// <summary>
         /// Event handler for the on house created event. 
         /// </summary>
-        /// <param name="createdHousing"></param>
+        /// <param name="createdHousing">The new housing object.</param>
         private void OnHousingCreated(HousingViewModel createdHousing)
         {
             _housings.Add(createdHousing);
             _housingListComponent.ScrollToElement(createdHousing);
-        }        
+        }
 
-        #endregion
-    }
+		/// <summary>
+		/// Event handler for the on house edited event. 
+		/// </summary>
+		/// <param name="editedHousing">The edtied housing object.</param>
+		private void OnHousingEdited(HousingViewModel editedHousing)
+		{
+			_housingListComponent.ScrollToElement(editedHousing);
+		}
+
+		#endregion
+	}
 }

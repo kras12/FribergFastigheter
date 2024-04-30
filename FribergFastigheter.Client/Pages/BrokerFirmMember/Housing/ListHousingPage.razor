@@ -3,6 +3,12 @@
 
 <div class="vertical-page-container">
 	<CreateHousing BrokerFirmId="_brokerFirmId" BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated"></CreateHousing>
+	
+	@if (_housings.Count > 0)
+	{
+		<EditHousing Housing="_housings.Last()" OnHousingEdited="OnHousingEdited"></EditHousing>
+	}	
+
 	<HousingList @ref="_housingListComponent" Housings="_housings"></HousingList>
 </div>
 
