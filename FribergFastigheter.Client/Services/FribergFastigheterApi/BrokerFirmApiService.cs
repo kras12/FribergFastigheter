@@ -43,6 +43,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// </summary>
 		private const string HousingByIdApiEndPoint = $"api/BrokerFirm/Housing/{IdPlaceHolder}";
 
+        /// <summary>
+		/// The relative housing category list API endpoint address.
+		/// </summary>
+		private const string HousingCategoryListApiEndpoint = "api/BrokerFirm/Housing/Category";
+
 		// <summary>
 		/// The housing image API endpoint address.
 		/// </summary>
@@ -57,6 +62,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// The ID placeholder used in API endpoint addresses.
 		/// </summary>
 		private const string IdPlaceHolder = "{id}";
+
+        /// <summary>
+		/// The relative municipality list API endpoint address.
+		/// </summary>
+		private const string MunicipalityListApiEndpoint = "api/BrokerFirm/Housing/Municipality";
 
 		#endregion
 
@@ -200,15 +210,30 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         }
 
         /// <summary>
+        /// Fetches all housing categories.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<List<HousingCategoryDto>?> GetHousingCategories()
+        {
+            return await _httpClient.GetFromJsonAsync<List<HousingCategoryDto>>($"{HousingCategoryListApiEndpoint}");
+        }
+
+        /// <summary>
         /// Fetches data for housing objects. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+        /// <summary>
+        /// Fetches all municipalities.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<HousingDto?> GetHousings([Required] int brokerFirmId)
+        public async Task<List<MunicipalityDto>?> GetMunicipalities()
         {
-            return _httpClient.GetFromJsonAsync<HousingDto>($"{HousingApiEndPoint}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
+            return await _httpClient.GetFromJsonAsync<List<MunicipalityDto>>($"{MunicipalityListApiEndpoint}");
         }
 
         /// <summary>
