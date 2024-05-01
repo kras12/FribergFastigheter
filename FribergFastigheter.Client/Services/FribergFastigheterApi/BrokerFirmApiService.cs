@@ -200,7 +200,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Deletes a housing object.
         /// </summary>
-		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing object.</param>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object.</param>
         /// <param name="housingId">The ID of the housing object to fetch images for.</param>
         /// <param name="imageIds">Contains the IDs of the images to delete.</param>
         /// <returns>A <see cref="Task"/>.</returns>
@@ -209,9 +209,9 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         public async Task DeleteHousing([Required] int brokerFirmId, int housingId, List<int> imageIds)
         {
             if (imageIds.Count > 0)
-        {
+            {
                 await DeleteImages(brokerFirmId, housingId, imageIds);
-        }
+            }
 
             await _httpClient.DeleteAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
         }
@@ -302,6 +302,23 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #endregion
 
         #region HousingImageMethods
+
+        /// <summary>
+        /// Fetches all images for a housing object. 
+        /// </summary>
+        /// <param name="brokerFirmId">The broker firm the housing object belongs to.</param>
+        /// <param name="housingId">The ID of the housing object to fetch images for. </param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects.</returns>
+        public Task<List<ImageDto>?> GetImages(int brokerFirmId, int housingId)
+        {
+            List<KeyValuePair<string, string>> queries = new()
+            {
+                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
+                new KeyValuePair<string, string>("housingId", housingId.ToString())
+            };
+
+            return _httpClient.GetFromJsonAsync<List<ImageDto>>($"{HousingImageApiEndPoint}{BuildQueryString(queries)}");
+        }
 
         /// <summary>
         /// Deletes an image for a housing object.

@@ -95,7 +95,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Deletes a housing object.
         /// </summary>
-        /// <param name="id">The ID of the housing object to delete.</param>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object.</param>
         /// <param name="housingId">The ID of the housing object to fetch images for.</param>
         /// <param name="imageIds">Contains the IDs of the images to delete.</param>
@@ -160,6 +159,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #endregion
 
         #region HousingImageMethods
+
+        /// <summary>
+        /// Fetches all images for a housing object. 
+        /// </summary>
+        /// <param name="brokerFirmId">The broker firm the housing object belongs to.</param>
+        /// <param name="housingId">The ID of the housing object to fetch images for. </param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects.</returns>
+        public Task<List<ImageDto>?> GetImages(int brokerFirmId, int housingId);
 
         /// <summary>
         /// Deletes an image for a housing object.
