@@ -93,32 +93,16 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public async Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
+		public Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
 		{
-            var result = await GetHousingsInternalAsync(brokerId).ToListAsync();
-
-			// TODO - Look for a more optimized way to fetch a limited number of images
-			if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
-			{
-				result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
-			}
-
-			return result;
+            return GetHousingsInternalAsync(brokerId, limitImagesPerHousing: limitImagesPerHousing).ToListAsync();
 		}
 
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null)
+        public Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null)
         {
-            var result = await GetHousingsInternalAsync(brokerFirm:brokerFirmId).ToListAsync();
-
-            // TODO - Look for a more optimized way to fetch a limited number of images
-            if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
-            {
-                result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
-            }
-
-            return result;
+            return GetHousingsInternalAsync(brokerFirm: brokerFirmId, limitImagesPerHousing: limitImagesPerHousing).ToListAsync();
         }
 
         /// <!-- Author: Marcus, Jimmie -->
@@ -131,11 +115,11 @@ namespace FribergFastigheter.Server.Data.Repositories
 				.FirstOrDefaultAsync();
 		}
 
-        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         private IQueryable<Housing> GetHousingsInternalAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
-            int? housingCategoryId = null, int? limitHousings = null, decimal? minPrice = null, decimal? maxPrice = null,
-            double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
+            int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null,
+            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
             #region Checks
 
@@ -220,25 +204,35 @@ namespace FribergFastigheter.Server.Data.Repositories
                 query = query.Take(limitHousings.Value);
             }
 
+            if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
+            {
+                query = query.Include(x => x.Images
+                .OrderBy(x => x.ImageId)
+                .Take(3));
+            }
+
+            // Letting EF Core use auto include in this instance will be 8-9 time slower.
+            query = query
+                .IgnoreAutoIncludes()
+                .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
+                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm)
+                .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
+                .Include(x => x.BrokerFirm).ThenInclude(x => x.Brokers).ThenInclude(x => x.ProfileImage)
+                .Include(x => x.Images)
+                .Include(x => x.Category)
+                .Include(x => x.Municipality);
+
             return query;
         }
 
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
+        public Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
             int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null,
 			double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
-            var result = await GetHousingsInternalAsync(brokerId, brokerFirm, municipalityId, housingCategoryId, limitHousings, minPrice, maxPrice,
-                minLivingArea, maxLivingArea, offsetRows).ToListAsync();
-
-			// TODO - Look for a more optimized way to fetch a limited number of images
-			if (limitImagesPerHousing != null && limitImagesPerHousing.Value > 0)
-			{
-				result.ForEach(x => x.Images = x.Images.Take(limitImagesPerHousing.Value).ToList());
-			}
-
-			return result;
+            return GetHousingsInternalAsync(brokerId, brokerFirm, municipalityId, housingCategoryId, limitHousings, limitImagesPerHousing, minPrice, maxPrice,
+                    minLivingArea, maxLivingArea, offsetRows).ToListAsync();
 		}
 
         /// <!-- Author: Jimmie -->
@@ -246,8 +240,8 @@ namespace FribergFastigheter.Server.Data.Repositories
         public Task<int> GetHousingsCountAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
             int? housingCategoryId = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null)
         {
-            return GetHousingsInternalAsync(brokerId, brokerFirm, municipalityId, housingCategoryId, limitHousings: null, minPrice, maxPrice,
-                minLivingArea, maxLivingArea).CountAsync();
+            return GetHousingsInternalAsync(brokerId, brokerFirm, municipalityId, housingCategoryId, limitHousings: null, limitImagesPerHousing: null, minPrice: minPrice, maxPrice: maxPrice,
+                minLivingArea: minLivingArea, maxLivingArea: maxLivingArea).CountAsync();
         }
 
         /// <!-- Author: Jimmie -->
