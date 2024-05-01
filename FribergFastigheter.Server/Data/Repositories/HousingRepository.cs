@@ -298,6 +298,15 @@ namespace FribergFastigheter.Server.Data.Repositories
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
+        public async Task<bool> OwnsImages(int housingId, List<int> imageIds)
+        {
+            return await applicationDbContext.Housings
+                .Where(x => x.HousingId == housingId)
+                .AnyAsync(x => x.Images.Count(x => imageIds.Contains(x.ImageId)) == imageIds.Count);
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
 		public async Task AddImages(int housingId, List<Image> images)
 		{
 			var housing = await applicationDbContext.Housings

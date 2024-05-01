@@ -31,5 +31,6 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task<int> GetHousingsCountAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null, int? housingCategoryId = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null);
 		Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
         Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null);
+        Task<bool> OwnsImages(int housingId, List<int> imageIds);
     }
 }
