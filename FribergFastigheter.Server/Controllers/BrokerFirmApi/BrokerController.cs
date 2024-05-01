@@ -128,12 +128,25 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPost]
-        public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateBrokerDto createBrokerDto)
+        public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateBrokerDto newBrokerDto, bool returnCreatedBroker)
         {
-            var newBroker = _mapper.Map<Broker>(createBrokerDto);
-            newBroker.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId};
+            if (brokerFirmId != newBrokerDto.BrokerFirmId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted broker object."));
+            }
+            var newBroker = _mapper.Map<Broker>(newBrokerDto);
             await _brokerRepository.AddAsync(newBroker);
-            return Ok();
+
+            if (returnCreatedBroker)
+            {
+                var result = _mapper.Map<BrokerDto>(await _brokerRepository.GetBrokerByIdAsync(newBroker.BrokerId));
+                _imageService.PrepareDto(HttpContext, result);
+                return CreatedAtAction(nameof(GetById), new { brokerId = newBroker.BrokerId }, result);
+            }
+            else
+            {
+                return Created();
+            }
         }
 
         /// <summary>
