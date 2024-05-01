@@ -35,6 +35,11 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public string PhoneNumber { get; set; } = "";
 
+        /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        public string Description { get; set; } = "";
+
         #endregion
     }
 }

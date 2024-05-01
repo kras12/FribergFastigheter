@@ -30,10 +30,16 @@ namespace FribergFastigheter.Shared.Dto
         /// The last name of the broker.
         /// </summary>
         public string LastName { get; set; } = "";
+
         /// <summary>
         /// The phone number of the broker.
         /// </summary>
         public string PhoneNumber { get; set; } = "";
+
+        /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        public string Description { get; set; } = "";
 
         #endregion
     }

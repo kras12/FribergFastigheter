@@ -11,13 +11,18 @@
 
         </div>
     </div>
-
+    <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
+    @if (IsNewBrokerFormActive == true)
+    {
+        <FribergFastigheter.Client.Components.CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
+    }
+    
     <div class="broker-list">
         @if (Brokers.Count > 0)
         {
             @foreach (var broker in Brokers)
             {
-                <div class="broker-card">
+                <div class="broker-card" id="@($"BrokerListItem-{broker.BrokerId}")">
                     <a href="/brokermember/broker/@broker.BrokerId">
                         <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
                     </a>
