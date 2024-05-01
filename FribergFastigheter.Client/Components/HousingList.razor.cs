@@ -13,7 +13,27 @@ namespace FribergFastigheter.Client.Components
     {
         #region Fields
 
-        private string? _scrollToELementId = null;
+        /// <summary>
+        /// Temporary ID variable for which broker firm to use performing actions.
+        /// TODO - Replace with data from identity later.
+        /// </summary>
+        private int _brokerFirmId = 1;
+
+        /// <summary>
+        /// The ID of the broker to assign when creating a new housing object.
+        /// TODO - Replace with data from identity later.
+        /// </summary>
+        private int _createHousingBrokerId = 1;
+
+        /// <summary>
+        /// Returns true if the create housing component is shown.
+        /// </summary>
+        private bool _isCreatingHousing = false;
+
+        /// <summary>
+        /// An element ID to scroll to on next rendering.
+        /// </summary>
+        private string? _scrollToELementId = null;        
 
         #endregion
 
@@ -59,6 +79,34 @@ namespace FribergFastigheter.Client.Components
                 await JSRuntime.InvokeVoidAsync("scrollToElement", _scrollToELementId);
                 _scrollToELementId = null;
             }
+        }
+
+        /// <summary>
+        /// Event handler for when the create housing button is clicke.d
+        /// </summary>
+        private void OnCreateHousingButtonClicked()
+        {
+            _isCreatingHousing = true;
+        }
+
+        /// <summary>
+        /// Event handler for the on house created event. 
+        /// </summary>
+        /// <param name="createdHousing">The new housing object.</param>
+        private void OnHousingCreated(HousingViewModel createdHousing)
+        {
+            Housings.Add(createdHousing);
+            _isCreatingHousing = false;
+            ScrollToElement(createdHousing);
+        }
+
+        /// <summary>
+        /// Event handler for when the housing creation process was cancelled. 
+        /// </summary>
+        private void OnHousingCreationCancelled()
+        {
+            _isCreatingHousing = false;
+            ScrollToFirstElement();
         }
 
         /// <summary>

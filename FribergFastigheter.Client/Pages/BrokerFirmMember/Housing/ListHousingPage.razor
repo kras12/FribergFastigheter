@@ -1,14 +1,9 @@
 ﻿@page "/brokermember/housing/list"
 @using FribergFastigheter.Client.Components
-
+@*
+    <!-- Author: Jimmie -->
+<!-- Co Authors: -->
+*@
 <div class="vertical-page-container">
-	<div hidden="@(!_isCreatingHousing)" class="vertical-page-section">
-		<CreateHousing BrokerFirmId="_brokerFirmId" BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
-	</div>
-	<div hidden="@_isCreatingHousing" class="vertical-page-section">
-		<div class="d-flex flex-row justify-content-center">
-			<button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
-		</div>
-		<HousingList @ref="_housingListComponent" Housings="_housings"></HousingList>
-	</div>	
+	<HousingList Housings="_housings"></HousingList>
 </div>
