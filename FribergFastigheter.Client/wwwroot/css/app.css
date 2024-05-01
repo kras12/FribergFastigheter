@@ -245,6 +245,25 @@ img.cover-image
 }
 
 /*==================================================*/
+/* Pagination                                       */
+/*==================================================*/
+
+/* Pagination number */
+.pagination-number {
+    border-radius: 100%;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    width: 2rem;
+}
+
+/* Pagination number - hover */
+.pagination-number:not(.active):is(:hover, :focus) {
+    background-color: var(--action-element-hover-background-color);
+    cursor: pointer;
+}
+
+/*==================================================*/
 /* Tiled image gallery (Grid - Autocolumn)          */
 /*==================================================*/
 
