@@ -97,10 +97,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         /// <param name="id">The ID of the housing object to delete.</param>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object.</param>
+        /// <param name="housingId">The ID of the housing object to fetch images for.</param>
+        /// <param name="imageIds">Contains the IDs of the images to delete.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task DeleteHousing(int id, [Required] int brokerFirmId);
+        public Task DeleteHousing([Required] int brokerFirmId, int housingId, List<int> imageIds);
 
         /// <summary>
 		/// Fetches housing objects that is being handled by a broker.
@@ -169,6 +171,17 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         public Task DeleteImage(int id, [Required] int brokerFirmId, [Required] int housingId);
+
+        /// <summary>
+        /// Deletes images for a housing object.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object that owns the images.</param>
+        /// <param name="housingId">The ID of the housing object that owns the images. </param>
+        /// <param name="imageIds">Contains the IDs of the images to delete.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task DeleteImages([Required] int brokerFirmId, int housingId, List<int> imageIds);
 
         /// <summary>
         /// Uploads images for a housing object. 
