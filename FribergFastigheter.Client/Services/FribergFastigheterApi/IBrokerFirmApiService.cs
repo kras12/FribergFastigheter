@@ -24,7 +24,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker);
+        public Task<BrokerDto?> CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker);
 
         /// <summary>
         /// Deletes a broker.

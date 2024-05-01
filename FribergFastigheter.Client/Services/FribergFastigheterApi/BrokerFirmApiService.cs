@@ -71,7 +71,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string HousingsByBrokerApiEndpoint = $"api/BrokerFirm/Housing/Broker/{IdPlaceHolder}/Housing";
 
-        #endregion
         /// <summary>
 		/// The relative municipality list API endpoint address.
 		/// </summary>
@@ -102,11 +101,24 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
-        {
-            return _httpClient.PostAsJsonAsync($"{BrokerApiEndPoint}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", broker);
-        }
+        /// 
+        //public Task CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
+        //{
+        //    return _httpClient.PostAsJsonAsync($"{BrokerApiEndPoint}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", broker);
+        //}
 
+        public async Task<BrokerDto?> CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
+        {
+            List<KeyValuePair<string, string>> queries = new()
+            {
+                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
+                new KeyValuePair<string, string>("returnCreatedBroker", true.ToString())
+            };
+
+            var response = await _httpClient.PostAsJsonAsync($"{BrokerApiEndPoint}/{BuildQueryString(queries)}", broker);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<BrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        }
         /// <summary>
         /// Deletes a broker.
         /// </summary>
