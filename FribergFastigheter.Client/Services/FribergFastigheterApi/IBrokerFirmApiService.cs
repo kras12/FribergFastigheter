@@ -103,6 +103,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         public Task DeleteHousing(int id, [Required] int brokerFirmId);
 
         /// <summary>
+		/// Fetches housing objects that is being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
+		public Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int brokerFirmId, int? limitImagesPerHousing = null);
+
+        /// <summary>
         /// Fetches data for a housing object.
         /// </summary>
         /// <param name="id">The ID of the housing to fetch.</param>
@@ -141,13 +149,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Updates a housing object.
         /// </summary>
-        /// <param name="id">The ID of the housing object to update.</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
-        /// <param name="housing">The serialized DTO object to send.</param>
+        /// <param name="housing">The serialized DTO object to send.</param> 
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UpdateHousing([Required] int id, [Required] int brokerFirmId, [Required] UpdateHousingDto housing);
+        public Task UpdateHousing([Required] EditHousingDto housing);
 
         #endregion
 
@@ -170,11 +176,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <param name="newFiles">A collection of files to upload.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles);
-        Task<List<HousingDto>?> GetHousingsByBrokerId(int brokerId, int brokerFirmId, int? limitImagesPerHousing = null);
+        public Task<List<ImageDto>> UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles);
 
         #endregion
     }

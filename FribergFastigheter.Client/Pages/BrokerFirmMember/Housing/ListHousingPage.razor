@@ -1,8 +1,9 @@
 ﻿@page "/brokermember/housing/list"
 @using FribergFastigheter.Client.Components
-
+@*
+    <!-- Author: Jimmie -->
+<!-- Co Authors: -->
+*@
 <div class="vertical-page-container">
-	<CreateHousing BrokerFirmId="_brokerFirmId" BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated"></CreateHousing>
-	<HousingList @ref="_housingListComponent" Housings="_housings"></HousingList>
+	<HousingList Housings="_housings"></HousingList>
 </div>
-

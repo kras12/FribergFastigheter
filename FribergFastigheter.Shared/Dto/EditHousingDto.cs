@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Shared.Dto
 {
     /// <summary>
-    /// A view model class that holds data for updating a housing object.
+    /// A DTO class that holds data for updating a housing.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class UpdateHousingViewModel : HousingViewModelBase
+    public class EditHousingDto : HousingBaseDto
     {
         #region Properties
 

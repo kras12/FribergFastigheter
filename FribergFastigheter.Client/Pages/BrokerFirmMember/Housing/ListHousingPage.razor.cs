@@ -10,24 +10,17 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
     /// <summary>
     /// The list housing page in the broker firm back office.
     /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: --> 
     public partial class ListHousingPage : ComponentBase
     {
         #region Fields       
 
         /// <summary>
         /// Temporary ID variable for which broker firm to use performing actions.
+        /// TODO - Replace with data from identity later.
         /// </summary>
         private int _brokerFirmId = 1;
-
-        /// <summary>
-        /// The ID of the broker to assign when creating a new housing object.
-        /// </summary>
-        private int _createHousingBrokerId = 1;
-
-        /// <summary>
-        /// A reference to the housing list component. 
-        /// </summary>
-        private HousingList _housingListComponent;
 
         /// <summary>
         /// A collection of housing objects to show in the listing.
@@ -60,29 +53,19 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
 
         #region Methods
 
-        /// <summary>
-        /// Method invoked when the component is ready to start, having received its initial 
-        /// parameters from its parent in the render tree. Override this method if you will 
-        /// perform an asynchronous operation and want the component to refresh when that 
-        /// operation is completed.
-        /// </summary>
-        /// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
-        protected override async Task OnInitializedAsync()
+		/// <summary>
+		/// Method invoked when the component is ready to start, having received its initial 
+		/// parameters from its parent in the render tree. Override this method if you will 
+		/// perform an asynchronous operation and want the component to refresh when that 
+		/// operation is completed.
+		/// </summary>
+		/// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
+		protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(_brokerFirmId));
+            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(_brokerFirmId, limitImagesPerHousing: 3));
         }
 
-        /// <summary>
-        /// Event handler for the on house created event. 
-        /// </summary>
-        /// <param name="createdHousing"></param>
-        private async Task OnHousingCreated(HousingViewModel createdHousing)
-        {
-            _housings.Add(createdHousing);
-            await _housingListComponent.ScrollToElement(createdHousing);
-        }        
-
-        #endregion
-    }
+		#endregion
+	}
 }
