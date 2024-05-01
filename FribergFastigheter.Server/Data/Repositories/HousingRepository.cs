@@ -57,25 +57,11 @@ namespace FribergFastigheter.Server.Data.Repositories
 		/// <!-- Co Authors: -->
 		public async Task UpdateAsync(Housing housing)
         {
-			// We must store the final images outside of the entity for our comparisions,
-			// since EF Core will add tracked images to the entity if they don't exist.
-			var targetImages = housing.Images.ToList();
 			applicationDbContext.Update(housing);
-
 			applicationDbContext.Brokers.Attach(housing.Broker);
             applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
             applicationDbContext.HousingCategories.Attach(housing.Category);
             applicationDbContext.Municipalities.Attach(housing.Municipality);
-
-			// EF Core will add missing images to the entity here.
-			var databaseImages = await applicationDbContext.Housings.Where(x => x.HousingId == housing.HousingId).SelectMany(x => x.Images).ToListAsync();
-
-			// Modify status for deleted images
-			databaseImages.ExceptBy(targetImages.Select(x => x.ImageId), y => y.ImageId).ToList()
-				.ForEach(deletedImage =>
-				{
-					applicationDbContext.Entry(deletedImage).State = EntityState.Deleted;
-				});
 
 			await applicationDbContext.SaveChangesAsync();
         }
@@ -296,8 +282,8 @@ namespace FribergFastigheter.Server.Data.Repositories
             return applicationDbContext.Housings.Where(x => x.HousingId == housingId).AnyAsync(x => x.Images.Any(x => x.ImageId == imageId));
 		}
 
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
         public async Task<bool> OwnsImages(int housingId, List<int> imageIds)
         {
             return await applicationDbContext.Housings
@@ -307,7 +293,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-		public async Task AddImages(int housingId, List<Image> images)
+        public async Task AddImages(int housingId, List<Image> images)
 		{
 			var housing = await applicationDbContext.Housings
                 .Where(x => x.HousingId == housingId)
