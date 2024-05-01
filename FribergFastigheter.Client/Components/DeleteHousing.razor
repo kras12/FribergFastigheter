@@ -1,0 +1,20 @@
+﻿<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-housing-dialog-@Housing.HousingId">
+    Radera
+</button>
+<div class="modal fade" id="delete-housing-dialog-@Housing.HousingId" tabindex="-1" aria-labelledby="delete-housing-dialog-label-@Housing.HousingId" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="delete-housing-dialog-label-@Housing.HousingId">Radera</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Det är inte möjligt att ångra en radering av husobjektet. Vill du radera det?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="@(() => OnDeleteHousingButtonClicked())">Radera</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>                
+            </div>
+        </div>
+    </div>
+</div>
