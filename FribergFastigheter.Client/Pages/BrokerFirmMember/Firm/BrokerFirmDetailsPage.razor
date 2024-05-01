@@ -8,7 +8,11 @@
     <button class="center" @onclick="@(() => OpenBrokerList())">Alla mäklare som jobbar för @BrokerFirm.Name</button>
     <button class="center" @onclick="@(() => OpenHousingList())">Alla hus objekt @BrokerFirm.Name har ute just nu</button>
     </div>
-    @if(IsBrokerListorHousingListActive == false)
+    @if(IsBrokerListorHousingListActive == null)
+    {
+        
+    }
+    else if (IsBrokerListorHousingListActive == false)
     {
         <FribergFastigheter.Client.Components.HousingList Housings="Housings" />
     }

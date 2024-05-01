@@ -26,7 +26,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Firm
         public IBrokerFirmApiService BrokerFirmApiService {  get; set; }
         [Inject]
         public IMapper Mapper { get; set; }
-        public bool IsBrokerListorHousingListActive { get; set; } = false;
+        public bool? IsBrokerListorHousingListActive { get; set; } = null;
 
         #endregion
 
