@@ -68,19 +68,21 @@ namespace FribergFastigheter.Client.Components
         /// Event handler for when an editing process for a housing object was cancelled.
         /// </summary>
         /// <param name="housing"></param>
-        private void OnCancelEditing(HousingViewModel housing)
+        private Task OnCancelEditingEventHandler(HousingViewModel housing)
         {
             _isInEditMode = false;
-            OnTransformed.InvokeAsync(housing);
+            return OnTransformed.InvokeAsync(housing);
         }
 
         /// <summary>
         /// Event handler for when the edit housing button was clicked. 
         /// </summary>
-        private void OnEditHousingButtonClicked()
+        private Task OnEditHousingButtonClickedEventHandler()
         {
             _isInEditMode = true;
-            OnTransformed.InvokeAsync(Housing);
+            return OnTransformed.InvokeAsync(Housing);
+        }
+
         /// <summary>
         /// Event handler for when the housing object was deleted.
         /// </summary>
@@ -94,10 +96,10 @@ namespace FribergFastigheter.Client.Components
         /// Event handler for when a housing object has been edited.
         /// </summary>
         /// <param name="housing"></param>
-        private void OnHousingEdited(HousingViewModel housing)
+        private Task OnHousingEditedEventHandler(HousingViewModel housing)
         {
             _isInEditMode = false;
-            OnTransformed.InvokeAsync(housing);
+            return OnTransformed.InvokeAsync(housing);
         }        
 
         /// <summary>

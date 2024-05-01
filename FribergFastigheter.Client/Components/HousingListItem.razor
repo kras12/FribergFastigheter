@@ -21,7 +21,7 @@
     </a>
     @if (_isInEditMode)
     {
-        <EditHousing Housing="Housing" OnHousingEdited="OnHousingEdited" OnHousingEditCancelled="OnCancelEditing"></EditHousing>
+        <EditHousing Housing="Housing" OnHousingEdited="OnHousingEditedEventHandler" OnHousingEditCancelled="OnCancelEditingEventHandler"></EditHousing>
     }
     else
     {
@@ -102,6 +102,7 @@
             {
                 <button type="button" class="btn btn-info" @onclick="(() => OverrideDescriptionTruncation(true))">Lång beskrivning</button>
             }            
+            <button type="button" class="btn btn-primary" @onclick="@(() => OnEditHousingButtonClickedEventHandler())">Redigera</button>
             <DeleteHousing Housing="Housing" BrokerFirmId="Housing.Broker.BrokerFirm.BrokerFirmId" OnHousingDeleted="OnHousingDeletedEventHandler"></DeleteHousing>
         </div>
     }
