@@ -42,6 +42,12 @@ namespace FribergFastigheter.Client.Components
         public HousingViewModel Housing { get; set; }
 
         /// <summary>
+        /// Event triggers when the housing object have been deleted.
+        /// </summary>
+        [Parameter]
+        public EventCallback<HousingViewModel> OnHousingDeleted { get; set; }
+
+        /// <summary>
         /// Event triggers when the element have undergone transformation. 
         /// </summary>
         [Parameter]
@@ -75,6 +81,13 @@ namespace FribergFastigheter.Client.Components
         {
             _isInEditMode = true;
             OnTransformed.InvokeAsync(Housing);
+        /// <summary>
+        /// Event handler for when the housing object was deleted.
+        /// </summary>
+        /// <param name="housing"></param>
+        private Task OnHousingDeletedEventHandler(HousingViewModel housing)
+        {
+            return OnHousingDeleted.InvokeAsync(housing);
         }
 
         /// <summary>
