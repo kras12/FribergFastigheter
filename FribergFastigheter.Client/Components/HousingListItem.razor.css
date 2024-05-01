@@ -4,7 +4,7 @@
 }
 
 /* Inactive links */
-.inactive-link {
+a.inactive-link {
     cursor: default;
     pointer-events: none;    
     text-decoration: none;

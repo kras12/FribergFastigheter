@@ -3,6 +3,7 @@ using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components
 {
@@ -13,6 +14,15 @@ namespace FribergFastigheter.Client.Components
     /// <!-- Co Authors: -->
     public partial class CreateHousing : ComponentBase
     {
+        #region Fields
+
+        /// <summary>
+        ///  A collection of images to upload. 
+        /// </summary>
+        private List<IBrowserFile> _uploadedFiles = new();
+
+        #endregion
+
         #region InjectedServiceProperties
 #pragma warning disable CS8618
 
@@ -57,6 +67,12 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         [Parameter]
         public EventCallback<HousingViewModel> OnHousingCreated { get; set; }
+
+        /// <summary>
+        /// Event that is triggered when a the housing creation was cancelled. 
+        /// </summary>
+        [Parameter]
+        public EventCallback OnHousingCreationCancelled { get; set; }
 
         #endregion
 
@@ -105,6 +121,35 @@ namespace FribergFastigheter.Client.Components
         }
 
         /// <summary>
+        /// Event handler for when the cancel housing creation button was clicked. 
+        /// </summary>
+        /// <returns></returns>
+        private Task OnCancelCreateHousingButtonClicked()
+        {
+            return OnHousingCreationCancelled.InvokeAsync(null);
+        }
+
+        /// <summary>
+        /// Event handler to handle changes for the input file element in the form. 
+        /// </summary>
+        /// <param name="e">The event arguments.</param>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private void OnFileUploadChanged(InputFileChangeEventArgs e)
+        {
+            // TODO - Move image types to another class and perhaps in the share project.
+            List<string> allowedImageTypes = new()
+            {
+                "image/jpeg",
+                "image/png"
+            };
+
+            _uploadedFiles = e.GetMultipleFiles(maximumFileCount: 100)
+                .Where(x => allowedImageTypes.Contains(x.ContentType))
+                .ToList();
+        }
+
+        /// <summary>
         /// Method invoked when the component is ready to start, having received its
         /// initial parameters from its parent in the render tree.
         /// </summary>
@@ -126,8 +171,24 @@ namespace FribergFastigheter.Client.Components
             CreateHousingInput.BrokerId = BrokerId;
             CreateHousingInput.BrokerFirmId = BrokerFirmId;
             var newHousing = await BrokerFirmApiService.CreateHousing(BrokerFirmId, AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
+            newHousing!.Images = await UploadImages(newHousing!.HousingId);
             await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
         }        
+
+        /// <summary>
+        /// Uploads images for a housing object if the user have selected any images. 
+        /// </summary>
+        /// <param name="housingId">The ID of the housing object to upload the images for.</param>
+        /// <returns>A collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
+        private async Task<List<ImageDto>> UploadImages(int housingId)
+        {
+            if (_uploadedFiles.Count > 0)
+            {
+                return await BrokerFirmApiService.UploadImages(BrokerFirmId, housingId, _uploadedFiles);
+            }
+
+            return new List<ImageDto>();
+        }
 
         #endregion
     }

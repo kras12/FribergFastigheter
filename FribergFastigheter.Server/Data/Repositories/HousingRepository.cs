@@ -306,15 +306,17 @@ namespace FribergFastigheter.Server.Data.Repositories
 		/// <!-- Co Authors: -->
 		public async Task AddImages(int housingId, List<Image> images)
 		{
-			var housing = await GetHousingByIdAsync(housingId);
+			var housing = await applicationDbContext.Housings
+                .Where(x => x.HousingId == housingId)
+                .IgnoreAutoIncludes()
+                .FirstOrDefaultAsync();
 
-			if (housing == null)
+            if (housing == null)
 			{
 				throw new Exception($"The housing object with ID '{housing}' was not found.");
 			}
 
             // We return entities as no tracking.
-            applicationDbContext.Housings.Attach(housing); 
             housing.Images.AddRange(images);
 			await applicationDbContext.SaveChangesAsync();
 		}

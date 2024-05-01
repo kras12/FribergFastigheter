@@ -28,7 +28,7 @@ namespace FribergFastigheter.Server.AutoMapper
 			CreateMap<BrokerDto, Broker>()
 				.ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null));
 
-			CreateMap<UpdateHousingDto, Housing>()
+			CreateMap<EditHousingDto, Housing>()
 			.ForMember(dest => dest.Broker, opt => opt.MapFrom(src => new Broker() { BrokerId = src.BrokerId }))
 			.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 			.ForMember(dest => dest.Category, opt => opt.MapFrom(src => new HousingCategory() { HousingCategoryId = src.CategoryId }))

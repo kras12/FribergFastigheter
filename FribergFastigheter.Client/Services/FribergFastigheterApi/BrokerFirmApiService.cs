@@ -71,7 +71,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string HousingsByBrokerApiEndpoint = $"api/BrokerFirm/Housing/Broker/{IdPlaceHolder}/Housing";
 
-        #endregion
         /// <summary>
 		/// The relative municipality list API endpoint address.
 		/// </summary>
@@ -194,7 +193,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 new KeyValuePair<string, string>("returnCreatedHousing", true.ToString())
             };
 
-            var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint}/{BuildQueryString(queries)}", housing);
+            var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint.Replace(IdPlaceHolder, housing.BrokerFirmId.ToString())}/{BuildQueryString(queries)}", housing);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<HousingDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
@@ -267,15 +266,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Updates a housing object.
         /// </summary>
-        /// <param name="id">The ID of the housing object to update.</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the housing objects.</param>
         /// <param name="housing">The serialized DTO object to send.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UpdateHousing([Required] int id, [Required] int brokerFirmId, [Required] UpdateHousingDto housing)
+        public Task UpdateHousing([Required] EditHousingDto housing)
         {
-            return _httpClient.PutAsJsonAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", housing);
+            return _httpClient.PutAsJsonAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, housing.HousingId.ToString())}{BuildQueryString("brokerFirmId", housing.BrokerFirmId.ToString())}", housing);
         }
 
         /// <summary>
@@ -327,10 +324,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <param name="newFiles">A collection of files to upload.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles)
+        public async Task<List<ImageDto>> UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles)
         {
             if (newFiles.Count == 0)
             {
@@ -347,10 +344,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             foreach (var file in newFiles)
             {
-                content.Add(new StreamContent(file.OpenReadStream()), "Images", file.Name);
+                content.Add(new StreamContent(file.OpenReadStream()), "files", file.Name);
             }
 
-            return _httpClient.PostAsync($"{HousingImageApiEndPoint}/{BuildQueryString(queries)}", content);
+            var response = await _httpClient.PostAsync($"{HousingImageApiEndPoint}/{BuildQueryString(queries)}", content);
+            response.EnsureSuccessStatusCode();
+            return (await response.Content.ReadFromJsonAsync<List<ImageDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }))!;
         }
 
         #endregion

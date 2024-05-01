@@ -12,8 +12,17 @@ namespace FribergFastigheter.Client.Components
     /// <!-- Co Authors: -->
     public partial class HousingListItem : ComponentBase
     {
+        #region Fields
+
+        /// <summary>
+        /// Returns true if the housing object is being edited. 
+        /// </summary>
+        private bool _isInEditMode = false;
+
+        #endregion
+
         #region Properties
-#pragma warning disable CS8618 
+#pragma warning disable CS8618
 
         /// <summary>
         /// The ID of list element.
@@ -27,10 +36,45 @@ namespace FribergFastigheter.Client.Components
         [Parameter]
         public HousingViewModel Housing { get; set; }
 
+        /// <summary>
+        /// Event triggers when the element have undergone transformation. 
+        /// </summary>
+        [Parameter]
+        public EventCallback<HousingViewModel> OnTransformed {  get; set; }
+
 #pragma warning restore CS8618
         #endregion
 
-        #region Methods
+        #region Methods     
+
+        /// <summary>
+        /// Event handler for when an editing process for a housing object was cancelled.
+        /// </summary>
+        /// <param name="housing"></param>
+        private void OnCancelEditing(HousingViewModel housing)
+        {
+            _isInEditMode = false;
+            OnTransformed.InvokeAsync(housing);
+        }
+
+        /// <summary>
+        /// Event handler for when the edit housing button was clicked. 
+        /// </summary>
+        private void OnEditHousingButtonClicked()
+        {
+            _isInEditMode = true;
+            OnTransformed.InvokeAsync(Housing);
+        }
+
+        /// <summary>
+        /// Event handler for when a housing object has been edited.
+        /// </summary>
+        /// <param name="housing"></param>
+        private void OnHousingEdited(HousingViewModel housing)
+        {
+            _isInEditMode = false;
+            OnTransformed.InvokeAsync(housing);
+        }        
 
         /// <summary>
         /// Method invoked when the component has received parameters from its parent in

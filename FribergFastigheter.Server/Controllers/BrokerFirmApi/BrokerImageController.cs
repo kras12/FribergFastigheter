@@ -26,6 +26,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         #region Fields
 
         /// <summary>
+        /// The injected Auto Mapper.
+        /// </summary>
+        private readonly IMapper _autoMapper;
+
+        /// <summary>
         /// The injected broker repository.
         /// </summary>
         private readonly IBrokerRepository _brokerRepository;
@@ -138,19 +143,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [HttpPost]
         [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Post([Required] int brokerFirmId, [Required] int brokerId, IFormFile newFile)
+        public async Task<ActionResult> Post([Required] int brokerFirmId, [Required] int brokerId, [FromForm] IFormFile newFile)
         {
             if (!await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
-            }
-            
+            }            
 
-            Image newImage = new Image(await _imageService.SaveImageToDiskAsync(newFile));
+            Image imageEntity = new (await _imageService.SaveImageToDiskAsync(newFile));
+            await _brokerRepository.AddImage(brokerId, imageEntity);
+            var imageDto = _autoMapper.Map<ImageDto>(imageEntity);
+            _imageService.PrepareDto(HttpContext, imageDto);
 
-            await _brokerRepository.AddImage(brokerId, newImage);
-            return Ok();
-            
+            return Ok(imageDto);            
         }		
 
         #endregion

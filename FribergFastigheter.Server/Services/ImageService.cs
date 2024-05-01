@@ -57,7 +57,7 @@ namespace FribergFastigheter.Server.Services
         /// <param name="image">The DTO object to process.</param>
         /// /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        private void PrepareDto(HttpContext httpContext, ImageDto image)
+        public void PrepareDto(HttpContext httpContext, ImageDto image)
         {
             PrepareDto(httpContext, new List<ImageDto> { image });
         }
@@ -69,7 +69,7 @@ namespace FribergFastigheter.Server.Services
         /// <param name="images">The DTO objects to process.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        private void PrepareDto(HttpContext httpContext, List<ImageDto> images)
+        public void PrepareDto(HttpContext httpContext, List<ImageDto> images)
         {
             foreach (ImageDto image in images)
             {
