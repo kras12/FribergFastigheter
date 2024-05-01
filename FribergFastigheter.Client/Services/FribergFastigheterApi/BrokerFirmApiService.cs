@@ -93,20 +93,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #region BrokerMethods
 
-        /// <summary>
-        /// Creates a new broker under the broker firm.
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the brokerfirm that the broker belongs to.</param>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        /// 
-        //public Task CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
-        //{
-        //    return _httpClient.PostAsJsonAsync($"{BrokerApiEndPoint}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", broker);
-        //}
-
         public async Task<BrokerDto?> CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
         {
             List<KeyValuePair<string, string>> queries = new()
