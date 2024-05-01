@@ -163,7 +163,36 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
         /// <summary>
-        /// An API endpoint for retrieving a housing image file. 
+        /// An API endpoint for retrieving all images for a housing object. 
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
+        /// <param name="housingId">The ID of the housing object the image belongs to</param>
+        /// <returns>A collection of <see cref="ImageDto"/> objects if successful.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [HttpGet]
+        [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetImages([Required] int brokerFirmId, [Required] int housingId)
+        {
+            if (!await _housingRepository.IsOwnedByBrokerFirm(housingId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
+            }
+
+            var images = _autoMapper.Map<List<ImageDto>>(await _housingRepository.GetImages(housingId));            
+
+            if (images.Count > 0)
+            {
+                _imageService.PrepareDto(HttpContext, images);
+                
+            }
+
+            return Ok(images);
+        }
+
+        /// <summary>
+        /// An API endpoint for retrieving a compressed file of all images for a housing object. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
