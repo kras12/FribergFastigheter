@@ -19,6 +19,11 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         private bool _isInEditMode = false;
 
+        /// <summary>
+        /// Returns true to if the whole description should be shown despite the <see cref="TruncateLongDescriptions"/> property being true.
+        /// </summary>
+        private bool _overrideDescriptionTruncation = false;
+
         #endregion
 
         #region Properties
@@ -41,6 +46,12 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         [Parameter]
         public EventCallback<HousingViewModel> OnTransformed {  get; set; }
+
+        /// <summary>
+        /// Set to true to truncate long descriptions
+        /// </summary>
+        [Parameter]
+        public bool TruncateLongDescriptions { get; set; } = false;
 
 #pragma warning restore CS8618
         #endregion
@@ -89,6 +100,15 @@ namespace FribergFastigheter.Client.Components
             {
                 throw new ArgumentNullException(nameof(Housing));
             }
+        }
+
+        /// <summary>
+        /// Sets a value for the override description truncation flag.
+        /// </summary>
+        /// <param name="value">The value to set.</param>
+        private void OverrideDescriptionTruncation(bool value)
+        {
+            _overrideDescriptionTruncation = value;
         }
 
         #endregion

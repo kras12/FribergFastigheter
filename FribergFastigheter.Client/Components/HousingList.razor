@@ -13,7 +13,8 @@
     <div class="d-flex flex-column gap-4 full-width">
         @foreach (var housing in Housings)
         {
-            <HousingListItem ElementId="@($"HousingListItem-{housing.HousingId}")" Housing="housing" OnTransformed="OnListItemTransformed"></HousingListItem>
+            <HousingListItem ElementId="@($"HousingListItem-{housing.HousingId}")" Housing="housing" OnTransformed="OnListItemTransformed" 
+            TruncateLongDescriptions="TruncateLongDescriptions"></HousingListItem>
         }
     </div>
 </div>

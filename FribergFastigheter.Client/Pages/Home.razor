@@ -76,7 +76,7 @@
     </div
     @if (HousingSearchResult != null)
     {
-        <HousingList Housings="HousingSearchResult.Housings" />
+        <HousingList Housings="HousingSearchResult.Housings" TruncateLongDescriptions="true" />
         
         @if (HousingSearchResult.Pagination != null)
         {

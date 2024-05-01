@@ -53,6 +53,12 @@ namespace FribergFastigheter.Client.Components
         public IJSRuntime JSRuntime {  get; set; }
 #pragma warning restore CS8618
 
+        /// <summary>
+        /// Set to true to truncate long descriptions
+        /// </summary>
+        [Parameter]
+        public bool TruncateLongDescriptions { get; set; } = false;
+
 		#endregion
 
 		#region Method				

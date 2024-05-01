@@ -77,12 +77,31 @@
             </div>
             <div class="card-body">
                 <p class="card-text">
-                    @Housing.GetTruncatedDescription(300)
+                    @if (TruncateLongDescriptions && !_overrideDescriptionTruncation)
+                    {
+                        @StringFormatHelper.TruncateLongTexts(Housing.Description, 300)
+                    }
+                    else
+                    {
+                        var paragraphs = Housing.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var paragraph in paragraphs)
+                        {
+                            <p class="card-text">@($"{paragraph}{Environment.NewLine}")</p>
+                        }
+                    }                    
                 </p>
             </div>        
         </a>
         <div class="card-footer d-flex flex-row justify-content-center gap-3">
-            <button type="button" class="btn btn-primary" @onclick="@(() => OnEditHousingButtonClicked())">Redigera</button>
+            @if (TruncateLongDescriptions && _overrideDescriptionTruncation)
+            {
+                <button type="button" class="btn btn-info" @onclick="(() => OverrideDescriptionTruncation(false))">Kort beskrivning</button>
+            }
+            else if (TruncateLongDescriptions)
+            {
+                <button type="button" class="btn btn-info" @onclick="(() => OverrideDescriptionTruncation(true))">Lång beskrivning</button>
+            }            
         </div>
     }
 </div>
