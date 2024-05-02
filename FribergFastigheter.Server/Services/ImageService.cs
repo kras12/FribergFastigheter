@@ -320,11 +320,26 @@ namespace FribergFastigheter.Server.Services
         /// <!-- Co Authors: -->
         public void DeleteImageFromDisk(string imageFileName)
         {
-            var filePath = Path.Combine(UploadFolderPath, imageFileName);
-            if (File.Exists(filePath))
+            DeleteImagesFromDisk(new List<string> { imageFileName });
+        }
+
+        /// <summary>
+        /// Method for deleting images from disk.
+        /// </summary>
+        /// <param name="imageFileNames">The names of the images to delete.</param>
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public void DeleteImagesFromDisk(List<string> imageFileNames)
+        {
+            foreach (var imageFileName in imageFileNames)
             {
-                File.Delete(filePath);
-            }
+                var filePath = Path.Combine(UploadFolderPath, imageFileName);
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }            
         }
 
         #endregion

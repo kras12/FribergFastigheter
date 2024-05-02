@@ -76,22 +76,22 @@
     </div
     @if (HousingSearchResult != null)
     {
-        <HousingList Housings="HousingSearchResult.Housings" />
+        <HousingList Housings="HousingSearchResult.Housings" TruncateLongDescriptions="true" />
         
         @if (HousingSearchResult.Pagination != null)
         {
-            <div class="d-flex flex-row gap-3">
+            <div class="d-flex flex-row gap-2 align-items-center">
                 @for (int i = 1; i <= HousingSearchResult.Pagination.NumberOfRequestablePages; i++)
                 {
                     @if (HousingSearchResult.Pagination.CurrentPage == i)
                     {
-                        <span class="fw-bold fs-5" >@i</span>
+                        <span class="pagination-number active fw-bold fs-5" >@i</span>
                     }
                     else
                     {
                         // Is needed due to how lambda works
                         int pageNumber = i;
-                        <span @onclick="@(() => SearchHousings(pageNumber))">@i</span>
+                        <span class="pagination-number" @onclick="@(() => SearchHousings(pageNumber))">@i</span>
                     }
                     
                 }

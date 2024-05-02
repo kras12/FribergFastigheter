@@ -22,5 +22,6 @@ namespace FribergFastigheter.Server.Services
 		void PrepareDto(HttpContext httpContext, List<BrokerFirmDto> brokerFirms);
         void PrepareDto(HttpContext httpContext, List<ImageDto> images);
         void PrepareDto(HttpContext httpContext, ImageDto image);
+        void DeleteImagesFromDisk(List<string> imageFileNames);
     }
 }

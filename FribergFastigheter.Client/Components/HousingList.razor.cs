@@ -53,24 +53,30 @@ namespace FribergFastigheter.Client.Components
         public IJSRuntime JSRuntime {  get; set; }
 #pragma warning restore CS8618
 
-		#endregion
+        /// <summary>
+        /// Set to true to truncate long descriptions
+        /// </summary>
+        [Parameter]
+        public bool TruncateLongDescriptions { get; set; } = false;
 
-		#region Method				
+        #endregion
 
-		/// <summary>
-		/// Method invoked after each time the component has been rendered interactively
-		/// and the UI has finished updating (for example, after elements have been added
-		/// to the browser DOM). Any Microsoft.AspNetCore.Components.ElementReference fields
-		/// will be populated by the time this runs. This method is not invoked during prerendering
-		/// or server-side rendering, because those processes are not attached to any live
-		/// browser DOM and are already complete before the DOM is updated. Note that the
-		/// component does not automatically re-render after the completion of any returned
-		/// System.Threading.Tasks.Task, because that would cause an infinite render loop.
-		/// </summary>
-		/// <param name="firstRender">Set to true if this is the first time Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
-		///     has been invoked on this component instance; otherwise false.</param>
-		/// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
-		protected override async Task OnAfterRenderAsync(bool firstRender)
+        #region Method				
+
+        /// <summary>
+        /// Method invoked after each time the component has been rendered interactively
+        /// and the UI has finished updating (for example, after elements have been added
+        /// to the browser DOM). Any Microsoft.AspNetCore.Components.ElementReference fields
+        /// will be populated by the time this runs. This method is not invoked during prerendering
+        /// or server-side rendering, because those processes are not attached to any live
+        /// browser DOM and are already complete before the DOM is updated. Note that the
+        /// component does not automatically re-render after the completion of any returned
+        /// System.Threading.Tasks.Task, because that would cause an infinite render loop.
+        /// </summary>
+        /// <param name="firstRender">Set to true if this is the first time Microsoft.AspNetCore.Components.ComponentBase.OnAfterRender(System.Boolean)
+        ///     has been invoked on this component instance; otherwise false.</param>
+        /// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
@@ -107,6 +113,14 @@ namespace FribergFastigheter.Client.Components
         {
             _isCreatingHousing = false;
             ScrollToFirstElement();
+        }
+
+        /// <summary>
+        /// Event handler for when the housing object was deleted.
+        /// </summary>
+        private void OnHousingDeletedEventHandler(HousingViewModel housing)
+        {
+            Housings.Remove(housing);
         }
 
         /// <summary>
