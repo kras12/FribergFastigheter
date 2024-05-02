@@ -30,6 +30,9 @@ namespace FribergFastigheter.Client.AutoMapper
 
             CreateMap<CreateBrokerViewModel, CreateBrokerDto>()
                 .ForMember(dest => dest.BrokerFirmId, opt => opt.MapFrom(src => src.BrokerFirmId));
+
+            CreateMap<EditBrokerViewModel, EditBrokerDto>()
+                .ForMember(dest => dest.BrokerFirmId, opt => opt.MapFrom(src => src.BrokerFirm.BrokerFirmId));
         }		
 	}
 }

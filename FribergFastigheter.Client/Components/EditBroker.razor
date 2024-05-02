@@ -1,0 +1,40 @@
+﻿<div class="card full-width">
+    <div class="card-header d-flex flex-row justify-content-center">Editera denna mäklare</div>
+    <div class="card-body">
+        <EditForm Model="BrokerInput" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex flex-column">
+                    <label>Förnamn*</label>
+                    <InputText @bind-Value="BrokerInput.FirstName"></InputText>
+                    <ValidationMessage For="@(() => BrokerInput.FirstName)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Efternamn*</label>
+                    <InputText @bind-Value="BrokerInput.LastName"></InputText>
+                    <ValidationMessage For="@(() => BrokerInput.LastName)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Epost*</label>
+                    <InputText @bind-Value="BrokerInput.Email"></InputText>
+                    <ValidationMessage For="@(() => BrokerInput.Email)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Telefonnummer*</label>
+                    <InputText @bind-Value="BrokerInput.PhoneNumber"></InputText>
+                    <ValidationMessage For="@(() => BrokerInput.PhoneNumber)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Beskrivning*</label>
+                    <InputTextArea @bind-Value="BrokerInput.Description"></InputTextArea>
+                    <ValidationMessage For="@(() => BrokerInput.Description)" />
+                </div>
+                <div class="d-flex flex-row justify-content-center gap-3">
+                    <button class="btn btn-success">Spara</button>
+                    <button class="btn btn-danger" @onclick="@(() => CloseEditForm())">Avbryt</button>
+                </div>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
