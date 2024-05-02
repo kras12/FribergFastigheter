@@ -14,6 +14,15 @@ namespace FribergFastigheter.Client.Components
     /// 
     public partial class BrokerList : ComponentBase
     {
+
+        #region Fields
+        private string? _scrollToELementId = null;
+
+        private string? _scrollToTop = null;
+
+        private string? formId = "EditForm";
+
+        #endregion
         #region InjectedServiceProperties
 
         /// <summary>
@@ -40,13 +49,10 @@ namespace FribergFastigheter.Client.Components
         public List<BrokerViewModel> Brokers { get; set; }
         [Parameter]
         public BrokerFirmSummaryViewModel BrokerFirm { get; set; }
+        public BrokerViewModel Broker { get; set; }
 
         public bool? IsNewBrokerFormActive { get; set; } = null;
-
-      
-        private BrokerList brokerListComponent;
-
-        private string? _scrollToELementId = null;
+        public bool? IsEditBrokerFormActive { get; set; } = null;
 
         #endregion
 
@@ -76,6 +82,21 @@ namespace FribergFastigheter.Client.Components
             
         }
 
+        public async void OpenEditBroker(BrokerViewModel broker)
+        {
+            Broker = broker;
+            IsEditBrokerFormActive = true;
+            await ScrollToTop(formId);
+        }
+
+        public void CloseEditBroker(bool close)
+        {
+            if (close == true)
+            {
+                IsEditBrokerFormActive = false;
+            }
+
+        }
         public async void OnCreatedBroker(BrokerViewModel newBroker) 
         {
             Brokers.Add(newBroker);
@@ -88,6 +109,11 @@ namespace FribergFastigheter.Client.Components
             _scrollToELementId = $"BrokerListItem-{newBroker.BrokerId}";
         }
 
+        public async Task ScrollToTop(string formId)
+        {
+            _scrollToTop = formId;
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
@@ -97,6 +123,16 @@ namespace FribergFastigheter.Client.Components
                 await JSRuntime.InvokeVoidAsync("scrollToElement", _scrollToELementId);
                 _scrollToELementId = null;
             }
+            if (_scrollToTop != null)
+            {
+                await JSRuntime.InvokeVoidAsync("scrollToElement", _scrollToTop);
+                _scrollToTop = null;
+            }
+        }
+
+        public async void OnBrokerEdited(BrokerViewModel editedBroker)
+        {
+            await ScrollToElement(editedBroker);
         }
 
         #endregion

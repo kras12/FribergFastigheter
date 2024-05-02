@@ -63,7 +63,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UpdateBroker([Required] int id, [Required] UpdateBrokerDto broker);
+        public Task UpdateBroker([Required] int brokerId, [Required] EditBrokerDto broker);
 
 		#endregion
 
@@ -200,6 +200,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         public Task<List<ImageDto>> UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles);
+        Task<ImageDto> UploadImages([Required] int brokerFirmId, [Required] int brokerId, IBrowserFile newFile);
 
         #endregion
     }

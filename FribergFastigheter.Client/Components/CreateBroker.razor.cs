@@ -3,6 +3,7 @@ using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components
 {
@@ -14,8 +15,14 @@ namespace FribergFastigheter.Client.Components
     /// 
     public partial class CreateBroker : ComponentBase
     {
+        #region Fields
+
+        private IBrowserFile? UploadedProfileImage = null;
+
+        #endregion
+
         #region InjectedServiceProperties
-        
+
         /// <summary>
         /// The injected housing API service.
         /// </summary>
@@ -51,6 +58,8 @@ namespace FribergFastigheter.Client.Components
         [Parameter]
         public EventCallback<bool> CloseCreateNewBroker {  get; set; }
 
+        
+
         #endregion
 
         #region Methods
@@ -68,6 +77,7 @@ namespace FribergFastigheter.Client.Components
         {
             CreateBrokerInput.BrokerFirmId = BrokerFirmId;
             var newBroker = await BrokerFirmApiService.CreateBroker(BrokerFirmId, Mapper.Map<CreateBrokerDto>(CreateBrokerInput));
+            newBroker!.ProfileImage = await UploadImages(newBroker!.BrokerId);
             await OnBrokerCreated.InvokeAsync(Mapper.Map<BrokerViewModel>(newBroker));
         }
 
@@ -76,6 +86,34 @@ namespace FribergFastigheter.Client.Components
             await CloseCreateNewBroker.InvokeAsync(true);
         }
 
+        /// <summary>
+        /// Uploads images for a housing object if the user have selected any images. 
+        /// </summary>
+        /// <param name="housingId">The ID of the housing object to upload the images for.</param>
+        /// <returns>A collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
+        private async Task<ImageDto> UploadImages(int brokerId)
+        {
+            if (UploadedProfileImage != null)
+            {
+                return await BrokerFirmApiService.UploadImages(BrokerFirmId, brokerId, UploadedProfileImage);
+            }
+
+            return new ImageDto();
+        }
+
+        private void OnFileUploadChanged(InputFileChangeEventArgs e)
+        {
+            // TODO - Move image types to another class and perhaps in the share project.
+            List<string> allowedImageTypes = new()
+            {
+                "image/jpeg",
+                "image/png"
+            };
+
+            UploadedProfileImage = e.GetMultipleFiles(maximumFileCount: 1)
+                .FirstOrDefault(x => allowedImageTypes.Contains(x.ContentType));
+
+        }
         #endregion
     }
 }
