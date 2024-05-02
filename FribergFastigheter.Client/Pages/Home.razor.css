@@ -1,4 +1,5 @@
-﻿.housing-image
+﻿/* Housing */
+.housing-image
 {
     object-fit: contain;
     max-height: 200px;    

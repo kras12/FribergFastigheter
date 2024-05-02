@@ -19,6 +19,11 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         private bool _isInEditMode = false;
 
+        /// <summary>
+        /// Returns true to if the whole description should be shown despite the <see cref="TruncateLongDescriptions"/> property being true.
+        /// </summary>
+        private bool _overrideDescriptionTruncation = false;
+
         #endregion
 
         #region Properties
@@ -37,10 +42,22 @@ namespace FribergFastigheter.Client.Components
         public HousingViewModel Housing { get; set; }
 
         /// <summary>
+        /// Event triggers when the housing object have been deleted.
+        /// </summary>
+        [Parameter]
+        public EventCallback<HousingViewModel> OnHousingDeleted { get; set; }
+
+        /// <summary>
         /// Event triggers when the element have undergone transformation. 
         /// </summary>
         [Parameter]
         public EventCallback<HousingViewModel> OnTransformed {  get; set; }
+
+        /// <summary>
+        /// Set to true to truncate long descriptions
+        /// </summary>
+        [Parameter]
+        public bool TruncateLongDescriptions { get; set; } = false;
 
 #pragma warning restore CS8618
         #endregion
@@ -51,29 +68,38 @@ namespace FribergFastigheter.Client.Components
         /// Event handler for when an editing process for a housing object was cancelled.
         /// </summary>
         /// <param name="housing"></param>
-        private void OnCancelEditing(HousingViewModel housing)
+        private Task OnCancelEditingEventHandler(HousingViewModel housing)
         {
             _isInEditMode = false;
-            OnTransformed.InvokeAsync(housing);
+            return OnTransformed.InvokeAsync(housing);
         }
 
         /// <summary>
         /// Event handler for when the edit housing button was clicked. 
         /// </summary>
-        private void OnEditHousingButtonClicked()
+        private Task OnEditHousingButtonClickedEventHandler()
         {
             _isInEditMode = true;
-            OnTransformed.InvokeAsync(Housing);
+            return OnTransformed.InvokeAsync(Housing);
+        }
+
+        /// <summary>
+        /// Event handler for when the housing object was deleted.
+        /// </summary>
+        /// <param name="housing"></param>
+        private Task OnHousingDeletedEventHandler(HousingViewModel housing)
+        {
+            return OnHousingDeleted.InvokeAsync(housing);
         }
 
         /// <summary>
         /// Event handler for when a housing object has been edited.
         /// </summary>
         /// <param name="housing"></param>
-        private void OnHousingEdited(HousingViewModel housing)
+        private Task OnHousingEditedEventHandler(HousingViewModel housing)
         {
             _isInEditMode = false;
-            OnTransformed.InvokeAsync(housing);
+            return OnTransformed.InvokeAsync(housing);
         }        
 
         /// <summary>
@@ -89,6 +115,15 @@ namespace FribergFastigheter.Client.Components
             {
                 throw new ArgumentNullException(nameof(Housing));
             }
+        }
+
+        /// <summary>
+        /// Sets a value for the override description truncation flag.
+        /// </summary>
+        /// <param name="value">The value to set.</param>
+        private void OverrideDescriptionTruncation(bool value)
+        {
+            _overrideDescriptionTruncation = value;
         }
 
         #endregion

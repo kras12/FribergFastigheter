@@ -98,6 +98,33 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
         /// <summary>
+        /// An API endpoint for deleting housing images. 
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
+        /// <param name="deleteImagesDto">Contains a collection of IDs for the images to delete.</param>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteImages([Required] int brokerFirmId, [Required][FromBody] DeleteImagesDto deleteImagesDto)
+        {
+            if (!await _housingRepository.OwnsImages(deleteImagesDto.HousingId, deleteImagesDto.ImageIds))
+            {
+                return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "All images doesn't belong to the referenced housing object."));
+            }
+            else if (!await _housingRepository.IsOwnedByBrokerFirm(deleteImagesDto.HousingId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
+            }
+
+            _imageService.DeleteImagesFromDisk((await _housingRepository.GetImages(deleteImagesDto.HousingId, deleteImagesDto.ImageIds)).Select(x => x.FileName).ToList());
+            await _housingRepository.DeleteImages(deleteImagesDto.HousingId, deleteImagesDto.ImageIds);            
+
+            return Ok();
+        }
+
+        /// <summary>
         /// An API endpoint for retrieving a housing image file. 
         /// </summary>
         /// <param name="id">The ID of the image to fetch.</param>
@@ -136,17 +163,46 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
         /// <summary>
-        /// An API endpoint for retrieving a housing image file. 
+        /// An API endpoint for retrieving all images for a housing object. 
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
+        /// <param name="housingId">The ID of the housing object the image belongs to</param>
+        /// <returns>A collection of <see cref="ImageDto"/> objects if successful.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [HttpGet]
+        [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetImages([Required] int brokerFirmId, [Required] int housingId)
+        {
+            if (!await _housingRepository.IsOwnedByBrokerFirm(housingId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
+            }
+
+            var images = _autoMapper.Map<List<ImageDto>>(await _housingRepository.GetImages(housingId));            
+
+            if (images.Count > 0)
+            {
+                _imageService.PrepareDto(HttpContext, images);
+                
+            }
+
+            return Ok(images);
+        }
+
+        /// <summary>
+        /// An API endpoint for retrieving a compressed file of all images for a housing object. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <returns>An embedded <see cref="FileResult"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        [HttpGet]
+        [HttpGet("Archive")]
         [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK, "application/zip")]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get([Required] int brokerFirmId, [Required] int housingId)
+        public async Task<IActionResult> GetArchive([Required] int brokerFirmId, [Required] int housingId)
         {
             if (!await _housingRepository.IsOwnedByBrokerFirm(housingId, brokerFirmId))
             {

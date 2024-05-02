@@ -3,6 +3,7 @@ using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components
 {
@@ -20,10 +21,20 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         private List<HousingCategoryViewModel> _housingCategories = new();
 
+        /// <summary>
+        /// A collection of images the user have chosen to delete.
+        /// </summary>
+        private List<ImageViewModel> _imagesToDelete = new();
+
 		/// <summary>
 		/// A collection of municipalities to use in the form bound edit housing view model.
 		/// </summary>
 		private List<MunicipalityViewModel> _municipalities = new();
+
+        /// <summary>
+        ///  A collection of images to upload. 
+        /// </summary>
+        private List<IBrowserFile> _uploadedFiles = new();
 
         #endregion
 
@@ -94,6 +105,25 @@ namespace FribergFastigheter.Client.Components
             EditHousingInput.HousingCategories = _housingCategories;
 		}
 
+        /// <summary>
+        /// Fetches and loads all images for the housing object.
+        /// </summary>
+        /// <returns></returns>
+        private Task LoadAllImages()
+        {
+            return Task.Run(
+               async () =>
+               {
+                   Housing.Images.Clear();
+                   var images = await BrokerFirmApiService.GetImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId);
+
+                   if (images != null)
+                   {
+                       Housing.Images = AutoMapper.Map<List<ImageViewModel>>(images);
+                   }
+               });
+        }
+
 		/// <summary>
 		/// Fetches and loads the housing categories. 
 		/// </summary>
@@ -140,7 +170,40 @@ namespace FribergFastigheter.Client.Components
         /// <returns></returns>
         private Task OnCancelHousingEditButtonClicked()
         {
+            Housing.Images.AddRange(_imagesToDelete);
+            _imagesToDelete.Clear();
             return OnHousingEditCancelled.InvokeAsync(Housing);
+        }
+
+        /// <summary>
+        /// Event handler for when the delete image button was clicked. 
+        /// </summary>
+        /// <param name="image">The image to delete.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
+        {
+            _imagesToDelete.Add(image);
+            Housing.Images.Remove(image);
+        }
+
+        /// <summary>
+        /// Event handler to handle changes for the input file element in the form. 
+        /// </summary>
+        /// <param name="e">The event arguments.</param>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private void OnFileUploadChanged(InputFileChangeEventArgs e)
+        {
+            // TODO - Move image types to another class and perhaps in the share project.
+            List<string> allowedImageTypes = new()
+            {
+                "image/jpeg",
+                "image/png"
+            };
+
+            _uploadedFiles = e.GetMultipleFiles(maximumFileCount: 100)
+                .Where(x => allowedImageTypes.Contains(x.ContentType))
+                .ToList();
         }
 
         /// <summary>
@@ -153,7 +216,7 @@ namespace FribergFastigheter.Client.Components
         protected async override Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await Task.WhenAll(LoadHousingCategories(), LoadMunicipalities());
+            await Task.WhenAll(LoadHousingCategories(), LoadMunicipalities(), LoadAllImages());
         }
 
         /// <summary>
@@ -180,8 +243,25 @@ namespace FribergFastigheter.Client.Components
             AutoMapper.Map(EditHousingInput!, Housing);
 			Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
 			Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
+            await BrokerFirmApiService.DeleteImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+            Housing.Images.AddRange(await UploadImages());
             await OnHousingEdited.InvokeAsync(Housing);
-        }        
+        }
+
+        /// <summary>
+        /// Uploads images for a housing object if the user have selected any images. 
+        /// </summary>
+        /// <returns>A collection of <see cref="ImageViewModel"/> objects for the uploaded images.</returns>
+        private async Task<List<ImageViewModel>> UploadImages()
+        {
+            if (_uploadedFiles.Count > 0)
+            {
+                var result = await BrokerFirmApiService.UploadImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId, _uploadedFiles);
+                return result != null ? AutoMapper.Map<List<ImageViewModel>>(result) : new();
+            }
+
+            return new();
+        }
 
         #endregion
     }

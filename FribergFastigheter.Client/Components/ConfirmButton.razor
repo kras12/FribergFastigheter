@@ -1,0 +1,28 @@
+﻿@* 
+<!-- Author: Jimmie -->
+<!-- Co Authors: --> 
+*@
+@{
+    string dialogId = Guid.NewGuid().ToString();
+    string labelId = Guid.NewGuid().ToString();
+}
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@dialogId">
+    Radera
+</button>
+<div class="modal fade" id="@dialogId" tabindex="-1" aria-labelledby="@labelId" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="@labelId">@Title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng" @onclick="@(() => OnDialogButtonClickedEventHandler(DialogResults.UserAborted))"></button>
+            </div>
+            <div class="modal-body">
+                @Body
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" @onclick="@(() => OnDialogButtonClickedEventHandler(DialogResults.UserConfirmed))">Ok</button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal" @onclick="@(() => OnDialogButtonClickedEventHandler(DialogResults.UserAborted))">Avbryt</button>
+            </div>
+        </div>
+    </div>
+</div>

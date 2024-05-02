@@ -8,6 +8,16 @@
         #region Methods
 
         /// <summary>
+        /// Formats a number as a meter squared string.
+        /// </summary>
+        /// <param name="area">The area to format.</param>
+        /// <returns>A formatted <see cref="string"/>.</returns>
+        public static string FormatMeterSquared(double area)
+        {
+            return $"{area} m²";
+        }
+
+        /// <summary>
         /// Formats the number as a price string.
         /// </summary>
         /// <param name="price">The price to format.</param>
@@ -26,6 +36,24 @@
             {
                 // price with 0 decimals, thousands separator, and currency.
                 return $"{price:C0}";
+            }            
+        }
+
+        /// <summary>
+        /// Returns a truncated text if i exceeds the character limit.
+        /// </summary>
+        /// <param name="text">The text to format.</param>
+        /// <param name="characterLimit">The max number of characters to return.</param>
+        /// <returns>A formatted <see cref="string"/>.</returns>
+        public static string TruncateLongTexts(string text, int characterLimit)
+        {
+            if (text.Length <= characterLimit)
+            {
+                return text;
+            }
+            else
+            {
+                return $"{text.Substring(0, Math.Min(text.Length, characterLimit - 5))}(...)";
             }            
         }
 
