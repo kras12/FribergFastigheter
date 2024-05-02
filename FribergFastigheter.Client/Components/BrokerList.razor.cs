@@ -133,13 +133,6 @@ namespace FribergFastigheter.Client.Components
         public async void OnBrokerEdited(BrokerViewModel editedBroker)
         {
             await ScrollToElement(editedBroker);
-            //foreach (var broker in Brokers)
-            //{
-            //    if (broker.BrokerId == editedBroker.BrokerId)
-            //    {
-            //        broker.
-            //    }
-
         }
 
         #endregion
