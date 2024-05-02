@@ -4,6 +4,7 @@ using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using static FribergFastigheter.Client.Components.ConfirmButton;
 
 namespace FribergFastigheter.Client.Components
 {
@@ -66,13 +67,17 @@ namespace FribergFastigheter.Client.Components
         #region Methods
 
         /// <summary>
-        /// Event handler for the delete housing object button. 
+        /// Event handler for when the user makes a choice in the confirm delete housing dialog box. 
         /// </summary>
-        /// <returns></returns>
-        private async Task OnDeleteHousingButtonClicked()
+        /// <param name="result">The result of the user action.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        private async Task OnConfirmDeleteHousingEventHandler(DialogResults result)
         {
-            await BrokerFirmApiService.DeleteHousing(BrokerFirmId, Housing.HousingId, Housing.Images.Select(x => x.ImageId).ToList());
-            await OnHousingDeleted.InvokeAsync(Housing);       
+            if (result == DialogResults.UserConfirmed)
+            {
+                await BrokerFirmApiService.DeleteHousing(BrokerFirmId, Housing.HousingId, Housing.Images.Select(x => x.ImageId).ToList());
+                await OnHousingDeleted.InvokeAsync(Housing);       
+            }
         }
 
         #endregion
