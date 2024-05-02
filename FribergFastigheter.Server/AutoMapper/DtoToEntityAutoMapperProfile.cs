@@ -44,7 +44,7 @@ namespace FribergFastigheter.Server.AutoMapper
 				.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
 
-			CreateMap<UpdateBrokerDto, Broker>()
+			CreateMap<EditBrokerDto, Broker>()
 				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore())
 				.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }));				
 		}

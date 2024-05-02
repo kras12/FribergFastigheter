@@ -153,14 +153,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for updating broker objects. 
         /// </summary>
         /// <param name="brokerId">The ID of the broker associated with the update</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the creating the new broker.</param>
-        /// <param name="updateBrokerDto">The serialized DTO object.</param>
+        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker being edited.</param>
+        /// <param name="editBrokerDto">The serialized DTO object.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPut("{brokerId:int}")]
-        public async Task<ActionResult> Put([Required] int brokerId, [Required] int brokerFirmId, [FromBody] UpdateBrokerDto updateBrokerDto)
+        public async Task<ActionResult> Put([Required] int brokerId, [Required] int brokerFirmId, [FromBody] EditBrokerDto editBrokerDto)
         {
-            if (brokerId != updateBrokerDto.BrokerId)
+            if (brokerId != editBrokerDto.BrokerId)
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
 			}
@@ -176,7 +176,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
 			}
 
-			var broker = _mapper.Map<Broker>(updateBrokerDto);
+			var broker = _mapper.Map<Broker>(editBrokerDto);
             await _brokerRepository.UpdateAsync(broker);
             return Ok();
         }
