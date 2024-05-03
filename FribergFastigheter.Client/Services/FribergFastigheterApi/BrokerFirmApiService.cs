@@ -1,4 +1,5 @@
 ﻿using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Statistics;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,6 +36,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// The broker firm API endpoint address.
 		/// </summary>
 		private const string BrokerFirmByIdApiEndPoint = $"api/BrokerFirm/{IdPlaceHolder}";
+
+        /// <summary>
+		/// The broker firm API endpoint address.
+		/// </summary>
+		private const string BrokerFirmStatisticsApiEndPoint = $"api/BrokerFirm/{IdPlaceHolder}/Statistics";
 
         // <summary>
         /// The housing API endpoint address.
@@ -170,6 +176,18 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId)
         {
             return _httpClient.GetFromJsonAsync<BrokerFirmDto>(BrokerFirmByIdApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
+        }
+
+        /// <summary>
+        /// Fetches statistics for a broker firm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmStatisticsViewModel"/> object.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<BrokerFirmStatisticsViewModel?> GetBrokerFirmStatistics([Required] int brokerFirmId)
+        {
+            return _httpClient.GetFromJsonAsync<BrokerFirmStatisticsViewModel>(BrokerFirmStatisticsApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
         }
 
         #endregion

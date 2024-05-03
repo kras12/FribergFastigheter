@@ -8,6 +8,7 @@ using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using FribergFastigheter.Shared.Dto.Statistics;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -84,6 +85,27 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 
 			return Ok(result);
 		}
+
+        /// <summary>
+        /// An API endpoint for fetching statistics for a broker firm. 
+        /// </summary>
+        /// <param name="id">The ID of the broker firm.</param>
+        /// <returns>An embedded collection of <see cref="BrokerFirmStatisticsDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+        [HttpGet("{id:int}/Statistics")]
+        [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics(int id)
+		{
+            if (!await _brokerFirmRepository.Exists(id))
+            {
+                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
+            }
+
+			var result = await _brokerFirmRepository.GetStatistics(id);
+            return Ok(result);
+        }
 		
 		// TODO - Wait until identity is implemented before we decide whether to include or remove this feature. 
 		/// <summary>

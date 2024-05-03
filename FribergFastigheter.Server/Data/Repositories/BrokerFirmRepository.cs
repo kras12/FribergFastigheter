@@ -1,4 +1,5 @@
 ﻿using FribergFastigheter.Server.Data.Interfaces;
+using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,37 @@ namespace FribergFastigheter.Server.Data.Repositories
             applicationDbContext.BrokerFirms.Remove(brokerFirm);
             await applicationDbContext.SaveChangesAsync();
         }
+
+        /// <summary>
+        /// Returns statistics for a broker firm. 
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm to fetch statistics for.</param>
+        /// <returns>A <see cref="Task"/> containining a <see cref="BrokerFirmStatisticsDto"/> object with the statistics.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<BrokerFirmStatisticsDto> GetStatistics(int brokerFirmId)
+        {
+            if (!applicationDbContext.BrokerFirms.Any(x => brokerFirmId == x.BrokerFirmId))
+            {
+                throw new Exception($"No broker firm found with the id '{brokerFirmId}'.");
+            }
+
+            BrokerFirmStatisticsDto result = new();
+            result.HousingCount = await applicationDbContext.Housings.CountAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+            result.BrokerCount = await applicationDbContext.Brokers.CountAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+            result.HousingCountPerCategory = await applicationDbContext.Housings.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
+                .GroupBy(                
+                    key => key.Category,
+                    (category, housing) => new StatisticItemDto()
+                    {
+                        Key = category.CategoryName,
+                        Value = housing.Count()
+                })
+                .ToListAsync();
+
+            return result;
+        }           
 
         public async Task UpdateAsync(BrokerFirm brokerFirm)
         {

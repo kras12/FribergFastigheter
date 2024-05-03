@@ -1,4 +1,5 @@
 ﻿using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Statistics;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -77,6 +78,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		public Task<BrokerFirmDto?> GetBrokerFirmById([Required] int brokerFirmId);
+
+        /// <summary>
+        /// Fetches statistics for a broker firm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmStatisticsViewModel"/> object.</returns>
+        public Task<BrokerFirmStatisticsViewModel?> GetBrokerFirmStatistics([Required] int brokerFirmId);
 
         #endregion
 
