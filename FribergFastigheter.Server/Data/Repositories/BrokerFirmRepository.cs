@@ -53,12 +53,16 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public async Task<BrokerFirmStatisticsDto> GetStatistics(int brokerFirmId)
         {
-            if (!applicationDbContext.BrokerFirms.Any(x => brokerFirmId == x.BrokerFirmId))
+            var brokerFirm = await applicationDbContext.BrokerFirms.Where(x => x.BrokerFirmId == brokerFirmId).FirstOrDefaultAsync();
+
+            if (brokerFirm == null)
             {
                 throw new Exception($"No broker firm found with the id '{brokerFirmId}'.");
-            }
+            }            
 
             BrokerFirmStatisticsDto result = new();
+            result.BrokerFirmId = brokerFirm.BrokerFirmId;
+            result.BrokerFirmName = brokerFirm.Name;
             result.HousingCount = await applicationDbContext.Housings.CountAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
             result.BrokerCount = await applicationDbContext.Brokers.CountAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
             result.HousingCountPerCategory = await applicationDbContext.Housings.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
