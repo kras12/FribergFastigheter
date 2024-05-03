@@ -32,10 +32,15 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// </summary>
 		private const string BrokerByIdApiEndPoint = $"api/BrokerFirm/Broker/{IdPlaceHolder}";
 
-		/// <summary>
-		/// The broker firm API endpoint address.
-		/// </summary>
-		private const string BrokerFirmByIdApiEndPoint = $"api/BrokerFirm/{IdPlaceHolder}";
+        // <summary>
+        /// The broker image API endpoint address.
+        /// </summary>
+        private const string BrokerImageApiEndPoint = "api/BrokerFirm/Broker/Image";
+
+        /// <summary>
+        /// The broker firm API endpoint address.
+        /// </summary>
+        private const string BrokerFirmByIdApiEndPoint = $"api/BrokerFirm/{IdPlaceHolder}";
 
         /// <summary>
 		/// The broker firm API endpoint address.
@@ -99,6 +104,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #region BrokerMethods
 
+        /// <summary>
+        /// Creates a new broker under the broker firm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the brokerfirm that the broker belongs to.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: -->
+         
+
         public async Task<BrokerDto?> CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
         {
             List<KeyValuePair<string, string>> queries = new()
@@ -157,9 +172,9 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task UpdateBroker([Required] int id, [Required] UpdateBrokerDto broker)
+        public Task UpdateBroker([Required] int brokerId, [Required] EditBrokerDto broker)
         {
-            return _httpClient.PutAsJsonAsync(BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString()), broker);
+            return _httpClient.PutAsJsonAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}{BuildQueryString("brokerFirmId", broker.BrokerFirmId.ToString())}", broker);
         }
 
 		#endregion
@@ -412,6 +427,60 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return (await response.Content.ReadFromJsonAsync<List<ImageDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }))!;
         }
 
+        #endregion
+
+        #region BrokerImageMethods
+
+  //      /// <summary>
+  //      /// Deletes an image for a housing object.
+  //      /// </summary>
+  //      /// <param name="id">The ID of the image object to delete.</param>
+		///// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
+  //      /// <param name="housingId">The ID of the housing object the image belongs to</param>
+  //      /// <returns>A <see cref="Task"/>.</returns>
+  //      /// <!-- Author: Jimmie -->
+  //      /// <!-- Co Authors: -->
+  //      public Task DeleteImage(int id, [Required] int brokerFirmId, [Required] int housingId)
+  //      {
+  //          List<KeyValuePair<string, string>> queries = new()
+  //          {
+  //              new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
+  //              new KeyValuePair<string, string>("housingId", housingId.ToString())
+  //          };
+
+  //          return _httpClient.DeleteAsync($"{HousingImageByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString(queries)}");
+  //      }
+
+        /// <summary>
+        /// Uploads profileimage for a broker object. 
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the profileimage belongs to.</param>
+        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
+        /// <param name="newFile">The file to upload.</param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<ImageDto> UploadImages([Required] int brokerFirmId, [Required] int brokerId, IBrowserFile newFile)
+        {
+            if (newFile == null)
+            {
+                throw new ArgumentException($"Cant find any image", nameof(newFile));
+            }
+
+            List<KeyValuePair<string, string>> queries = new()
+            {
+                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
+                new KeyValuePair<string, string>("brokerId", brokerId.ToString())
+            };
+
+            var content = new MultipartFormDataContent();
+            content.Add(new StreamContent(newFile.OpenReadStream()), "file", newFile.Name);
+
+            var response = await _httpClient.PostAsync($"{BrokerImageApiEndPoint}/{BuildQueryString(queries)}", content);
+            
+            response.EnsureSuccessStatusCode();
+            return (await response.Content.ReadFromJsonAsync<ImageDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }));
+        }
         #endregion
     }
 }

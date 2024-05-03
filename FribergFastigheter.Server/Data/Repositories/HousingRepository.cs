@@ -305,7 +305,6 @@ namespace FribergFastigheter.Server.Data.Repositories
 				throw new Exception($"The housing object with ID '{housing}' was not found.");
 			}
 
-            // We return entities as no tracking.
             housing.Images.AddRange(images);
 			await applicationDbContext.SaveChangesAsync();
 		}
