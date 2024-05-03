@@ -21,6 +21,16 @@ namespace FribergFastigheter.Shared.Dto.Statistics
         public int BrokerCount { get; set; }
 
         /// <summary>
+        /// The ID of the broker firm. 
+        /// </summary>
+        public int BrokerFirmId { get; set; }
+
+        /// <summary>
+        /// The name of the broker firm. 
+        /// </summary>
+        public string BrokerFirmName { get; set; } = "";
+
+        /// <summary>
         /// The number of housing objects that belongs to the firm. 
         /// </summary>
         public int HousingCount { get; set; }
