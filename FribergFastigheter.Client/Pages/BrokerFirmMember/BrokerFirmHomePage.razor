@@ -1,6 +1,43 @@
 ﻿@page "/brokermember"
+@using FribergFastigheter.Client.Components.Statistics
+@* 
+<!-- Author: Jimmie -->
+<!-- Co Authors: --> 
+*@
+<div class="vertical-page-container">
+	@if (_brokerFirmStatistics != null)
+	{
+        Random random = new();
+        double valueChangeInPercentage = random.Next(-10, 11) + random.NextDouble();
+        string arrowClass = valueChangeInPercentage > 0 ? "fas fa-arrow-up" : "fas fa-arrow-down";
 
+        <h1>@_brokerFirmStatistics.BrokerFirmName</h1>
 
-<h3>BrokerHome</h3>
+        // Brokers
+        <StatisticsCard Title="Mäklare">
+            <SimpleStatisticsCardFragment Label="Antal" Value="_brokerFirmStatistics.BrokerCount" FontAwesomeIconClass="fas fa-users"></SimpleStatisticsCardFragment>
+        </StatisticsCard>
 
+        // Housings
+        <StatisticsCard Title="Bostadsobjekt">  
+            <AccordionStatisticsContainerFragment>
+                <AccordionStatisticsPageFragment ButtonText="Alla" Label="Antal" Value="_brokerFirmStatistics.HousingCount" FontAwesomeIconClass="fas fa-users" ValueChangeInPercentage="valueChangeInPercentage" ValueChangeSinceText="Sedan förra månaden"></AccordionStatisticsPageFragment>
+                @foreach (var item in _brokerFirmStatistics.HousingCountPerCategory)
+                {
+                    <AccordionStatisticsPageFragment ButtonText="@item.Key" Label="Antal" Value="@item.Value" FontAwesomeIconClass="fas fa-users" IsOpen="false"></AccordionStatisticsPageFragment>
+                }                            
+            </AccordionStatisticsContainerFragment>
+        </StatisticsCard>
 
+        // Housings - Alternative tabbed version
+        @* <StatisticsCard Title="Bostadsobjekt">
+            <TabbedStatisticsContainerFragment>
+                <TabbedStatisticsPageFragment ButtonText="Alla" Label="Antal" Value="_brokerFirmStatistics.HousingCount" FontAwesomeIconClass="fas fa-users" ValueChangeInPercentage="valueChangeInPercentage" ValueChangeSinceText="Sedan förra månaden"></TabbedStatisticsPageFragment>
+                @foreach (var item in _brokerFirmStatistics.HousingCountPerCategory)
+                {
+                    <TabbedStatisticsPageFragment ButtonText="@item.Key" Label="Antal" Value="@item.Value" FontAwesomeIconClass="fas fa-users"></TabbedStatisticsPageFragment>
+                }
+            </TabbedStatisticsContainerFragment>
+        </StatisticsCard> *@
+	}	
+</div>
