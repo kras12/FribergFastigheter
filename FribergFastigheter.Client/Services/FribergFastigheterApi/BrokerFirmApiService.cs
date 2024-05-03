@@ -182,12 +182,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// Fetches statistics for a broker firm.
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmStatisticsViewModel"/> object.</returns>
+        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmStatisticsDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<BrokerFirmStatisticsViewModel?> GetBrokerFirmStatistics([Required] int brokerFirmId)
+        public Task<BrokerFirmStatisticsDto?> GetBrokerFirmStatistics([Required] int brokerFirmId)
         {
-            return _httpClient.GetFromJsonAsync<BrokerFirmStatisticsViewModel>(BrokerFirmStatisticsApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
+            return _httpClient.GetFromJsonAsync<BrokerFirmStatisticsDto>(BrokerFirmStatisticsApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
         }
 
         #endregion
