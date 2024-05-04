@@ -194,7 +194,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         {
             if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
             }
 
             await _brokerRepository.DeleteAsync(id);
@@ -204,30 +204,25 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// An API endpoint for deleting housing images. 
         /// </summary>
-        /// <param name="id">The ID of the image to delete.</param>
+        /// <param name="id">The ID of the broker object the image belongs to</param>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the image belongs to.</param>
-        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [HttpDelete("broker/profile-image/{id:int}")]
+        [HttpDelete("broker/{id:int}/profile-image")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteProfileImage(int id, [Required] int brokerFirmId, [Required] int brokerId)
+        public async Task<ActionResult> DeleteProfileImage([Required] int id, [Required] int brokerFirmId)
         {
-            if (!await _brokerRepository.OwnsImage(brokerId, id))
-            {
-                return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No image with that ID was found that belongs to the referenced broker object."));
-            }
-            else if (!await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
+            if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
             }
 
-            var image = await _brokerRepository.GetImagebyBrokerId(brokerId);
+            var image = await _brokerRepository.GetProfileImage(id);
 
             if (image != null)
             {
-                await _brokerRepository.DeleteImage(brokerId);
+                await _brokerRepository.DeleteProfileImage(id);
                 _imageService.DeleteImageFromDisk(image.FileName);
                 return Ok();
             }
@@ -240,21 +235,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for creating images. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the image belongs to.</param>
-        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
+        /// <param name="id">The ID of the broker object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [HttpPost("broker/profile-image")]
+        [HttpPost("broker/{id:int}/profile-image")]
         [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateProfileImage([Required] int brokerFirmId, [Required] int brokerId, [FromForm] IFormFile file)
+        public async Task<ActionResult> CreateProfileImage([Required] int id, [Required] int brokerFirmId, [FromForm] IFormFile file)
         {
-            if (!await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
+            if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
             }
 
             Image imageEntity = new(await _imageService.SaveImageToDiskAsync(file));
-            await _brokerRepository.AddImage(brokerId, imageEntity);
+            await _brokerRepository.AddImage(id, imageEntity);
             var imageDto = _autoMapper.Map<ImageDto>(imageEntity);
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, imageDto);
 

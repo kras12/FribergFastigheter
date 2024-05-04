@@ -44,7 +44,10 @@
                         <h5>
                             Email: @broker.Email
                         </h5>
-                        <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
+                        <div class="d-flex flex-row gap-3">
+                            <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
+                            <FribergFastigheter.Client.Components.DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" BrokerFirmId="BrokerFirm.BrokerFirmId" />
+                        </div>
                     </div>
                 </div>
             }

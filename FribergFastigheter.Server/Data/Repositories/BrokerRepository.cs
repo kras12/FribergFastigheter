@@ -38,16 +38,23 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int brokerId)
+        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task DeleteAsync(int brokerId)
         {
-            return DeleteAsync(new Broker() { BrokerId = brokerId });
-        }
+            var fetchedBroker = applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId)
+                .FirstOrDefault();
 
-        public async Task DeleteAsync(Broker broker)
-        {
-            applicationDbContext.Brokers.Remove(broker);
+            if (fetchedBroker == null)
+            {
+                throw new Exception($"The broker object with ID '{brokerId}' was not found.");
+            }
+
+            applicationDbContext.Entry(fetchedBroker.ProfileImage!).State = EntityState.Deleted;
+            applicationDbContext.Brokers.Remove(fetchedBroker);
+
             await applicationDbContext.SaveChangesAsync();
-        }
+        }      
 
         public async Task UpdateAsync(Broker broker) 
         {
@@ -89,7 +96,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        public Task<Image?> GetImagebyBrokerId(int brokerId)
+        public Task<Image?> GetProfileImage(int brokerId)
         {
           return applicationDbContext
                 .Brokers.Where(x => x.BrokerId == brokerId)
@@ -125,19 +132,19 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        public async Task<int> DeleteImage(int brokerId)
+        public async Task DeleteProfileImage(int brokerId)
         {
-            var broker = await GetBrokerByIdAsync(brokerId);
+            var broker = applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId)
+                .FirstOrDefault();
 
             if (broker == null)
             {
                 throw new Exception($"The broker object with ID '{broker}' was not found.");
             }
-            applicationDbContext.Brokers.Attach(broker);
-            applicationDbContext.Entry(broker.ProfileImage).State = EntityState.Deleted;
+            applicationDbContext.Entry(broker.ProfileImage!).State = EntityState.Deleted;
             broker.ProfileImage = null;
 
-            return await applicationDbContext.SaveChangesAsync();
+            await applicationDbContext.SaveChangesAsync();
         }
 
         #endregion
