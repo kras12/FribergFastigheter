@@ -34,7 +34,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task DeleteBroker(int id, [Required] int brokerFirmId);
+        public Task DeleteBroker([Required] int brokerFirmId, int id, int imageId );
 
         /// <summary>
         /// Fetches data for a broker. 
@@ -201,6 +201,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task<List<ImageDto>> UploadImages([Required] int brokerFirmId, [Required] int housingId, List<IBrowserFile> newFiles);
         Task<ImageDto> UploadImages([Required] int brokerFirmId, [Required] int brokerId, IBrowserFile newFile);
+        Task DeleteProfileImage(int id, [Required] int brokerFirmId, [Required] int brokerId);
+        Task<int> GetHousingCountByBrokerId(int brokerId);
 
         #endregion
     }
