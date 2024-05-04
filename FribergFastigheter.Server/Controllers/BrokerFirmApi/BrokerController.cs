@@ -185,12 +185,18 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for deleting broker objects. 
         /// </summary>
         /// <param name="id">The ID of the broker object to delete.</param>
-        /// <!-- Author: Marcus -->
+        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker being edited.</param>
+        /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
         /// TODO: The delete a broker object does not work because of conflict with the housing object that have said broker as a property. Maybe a check and send a suitable response.
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id, [Required] int brokerFirmId)
         {
+            if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+            }
+
             await _brokerRepository.DeleteAsync(id);
             return Ok();
         }

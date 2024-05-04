@@ -77,7 +77,7 @@ namespace FribergFastigheter.Client.Components
         {
             CreateBrokerInput.BrokerFirmId = BrokerFirmId;
             var newBroker = await BrokerFirmApiService.CreateBroker(BrokerFirmId, Mapper.Map<CreateBrokerDto>(CreateBrokerInput));
-            newBroker!.ProfileImage = await UploadImages(newBroker!.BrokerId);
+            newBroker!.ProfileImage = await UploadProfileImage(newBroker!.BrokerId);
             await OnBrokerCreated.InvokeAsync(Mapper.Map<BrokerViewModel>(newBroker));
         }
 
@@ -91,11 +91,11 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         /// <param name="housingId">The ID of the housing object to upload the images for.</param>
         /// <returns>A collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
-        private async Task<ImageDto> UploadImages(int brokerId)
+        private async Task<ImageDto> UploadProfileImage(int brokerId)
         {
             if (UploadedProfileImage != null)
             {
-                return await BrokerFirmApiService.UploadImages(BrokerFirmId, brokerId, UploadedProfileImage);
+                return await BrokerFirmApiService.UploadBrokerProfileImage(BrokerFirmId, brokerId, UploadedProfileImage);
             }
 
             return new ImageDto();

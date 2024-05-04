@@ -86,6 +86,26 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return BuildQueryString(new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(key, value) });
         }
 
+        /// <summary>
+        /// Checks the value of an object reference and throws an exception if it's null. 
+        /// If it has a value the object is returned. 
+        /// </summary>
+        /// <param name="targetObject">The object to check.</param>
+        /// <param name="exceptionMessage">An optional message to use for the exception.</param>
+        /// <returns>The object if it's not null.</returns>
+        /// <exception cref="Exception"></exception>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        protected T EnsureNotNull<T>(T? targetObject, string? exceptionMessage = null) where T : class
+        {
+            if (targetObject == null)
+            {
+                throw new Exception(exceptionMessage);
+            }
+
+            return targetObject;
+        }
+
         #endregion
     }
 }

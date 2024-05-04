@@ -114,13 +114,7 @@ namespace FribergFastigheter.Client.Components
             return Task.Run(
                async () =>
                {
-                   Housing.Images.Clear();
-                   var images = await BrokerFirmApiService.GetImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId);
-
-                   if (images != null)
-                   {
-                       Housing.Images = AutoMapper.Map<List<ImageViewModel>>(images);
-                   }
+                   Housing.Images = AutoMapper.Map<List<ImageViewModel>>(await BrokerFirmApiService.GetHousingImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId));                  
                });
         }
 
@@ -135,12 +129,7 @@ namespace FribergFastigheter.Client.Components
             return Task.Run(
                async () =>
                {
-                   var categories = await BrokerFirmApiService.GetHousingCategories();
-
-                   if (categories != null)
-                   {
-                       _housingCategories = AutoMapper.Map<List<HousingCategoryViewModel>>(categories);
-                   }
+                   _housingCategories = AutoMapper.Map<List<HousingCategoryViewModel>>(await BrokerFirmApiService.GetHousingCategories());                 
                });
         }
 
@@ -155,12 +144,7 @@ namespace FribergFastigheter.Client.Components
             return Task.Run(
                async () =>
                {
-                   var municipalities = await BrokerFirmApiService.GetMunicipalities();
-
-                   if (municipalities != null)
-                   {
-                       _municipalities = AutoMapper.Map<List<MunicipalityViewModel>>(municipalities);
-                   }
+                    _municipalities = AutoMapper.Map<List<MunicipalityViewModel>>(await BrokerFirmApiService.GetMunicipalities());
                });
         }
 
@@ -256,7 +240,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (_uploadedFiles.Count > 0)
             {
-                var result = await BrokerFirmApiService.UploadImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId, _uploadedFiles);
+                var result = await BrokerFirmApiService.UploadHousingImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId, _uploadedFiles);
                 return result != null ? AutoMapper.Map<List<ImageViewModel>>(result) : new();
             }
 

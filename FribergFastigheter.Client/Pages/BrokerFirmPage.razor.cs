@@ -57,13 +57,7 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-			var result = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
-			BrokerFirm = null;
-
-			if (result != null)
-			{
-				BrokerFirm = AutoMapper.Map<BrokerFirmViewModel>(result);
-			}			
+            BrokerFirm = AutoMapper.Map<BrokerFirmViewModel>(await HousingApiService.GetBrokerFirmById(BrokerFirmId));		
 		}
 
 		#endregion

@@ -40,10 +40,10 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 
         protected override async Task OnInitializedAsync()
         {
-            BrokerDto? broker = (await BrokerApiService.GetBrokerById(Id, BrokerFirmId));
+            BrokerDto broker = await BrokerApiService.GetBrokerById(Id, BrokerFirmId);
             BrokerViewModel brokerResult = Mapper.Map<BrokerViewModel>(broker);
             Broker = brokerResult;
-            List<HousingDto>? housings = await BrokerApiService.GetHousingsByBrokerId(Id, BrokerFirmId, 3);
+            List<HousingDto> housings = await BrokerApiService.GetHousingsByBrokerId(Id, BrokerFirmId, 3);
             List<HousingViewModel> housingResult = Mapper.Map<List<HousingViewModel>>(housings);
             Housings = housingResult;
         }

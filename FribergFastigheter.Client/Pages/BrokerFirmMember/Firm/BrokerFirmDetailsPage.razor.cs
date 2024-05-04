@@ -43,7 +43,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Firm
 
         protected override async Task OnInitializedAsync()
         {
-            BrokerFirmDto? brokerFirm = await BrokerFirmApiService.GetBrokerFirmById(Id);
+            BrokerFirmDto brokerFirm = await BrokerFirmApiService.GetBrokerFirmById(Id);
             BrokerFirmViewModel brokerFirmResult = Mapper.Map<BrokerFirmViewModel>(brokerFirm);
             BrokerFirm = brokerFirmResult;
 
@@ -59,8 +59,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Firm
             //    housings.AddRange(housingResult);
             //}
             //Housings = housings;
-            List<HousingViewModel> housings = Mapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(Id, 3));
-            Housings = housings;
+            Housings = Mapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(Id, 3));
         }
 
         public void OpenBrokerList()
