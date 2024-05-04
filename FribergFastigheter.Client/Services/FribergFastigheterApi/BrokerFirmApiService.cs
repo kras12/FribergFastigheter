@@ -484,16 +484,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 throw new ArgumentException($"Cant find any image", nameof(newFile));
             }
 
-            List<KeyValuePair<string, string>> queries = new()
-            {
-                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
-                new KeyValuePair<string, string>("brokerId", brokerId.ToString())
-            };
-
             var content = new MultipartFormDataContent();
             content.Add(new StreamContent(newFile.OpenReadStream()), "file", newFile.Name);
 
-            var response = await _httpClient.PostAsync($"{BrokerProfileImageApiEndPoint}/{BuildQueryString(queries)}", content);            
+            var response = await _httpClient.PostAsync($"{BrokerProfileImageApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}/{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}", content);
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ImageDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
