@@ -36,6 +36,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string BrokerImageApiEndPoint = "api/BrokerFirm/Broker/Image";
 
+        // <summary>
+        /// The housing image API endpoint address.
+        /// </summary>
+        private const string BrokerImageByIdApiEndPoint = $"api/BrokerFirm/Broker/Image/{IdPlaceHolder}";
+
         /// <summary>
         /// The broker firm API endpoint address.
         /// </summary>
@@ -75,6 +80,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// The relative housings by broker ID API endpoint address.
         /// </summary>
         private const string HousingsByBrokerApiEndpoint = $"api/BrokerFirm/Housing/Broker/{IdPlaceHolder}/Housing";
+
+        /// <summary>
+        /// The relative housing Count by broker ID API endpoint address.
+        /// </summary>
+        private const string HousingCountByBrokerApiEndpoint = $"api/BrokerFirm/Housing/Broker/{IdPlaceHolder}/Housing/Count";
 
         /// <summary>
 		/// The relative municipality list API endpoint address.
@@ -126,13 +136,18 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="id">The ID of the broker object to delete.</param>
 		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie -->
+        /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        public Task DeleteBroker(int id, [Required] int brokerFirmId)
+        public async Task DeleteBroker([Required] int brokerFirmId, int id, int imageId)
         {
-            return _httpClient.DeleteAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
-        }
+            if (imageId != null)
+            {
+                await DeleteProfileImage(brokerFirmId, id, imageId);
+            }
 
+            await _httpClient.DeleteAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
+        }
+        
         /// <summary>
         /// Fetches data for a broker. 
         /// </summary>
@@ -164,7 +179,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <param name="id">The ID of the broker to update.</param>
         /// <param name="broker">The serialized DTO object to send.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie -->
+        /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
         public Task UpdateBroker([Required] int brokerId, [Required] EditBrokerDto broker)
         {
@@ -314,6 +329,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return await _httpClient.GetFromJsonAsync<List<HousingDto>?>($"{HousingsByBrokerApiEndpoint.Replace(IdPlaceHolder, brokerId.ToString())}{BuildQueryString(queries)}");
         }
 
+        /// <summary>
+		/// Fetches housing count that is being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <returns>A <see cref="Task"/> containing a  <see cref="Int"/> Count</returns>
+		public async Task<int> GetHousingCountByBrokerId(int brokerId)
+        {
+            return await _httpClient.GetFromJsonAsync<int>($"{HousingCountByBrokerApiEndpoint.Replace(IdPlaceHolder, brokerId.ToString())}");
+        }
+
         #endregion
 
         #region HousingImageMethods
@@ -413,25 +438,25 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #region BrokerImageMethods
 
-  //      /// <summary>
-  //      /// Deletes an image for a housing object.
-  //      /// </summary>
-  //      /// <param name="id">The ID of the image object to delete.</param>
-		///// <param name="brokerFirmId">The ID of the broker firm associated with the housing object the image belongs to.</param>
-  //      /// <param name="housingId">The ID of the housing object the image belongs to</param>
-  //      /// <returns>A <see cref="Task"/>.</returns>
-  //      /// <!-- Author: Jimmie -->
-  //      /// <!-- Co Authors: -->
-  //      public Task DeleteImage(int id, [Required] int brokerFirmId, [Required] int housingId)
-  //      {
-  //          List<KeyValuePair<string, string>> queries = new()
-  //          {
-  //              new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
-  //              new KeyValuePair<string, string>("housingId", housingId.ToString())
-  //          };
+        /// <summary>
+        /// Deletes an profileimage for a broker object.
+        /// </summary>
+        /// <param name="id">The ID of the image object to delete.</param>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the profileimage belongs to.</param>
+        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: -->
+        public Task DeleteProfileImage( [Required] int brokerFirmId, [Required] int brokerId, int id)
+        {
+            List<KeyValuePair<string, string>> queries = new()
+            {
+                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
+                new KeyValuePair<string, string>("brokerId", brokerId.ToString())
+            };
 
-  //          return _httpClient.DeleteAsync($"{HousingImageByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString(queries)}");
-  //      }
+            return _httpClient.DeleteAsync($"{BrokerImageByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}{BuildQueryString(queries)}");
+        }
 
         /// <summary>
         /// Uploads profileimage for a broker object. 

@@ -32,5 +32,6 @@ namespace FribergFastigheter.Server.Data.Interfaces
 		Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
         Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null);
         Task<bool> OwnsImages(int housingId, List<int> imageIds);
+        Task<int> GetHousingCountByBrokerId(int brokerId);
     }
 }

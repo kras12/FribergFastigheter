@@ -86,6 +86,8 @@ namespace FribergFastigheter.Client.Models
 		/// </summary>
 		public string? Url { get; set; } = null;
 
+        public int? HousingsCount { get; set; } = null;
+
 		#endregion
 	}
 }
