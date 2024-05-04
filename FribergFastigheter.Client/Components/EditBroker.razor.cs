@@ -3,6 +3,7 @@ using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components
 {
@@ -14,6 +15,16 @@ namespace FribergFastigheter.Client.Components
     /// <!-- Co Authors: -->
     public partial class EditBroker : ComponentBase
     {
+        #region Fields
+
+        /// <summary>
+        /// A image the user have chosen to delete.
+        /// </summary>
+        private ImageViewModel ImageToDelete = new();
+        private IBrowserFile? UploadedProfileImage = null;
+
+        #endregion
+
         #region InjectedServiceProperties
 
         /// <summary>
@@ -40,7 +51,7 @@ namespace FribergFastigheter.Client.Components
         private EditBrokerViewModel BrokerInput { get; set; } = null;
 
         [Parameter]
-        public EventCallback<bool> CloseEditBroker { get; set; }
+        public EventCallback CloseEditBroker { get; set; }
 
         [Parameter]
         public EventCallback<BrokerViewModel> OnBrokerEdited { get; set; }
@@ -75,20 +86,49 @@ namespace FribergFastigheter.Client.Components
             BrokerInput.BrokerFirm.BrokerFirmId = BrokerFirmId;
             await BrokerFirmApiService.UpdateBroker(Broker.BrokerId, AutoMapper.Map<EditBrokerDto>(BrokerInput));
             AutoMapper.Map(BrokerInput!, Broker);
-            await OnBrokerEdited.InvokeAsync(Broker);
-            //    var newBroker = await BrokerFirmApiService.CreateBroker(BrokerFirmId, Mapper.Map<CreateBrokerDto>(CreateBrokerInput));
-            //    await OnBrokerCreated.InvokeAsync(Mapper.Map<BrokerViewModel>(newBroker));
-            //}
-
-
-            
+            await BrokerFirmApiService.DeleteProfileImage(Broker.BrokerFirm.BrokerFirmId,Broker.BrokerId, ImageToDelete.ImageId);
+            if(UploadedProfileImage != null)
+            {
+                Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+            }
+            await OnBrokerEdited.InvokeAsync(Broker);   
         }
-
+ 
         private async Task CloseEditForm()
         {
-            await CloseEditBroker.InvokeAsync(true);
+            await CloseEditBroker.InvokeAsync();
         }
 
+        private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
+        {
+            ImageToDelete = image;
+            Broker.ProfileImage = null;
+        }
+
+        private void OnFileUploadChanged(InputFileChangeEventArgs e)
+        {
+            // TODO - Move image types to another class and perhaps in the share project.
+            List<string> allowedImageTypes = new()
+            {
+                "image/jpeg",
+                "image/png"
+            };
+
+            UploadedProfileImage = e.GetMultipleFiles(maximumFileCount: 1)
+                .FirstOrDefault(x => allowedImageTypes.Contains(x.ContentType));
+        }
+
+        private async Task<ImageViewModel> UploadImages(int brokerId)
+        {
+            if (UploadedProfileImage == null)
+            {
+                throw new InvalidOperationException("No image to upload was found");
+            }
+            var result = await BrokerFirmApiService.UploadImages(BrokerFirmId, brokerId, UploadedProfileImage);
+            UploadedProfileImage = null;
+            return result != null ? AutoMapper.Map<ImageViewModel>(result) : new ImageViewModel();
+            
+        }
         #endregion
     }
 }
