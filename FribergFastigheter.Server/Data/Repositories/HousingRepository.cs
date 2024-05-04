@@ -101,6 +101,14 @@ namespace FribergFastigheter.Server.Data.Repositories
 				.FirstOrDefaultAsync();
 		}
 
+        public async Task<int> GetHousingCountByBrokerId(int brokerId)
+        {
+            return await applicationDbContext.Housings
+                .Where(x => x.Broker.BrokerId == brokerId)
+                .AsNoTracking()
+                .CountAsync();
+        }
+
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         private IQueryable<Housing> GetHousingsInternalAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,

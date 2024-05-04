@@ -187,14 +187,29 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			return Ok(result);
 		}
 
-		/// <summary>
-		/// An API endpoint for retrieving housing objects being handled by a brokerfirm.
+        /// <summary>
+		/// An API endpoint for retrieving housing objects count being handled by a broker.
 		/// </summary>
-		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
-		/// <!-- Author: Jimmie, Marcus -->
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <returns>An embedded <see cref="int"/></returns>
+		/// <!-- Author: Marcus -->
 		/// <!-- Co Authors: -->
-		[HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
+		[HttpGet("Broker/{brokerId:int}/Housing/Count")]
+        public async Task<ActionResult<int>> GetHousingCountByBrokerId([Required] int brokerId)
+        {
+            int housingCount = await _housingRepository.GetHousingCountByBrokerId(brokerId);
+
+            return Ok(housingCount);
+        }
+
+        /// <summary>
+        /// An API endpoint for retrieving housing objects being handled by a brokerfirm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+        /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
         [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerFirmId([Required] int brokerFirmId, int? limitImagesPerHousing = null)
