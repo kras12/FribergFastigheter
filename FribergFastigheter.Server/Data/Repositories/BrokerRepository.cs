@@ -127,13 +127,13 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public async Task<int> DeleteImage(int brokerId)
         {
-            var broker = await GetBrokerByIdAsync(brokerId);
+            var broker = applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId)
+                .FirstOrDefault();
 
             if (broker == null)
             {
                 throw new Exception($"The broker object with ID '{broker}' was not found.");
             }
-            applicationDbContext.Brokers.Attach(broker);
             applicationDbContext.Entry(broker.ProfileImage).State = EntityState.Deleted;
             broker.ProfileImage = null;
 
