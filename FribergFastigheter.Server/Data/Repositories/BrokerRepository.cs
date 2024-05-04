@@ -50,9 +50,12 @@ namespace FribergFastigheter.Server.Data.Repositories
                 throw new Exception($"The broker object with ID '{brokerId}' was not found.");
             }
 
-            applicationDbContext.Entry(fetchedBroker.ProfileImage!).State = EntityState.Deleted;
+            if (fetchedBroker.ProfileImage != null)
+            {
+                applicationDbContext.Entry(fetchedBroker.ProfileImage!).State = EntityState.Deleted;
+            }
+            
             applicationDbContext.Brokers.Remove(fetchedBroker);
-
             await applicationDbContext.SaveChangesAsync();
         }      
 
