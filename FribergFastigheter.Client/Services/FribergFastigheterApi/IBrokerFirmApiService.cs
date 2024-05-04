@@ -114,14 +114,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         public Task DeleteHousing([Required] int brokerFirmId, int housingId, List<int> imageIds);
 
         /// <summary>
-		/// Fetches housing objects that is being handled by a broker.
-		/// </summary>
-		/// <param name="brokerId">The ID of the broker.</param>
-		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
-		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
-		public Task<List<HousingDto>> GetHousingsByBrokerId(int brokerId, int brokerFirmId, int? limitImagesPerHousing = null);
-
-        /// <summary>
         /// Fetches data for a housing object.
         /// </summary>
         /// <param name="id">The ID of the housing to fetch.</param>
@@ -145,10 +137,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object.</param>
         /// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+        /// <param name="brokerId">Filters the housing objects after a broker.</param>
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<List<HousingDto>> GetHousings([Required] int brokerFirmId, int? limitImagesPerHousing = null);
+        public Task<List<HousingDto>> GetHousings([Required] int brokerFirmId, int? limitImagesPerHousing = null, int? brokerId = null);
 
         /// <summary>
         /// Fetches all municipalities.
