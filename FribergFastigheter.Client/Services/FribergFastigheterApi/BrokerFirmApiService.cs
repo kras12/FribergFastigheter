@@ -69,7 +69,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
 		/// The relative housing category list API endpoint address.
 		/// </summary>
-		private const string HousingCategoryListApiEndpoint = $"{ApiBase}/housing-categories";
+		private const string HousingCategoryListApiEndpoint = $"{ApiBase}/housing/categories";
 
         /// <summary>
         /// The relative housing Count by broker ID API endpoint address.

@@ -55,7 +55,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <returns>An embedded collection of <see cref="HousingCategoryDto"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        [HttpGet("housing-categories")]
+        [HttpGet("housing/categories")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
         {
