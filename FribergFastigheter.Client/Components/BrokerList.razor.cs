@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace FribergFastigheter.Client.Components
 {
@@ -21,6 +24,7 @@ namespace FribergFastigheter.Client.Components
         private string? _scrollToTop = null;
 
         private string? formId = "EditForm";
+
 
         #endregion
         #region InjectedServiceProperties
@@ -53,6 +57,7 @@ namespace FribergFastigheter.Client.Components
 
         public bool? IsNewBrokerFormActive { get; set; } = null;
         public bool? IsEditBrokerFormActive { get; set; } = null;
+
 
         #endregion
 
@@ -89,13 +94,9 @@ namespace FribergFastigheter.Client.Components
             await ScrollToTop(formId);
         }
 
-        public void CloseEditBroker(bool close)
+        public void CloseEditBroker()
         {
-            if (close == true)
-            {
-                IsEditBrokerFormActive = false;
-            }
-
+            IsEditBrokerFormActive = false;
         }
         public async void OnCreatedBroker(BrokerViewModel newBroker) 
         {
@@ -132,16 +133,15 @@ namespace FribergFastigheter.Client.Components
 
         public async void OnBrokerEdited(BrokerViewModel editedBroker)
         {
+            IsEditBrokerFormActive = false;
             await ScrollToElement(editedBroker);
-            //foreach (var broker in Brokers)
-            //{
-            //    if (broker.BrokerId == editedBroker.BrokerId)
-            //    {
-            //        broker.
-            //    }
-
         }
 
-        #endregion
+        public async void OnBrokerDeleted(BrokerViewModel broker)
+        {
+            Brokers.Remove(broker);
+        }
+    
     }
+        #endregion
 }
