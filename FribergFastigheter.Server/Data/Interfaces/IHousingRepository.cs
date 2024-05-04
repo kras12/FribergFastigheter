@@ -11,7 +11,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
 	public interface IHousingRepository
     {
         Task AddAsync(Housing housing);
-		Task DeleteAsync(int housingId);
+		Task DeleteHousing(int housingId);
 		Task DeleteAsync(Housing housing);
 		Task<Broker> GetBroker(int housingId);
 		Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null, int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null);
@@ -21,7 +21,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
 		Task<List<Image>> GetImages(int housingId, List<int>? imageIds = null);
 		Task<bool> HousingExists(int housingId);
         Task<bool> OwnsImage(int housingId, int imageId);
-        Task<int> DeleteImages(int housingId, List<int> imageIds);
+        Task<int> DeleteImages(int housingId, List<int>? imageIds = null);
         Task<int> DeleteImage(int housingId, int imageId);
         Task<Image?> GetImagebyId(int housingId, int imageId);
         Task AddImages(int housingId, List<Image> imageIds);

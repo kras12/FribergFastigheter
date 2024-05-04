@@ -18,8 +18,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
     /// An API controller for the brokerfirm housings API.
     /// </summary>
     /// <!-- Author: Marcus -->
-    /// <!-- Co Authors: -->
-    [Route("api/BrokerFirm/Broker")]
+    /// <!-- Co Authors: Jimmie -->
+    [Route("broker-firm-api")]
     [ApiController]
     public class BrokerController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// The injected Auto Mapper.
         /// </summary>
-        private readonly IMapper _mapper;
+        private readonly IMapper _autoMapper;
 
         #endregion
 
@@ -58,7 +58,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IImageService imageService, IBrokerFirmRepository brokerFirmRepository)
         {
             _brokerRepository = brokerRepository;
-            _mapper = mapper;
+            _autoMapper = mapper;
             _imageService = imageService;
             _brokerFirmRepository = brokerFirmRepository;
         }
@@ -73,10 +73,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
-        [HttpGet]
+        /// <!-- Co Authors: Jimmie -->
+        [HttpGet("brokers")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> Get([Required] int brokerFirmId)
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers([Required] int brokerFirmId)
         {
             if(await _brokerFirmRepository.Exists(brokerFirmId) == false)
             {
@@ -84,38 +84,38 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
             
             var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(brokerFirmId))
-                .Select(x => _mapper.Map<BrokerDto>(x))
+                .Select(x => _autoMapper.Map<BrokerDto>(x))
                 .ToList();
 
-            _imageService.PrepareDto(HttpContext, brokers);
+            _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokers);
             return Ok(brokers);
         }
 
         /// <summary>
         /// An API endpoint for fetching a broker object. 
         /// </summary>
-        /// <param name="brokerId">The ID of the broker to fetch.</param>
+        /// <param name="id">The ID of the broker to fetch.</param>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        [HttpGet("{brokerId:int}")]
+        [HttpGet("broker/{id:int}")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById([Required] int brokerId, [Required] int brokerFirmId)
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokerById([Required] int id, [Required] int brokerFirmId)
         {
-            var broker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
+            var broker = await _brokerRepository.GetBrokerByIdAsync(id);
 
             if (broker == null)
             {
-                return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+                return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
             }
             else if (broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
             }
 
-            var result = _mapper.Map<BrokerDto>(broker);
-            _imageService.PrepareDto(HttpContext, result);
+            var result = _autoMapper.Map<BrokerDto>(broker);
+            _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
             return Ok(result);
         }
@@ -127,21 +127,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="createBrokerDto">The serialized DTO object.</param>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
-        [HttpPost]
-        public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateBrokerDto newBrokerDto, bool returnCreatedBroker)
+        [HttpPost("brokers")]
+        public async Task<ActionResult> CreateBroker([Required] int brokerFirmId, [FromBody] CreateBrokerDto newBrokerDto, bool returnCreatedBroker)
         {
             if (brokerFirmId != newBrokerDto.BrokerFirmId)
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted broker object."));
             }
-            var newBroker = _mapper.Map<Broker>(newBrokerDto);
+            var newBroker = _autoMapper.Map<Broker>(newBrokerDto);
             await _brokerRepository.AddAsync(newBroker);
 
             if (returnCreatedBroker)
             {
-                var result = _mapper.Map<BrokerDto>(await _brokerRepository.GetBrokerByIdAsync(newBroker.BrokerId));
-                _imageService.PrepareDto(HttpContext, result);
-                return CreatedAtAction(nameof(GetById), new { brokerId = newBroker.BrokerId }, result);
+                var result = _autoMapper.Map<BrokerDto>(await _brokerRepository.GetBrokerByIdAsync(newBroker.BrokerId));
+                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
+                return CreatedAtAction(nameof(GetBrokerById), new { id = newBroker.BrokerId }, result);
             }
             else
             {
@@ -152,31 +152,31 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// An API endpoint for updating broker objects. 
         /// </summary>
-        /// <param name="brokerId">The ID of the broker associated with the update</param>
+        /// <param name="id">The ID of the broker associated with the update</param>
         /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker being edited.</param>
         /// <param name="editBrokerDto">The serialized DTO object.</param>
         /// /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
-        [HttpPut("{brokerId:int}")]
-        public async Task<ActionResult> Put([Required] int brokerId, [Required] int brokerFirmId, [FromBody] EditBrokerDto editBrokerDto)
+        /// <!-- Co Authors: Jimmie -->
+        [HttpPut("broker/{id:int}")]
+        public async Task<ActionResult> UpdateBroker([Required] int id, [Required] int brokerFirmId, [FromBody] EditBrokerDto editBrokerDto)
         {
-            if (brokerId != editBrokerDto.BrokerId)
+            if (id != editBrokerDto.BrokerId)
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
 			}
-            else if (! await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
+            else if (! await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
 
-			var existingBroker = await _brokerRepository.GetBrokerByIdAsync(brokerId);
+			var existingBroker = await _brokerRepository.GetBrokerByIdAsync(id);
 
             if (existingBroker == null)
             {
-				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{brokerId}' was not found."));
+				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
 			}
 
-			var broker = _mapper.Map<Broker>(editBrokerDto);
+			var broker = _autoMapper.Map<Broker>(editBrokerDto);
             await _brokerRepository.UpdateAsync(broker);
             return Ok();
         }
@@ -189,8 +189,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
         /// TODO: The delete a broker object does not work because of conflict with the housing object that have said broker as a property. Maybe a check and send a suitable response.
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id, [Required] int brokerFirmId)
+        [HttpDelete("broker/{id}")]
+        public async Task<ActionResult> DeleteBroker(int id, [Required] int brokerFirmId)
         {
             if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
@@ -201,11 +201,68 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             return Ok();
         }
 
+        /// <summary>
+        /// An API endpoint for deleting housing images. 
+        /// </summary>
+        /// <param name="id">The ID of the image to delete.</param>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the image belongs to.</param>
+        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [HttpDelete("broker/profile-image/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteProfileImage(int id, [Required] int brokerFirmId, [Required] int brokerId)
+        {
+            if (!await _brokerRepository.OwnsImage(brokerId, id))
+            {
+                return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No image with that ID was found that belongs to the referenced broker object."));
+            }
+            else if (!await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
+            }
+
+            var image = await _brokerRepository.GetImagebyBrokerId(brokerId);
+
+            if (image != null)
+            {
+                await _brokerRepository.DeleteImage(brokerId);
+                _imageService.DeleteImageFromDisk(image.FileName);
+                return Ok();
+            }
+
+            // Should never get here
+            return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No image with that ID was found."));
+        }        
+
+        /// <summary>
+        /// An API endpoint for creating images. 
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the image belongs to.</param>
+        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [HttpPost("broker/profile-image")]
+        [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> CreateProfileImage([Required] int brokerFirmId, [Required] int brokerId, [FromForm] IFormFile file)
+        {
+            if (!await _brokerRepository.IsOwnedByBrokerFirm(brokerId, brokerFirmId))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
+            }
+
+            Image imageEntity = new(await _imageService.SaveImageToDiskAsync(file));
+            await _brokerRepository.AddImage(brokerId, imageEntity);
+            var imageDto = _autoMapper.Map<ImageDto>(imageEntity);
+            _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, imageDto);
+
+            return Ok(imageDto);
+        }
+
         #endregion
 
-    
     }
-
 }
-
 

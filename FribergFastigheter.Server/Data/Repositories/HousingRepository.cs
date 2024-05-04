@@ -42,7 +42,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-		public Task DeleteAsync(int housingId)
+		public Task DeleteHousing(int housingId)
 		{
             return DeleteAsync(new Housing() { HousingId = housingId });
 		}
@@ -303,7 +303,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<int> DeleteImages(int housingId, List<int> imageIds)
+        public async Task<int> DeleteImages(int housingId, List<int>? imageIds = null)
 		{
 			var housing = await GetHousingByIdAsync(housingId);
 
@@ -312,7 +312,9 @@ namespace FribergFastigheter.Server.Data.Repositories
                 throw new Exception($"The housing object with ID '{housing}' was not found.");
             }
 
-			housing.Images.Where(x => imageIds.Contains(x.ImageId)).ToList().ForEach(x => applicationDbContext.Entry(x).State = EntityState.Deleted);
+            var imagesToDelete = imageIds != null ? housing.Images.Where(x => imageIds.Contains(x.ImageId)).ToList() : housing.Images;
+            imagesToDelete.ForEach(x => applicationDbContext.Entry(x).State = EntityState.Deleted);
+            
             return await applicationDbContext.SaveChangesAsync();
         }
 

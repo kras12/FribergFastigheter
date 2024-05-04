@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using FribergFastigheter.Shared.Dto.Statistics;
+using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,7 +20,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 	/// </summary>
 	/// <!-- Author: Jimmie -->
 	/// <!-- Co Authors: -->
-	[Route("api/BrokerFirm")]
+	[Route("broker-firm-api")]
 	[ApiController]
 	public class BrokerFirmController : ControllerBase
 	{
@@ -68,10 +69,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		[HttpGet("{id:int}")]
+		[HttpGet("firm/{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
+		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById(int id)
 		{
 			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
 
@@ -81,7 +82,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
-            _imageservice.PrepareDto(HttpContext, result);
+            _imageservice.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
 			return Ok(result);
 		}
@@ -93,7 +94,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <returns>An embedded collection of <see cref="BrokerFirmStatisticsDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-        [HttpGet("{id:int}/Statistics")]
+        [HttpGet("firm/{id:int}/statistics")]
         [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics(int id)
@@ -115,7 +116,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <param name="brokerFirmDto">The serialized DTO object.</param>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		//[HttpPut("{id:int}")]
+		//[HttpPut("firm/{id:int}")]
 		//[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
 		//public async Task<ActionResult> Put(int id, [FromBody] BrokerFirmDto brokerFirmDto )
 		//{
