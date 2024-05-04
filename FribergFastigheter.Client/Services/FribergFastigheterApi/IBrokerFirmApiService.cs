@@ -31,11 +31,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// Deletes a broker.
         /// </summary>
         /// <param name="id">The ID of the broker object to delete.</param>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
         /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie -->
+        /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        public Task DeleteBroker(int id, [Required] int brokerFirmId);
+        public Task DeleteBroker([Required] int id, [Required] int brokerFirmId);
 
         /// <summary>
         /// Fetches data for a broker. 
@@ -132,6 +132,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         public Task<List<HousingCategoryDto>> GetHousingCategories();
 
         /// <summary>
+		/// Fetches housing count that is being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <returns>A <see cref="Task"/> containing a  <see cref="Int"/> Count</returns>
+		public Task<int> GetHousingCountByBrokerId(int brokerId);
+
+        /// <summary>
         /// Fetches all housing objects for a broker firm.
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing object.</param>
@@ -209,6 +216,17 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #region BrokerImageMethods
 
         /// <summary>
+        /// Deletes an profileimage for a broker object.
+        /// </summary>
+        /// <param name="id">The ID of the image object to delete.</param>
+		/// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the profileimage belongs to.</param>
+        /// <param name="brokerId">The ID of the broker object the image belongs to</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: -->
+        public Task DeleteBrokerProfileImage([Required] int brokerFirmId, [Required] int brokerId);
+
+        /// <summary>
         /// Uploads profileimage for a broker object. 
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the profileimage belongs to.</param>
@@ -217,7 +235,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public Task<ImageDto> UploadBrokerProfileImage([Required] int brokerFirmId, [Required] int brokerId, IBrowserFile newFile);
+        public Task<ImageDto> UploadBrokerProfileImage([Required] int brokerFirmId, [Required] int brokerId, IBrowserFile newFile);    
 
         #endregion
     }

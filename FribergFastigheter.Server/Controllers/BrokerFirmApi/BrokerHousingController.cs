@@ -139,6 +139,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
         /// <summary>
+		/// An API endpoint for retrieving housing objects count being handled by a broker.
+		/// </summary>
+		/// <param name="brokerId">The ID of the broker.</param>
+		/// <returns>An embedded <see cref="int"/></returns>
+		/// <!-- Author: Marcus -->
+		/// <!-- Co Authors: -->
+		[HttpGet("housings/count")]
+        public async Task<ActionResult<int>> GetHousingCountByBrokerId([Required] int? brokerId = null)
+        {
+            int housingCount = await _housingRepository.GetHousingsCountAsync(brokerId: brokerId);
+
+            return Ok(housingCount);
+        }
+
+        /// <summary>
         /// An API endpoint for retrieving housing objects being handled by a brokerfirm.
         /// </summary>
         /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>

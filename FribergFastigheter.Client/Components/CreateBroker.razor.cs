@@ -112,7 +112,6 @@ namespace FribergFastigheter.Client.Components
 
             UploadedProfileImage = e.GetMultipleFiles(maximumFileCount: 1)
                 .FirstOrDefault(x => allowedImageTypes.Contains(x.ContentType));
-
         }
         #endregion
     }

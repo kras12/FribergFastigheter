@@ -194,7 +194,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         {
             if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
             }
 
             await _brokerRepository.DeleteAsync(id);
