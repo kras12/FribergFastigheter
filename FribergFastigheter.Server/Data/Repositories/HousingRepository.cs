@@ -77,35 +77,30 @@ namespace FribergFastigheter.Server.Data.Repositories
 				 .FirstAsync();
 		}
 
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
-		{
-            return GetHousingsInternalAsync(brokerId, limitImagesPerHousing: limitImagesPerHousing).ToListAsync();
-		}
-
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null)
+        public Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
+            int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null,
+            double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
-            return GetHousingsInternalAsync(brokerFirm: brokerFirmId, limitImagesPerHousing: limitImagesPerHousing).ToListAsync();
+            return GetHousingsInternalAsync(brokerId: brokerId, brokerFirmId: brokerFirmId, municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
+                limitHousings: limitHousings, limitImagesPerHousing: limitImagesPerHousing, minPrice: minPrice, maxPrice: maxPrice,
+                    minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows).ToListAsync();
         }
 
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<Housing?> GetHousingByIdAsync(int id)
+        public async Task<Housing?> GetHousingByIdAsync(int housingId, int? brokerFirmId = null)
         {
-           return await applicationDbContext.Housings
-                .Where(x => x.HousingId == id)
-				.AsNoTracking()
+           return await GetHousingsInternalAsync(housingId: housingId, brokerFirmId: brokerFirmId)
 				.FirstOrDefaultAsync();
 		}
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        private IQueryable<Housing> GetHousingsInternalAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
+        private IQueryable<Housing> GetHousingsInternalAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
             int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null,
-            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
+            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, int? housingId = null)
         {
             #region Checks
 
@@ -140,6 +135,11 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AsNoTracking()
                 .AsQueryable();
 
+            if (housingId != null)
+            {
+                query = query.Where(x => x.HousingId == housingId);
+            }
+
             if (municipalityId != null)
             {
                 query = query.Where(x => x.Municipality.MunicipalityId == municipalityId);
@@ -155,9 +155,9 @@ namespace FribergFastigheter.Server.Data.Repositories
                 query = query.Where(x => x.Broker.BrokerId == brokerId);
             }
 
-            if (brokerFirm != null)
+            if (brokerFirmId != null)
             {
-                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirm);
+                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
             }
 
             if (minPrice != null)
@@ -211,23 +211,15 @@ namespace FribergFastigheter.Server.Data.Repositories
             return query;
         }
 
-        /// <!-- Author: Marcus, Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
-            int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null,
-			double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
-        {
-            return GetHousingsInternalAsync(brokerId, brokerFirm, municipalityId, housingCategoryId, limitHousings, limitImagesPerHousing, minPrice, maxPrice,
-                    minLivingArea, maxLivingArea, offsetRows).ToListAsync();
-		}
+        
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<int> GetHousingsCountAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null,
+        public Task<int> GetHousingsCountAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
             int? housingCategoryId = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null)
         {
-            return GetHousingsInternalAsync(brokerId, brokerFirm, municipalityId, housingCategoryId, limitHousings: null, limitImagesPerHousing: null, minPrice: minPrice, maxPrice: maxPrice,
-                minLivingArea: minLivingArea, maxLivingArea: maxLivingArea).CountAsync();
+            return GetHousingsInternalAsync(brokerId: brokerId, brokerFirmId: brokerFirmId, municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
+                minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea).CountAsync();
         }
 
         /// <!-- Author: Jimmie -->

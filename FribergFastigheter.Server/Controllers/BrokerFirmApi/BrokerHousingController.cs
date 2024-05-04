@@ -77,7 +77,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [HttpDelete("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Delete(int id, [Required] int brokerFirmId)
+        public async Task<ActionResult> DeleteHousing(int id, [Required] int brokerFirmId)
         {
             if (!await _housingRepository.Exists(id))
             {
@@ -90,34 +90,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             await _housingRepository.DeleteAsync(id);
             return Ok();
-        }
-
-        /// <summary>
-        /// An API endpoint for searching housing objects. 
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-        /// <param name="brokerId">The ID of the broker associated with the housing.</param>
-        /// <param name="municipalityId">An optional municipality filter.</param>
-        /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        [HttpGet]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<HousingDto>>> Get([Required] int brokerFirmId, int? brokerId, int? municipalityId = null)
-        {
-            if (brokerId != null && !(await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId.Value)))
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
-            }
-
-            var housings = (await _housingRepository.GetHousingsAsync(brokerId: brokerId, brokerFirm: brokerFirmId, municipalityId: municipalityId, limitImagesPerHousing: 3))
-                .Select(x => _mapper.Map<HousingDto>(x))
-                .ToList();
-
-            _imageService.PrepareDto(HttpContext, housings);
-
-            return Ok(housings);
-        }
+        }        
 
         /// <summary>
         /// An API endpoint for fetching a housing object. 
@@ -130,7 +103,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [HttpGet("{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<HousingDto>>> GetById(int id, [Required] int brokerFirmId)
+        public async Task<ActionResult<IEnumerable<HousingDto>>> GetHousingById(int id, [Required] int brokerFirmId)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(id);
 
@@ -157,49 +130,26 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [HttpGet("Category")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HousingCategoryDto>>> GetCategories()
+        public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
         {
             return Ok(_mapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories()));
         }
 
-		/// <summary>
-		/// An API endpoint for retrieving housing objects being handled by a broker.
-		/// </summary>
-		/// <param name="brokerId">The ID of the broker.</param>
-		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		[HttpGet("Broker/{brokerId:int}/Housing")]
-		[ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerId([Required] int brokerId, [Required] int brokerFirmId, int? limitImagesPerHousing = null)
-		{
-			if (! await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId))
-			{
-				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
-			}
-
-			
-			List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerId(brokerId, limitImagesPerHousing));
-			_imageService.PrepareDto(HttpContext, result);
-
-			return Ok(result);
-		}
-
-		/// <summary>
-		/// An API endpoint for retrieving housing objects being handled by a brokerfirm.
-		/// </summary>
-		/// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
-		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
-		/// <!-- Author: Jimmie, Marcus -->
-		/// <!-- Co Authors: -->
-		[HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
+        /// <summary>
+        /// An API endpoint for retrieving housing objects being handled by a brokerfirm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm associated with the housing.</param>
+        /// <param name="brokerId">Filters the housing objects after a broker.</param>
+        /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [HttpGet("BrokerFirm/{brokerFirmId:int}/Housing")]
         [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerFirmId([Required] int brokerFirmId, int? limitImagesPerHousing = null)
+        public async Task<ActionResult<List<HousingDto>>> GetHousings([Required] int brokerFirmId, int? limitImagesPerHousing = null, int? brokerId = null)
         {
-            List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerFirmId(brokerFirmId, limitImagesPerHousing));
+            List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsAsync(brokerFirmId: brokerFirmId, brokerId: brokerId,
+                limitImagesPerHousing: limitImagesPerHousing));
             _imageService.PrepareDto(HttpContext, result);
 
             return Ok(result);
@@ -229,7 +179,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		[HttpPost("BrokerFirm/{brokerFirmId:int}/Housing")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status201Created)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]        
-		public async Task<ActionResult> Post([Required] int brokerFirmId, [FromBody] CreateHousingDto newHousingDto, bool returnCreatedHousing)
+		public async Task<ActionResult> CreateHousing([Required] int brokerFirmId, [FromBody] CreateHousingDto newHousingDto, bool returnCreatedHousing)
         {
 			if (brokerFirmId != newHousingDto.BrokerFirmId)
 			{
@@ -243,7 +193,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 			{
                 var result = _mapper.Map<HousingDto>(await _housingRepository.GetHousingByIdAsync(newHousingEntity.HousingId));
                 _imageService.PrepareDto(HttpContext, result);
-                return CreatedAtAction(nameof(GetById), new { id = newHousingEntity.HousingId }, result);
+                return CreatedAtAction(nameof(GetHousingById), new { id = newHousingEntity.HousingId }, result);
             }
 			else
 			{
@@ -262,7 +212,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		[HttpPut("{id:int}")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Put([Required] int id, [Required] int brokerFirmId, [FromBody] EditHousingDto updateHousingDto)
+		public async Task<ActionResult> UpdateHousing([Required] int id, [Required] int brokerFirmId, [FromBody] EditHousingDto updateHousingDto)
         {
             if (id != updateHousingDto.HousingId || !await _housingRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
             {

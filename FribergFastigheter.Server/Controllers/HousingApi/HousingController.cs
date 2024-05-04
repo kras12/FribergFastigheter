@@ -104,7 +104,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Co Authors: Jimmie -->
         [HttpGet("Search")]
         [ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<HousingSearchResultDto>> GetHousings(int? municipalityId = null, int? housingCategoryId = null,
+        public async Task<ActionResult<HousingSearchResultDto>> SearchHousings(int? municipalityId = null, int? housingCategoryId = null,
             int? limitHousings = null, int? limitImagesPerHousing = null,
             decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
@@ -146,7 +146,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
         {
-            var housings = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerId(brokerId, limitImagesPerHousing: limitImagesPerHousing));
+            var housings = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsAsync(brokerId: brokerId, limitImagesPerHousing: limitImagesPerHousing));
             _imageService.PrepareDto(HttpContext, housings);
 
             return Ok(housings);
