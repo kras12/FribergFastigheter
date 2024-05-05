@@ -24,9 +24,9 @@ namespace FribergFastigheter
 
 			// Add Cors policy for our debug build
 #if DEBUG
-			builder.Services.AddCors(policy =>
+			builder.Services.AddCors(options =>
 			{
-				policy.AddPolicy("LocalHostingCorsPolicy", builder => builder.WithOrigins("https://localhost:7038")
+				options.AddPolicy("LocalHostingCorsPolicy", builder => builder.WithOrigins("https://localhost:7038")
 					 .AllowAnyMethod()
 					 .AllowAnyHeader()
 					 .AllowCredentials());
