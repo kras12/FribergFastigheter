@@ -1,7 +1,7 @@
 ﻿using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FribergFastigheter.Server.Data.Repositories

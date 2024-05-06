@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheterApi.Data.Entities;
-
 namespace FribergFastigheter.Server.AutoMapper
 {
 	/// <summary>
@@ -40,7 +38,7 @@ namespace FribergFastigheter.Server.AutoMapper
 			.ForMember(dest => dest.Category, opt => opt.MapFrom(src => new HousingCategory() { HousingCategoryId = src.CategoryId }))
 			.ForMember(dest => dest.Municipality, opt => opt.MapFrom(src => new Municipality() { MunicipalityId = src.MunicipalityId }));
 
-			CreateMap<CreateBrokerDto, Broker>()
+			CreateMap<RegisterBrokerDto, Broker>()
 				.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
 

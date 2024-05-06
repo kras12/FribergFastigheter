@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -128,7 +127,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: -->
         [HttpPost("brokers")]
-        public async Task<ActionResult> CreateBroker([Required] int brokerFirmId, [FromBody] CreateBrokerDto newBrokerDto, bool returnCreatedBroker)
+        public async Task<ActionResult> CreateBroker([Required] int brokerFirmId, [FromBody] RegisterBrokerDto newBrokerDto, bool returnCreatedBroker)
         {
             if (brokerFirmId != newBrokerDto.BrokerFirmId)
             {

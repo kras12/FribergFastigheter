@@ -1,5 +1,4 @@
-﻿using FribergFastigheter.Data.Entities;
-using FribergFastigheterApi.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 
 namespace FribergFastigheter.Server.Data.Interfaces
 {

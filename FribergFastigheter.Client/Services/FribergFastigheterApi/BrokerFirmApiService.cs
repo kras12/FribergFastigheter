@@ -135,7 +135,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public async Task<BrokerDto> CreateBroker([Required] int brokerFirmId, [Required] CreateBrokerDto broker)
+        public async Task<BrokerDto> CreateBroker([Required] int brokerFirmId, [Required] RegisterBrokerDto broker)
         {
             List<KeyValuePair<string, string>> queries = new()
             {

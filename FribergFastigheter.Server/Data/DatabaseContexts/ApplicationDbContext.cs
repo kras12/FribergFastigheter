@@ -1,7 +1,9 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.HelperClasses;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheter.Server.Data.Constants;
 using FribergFastigheterApi.HelperClasses.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +16,7 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 	/// </summary>
 	/// <!-- Author: Jimmie -->
 	/// <!-- Co Authors: Marcus -->
-	public class ApplicationDbContext : DbContext
+	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	{
 		#region Constructors
 
@@ -143,6 +145,66 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
             modelBuilder.Entity<Broker>()
                 .Navigation(x => x.ProfileImage)
                 .AutoInclude();
+
+			modelBuilder.Entity<Broker>()
+				.Navigation(x => x.User)
+				.AutoInclude();
+
+			modelBuilder.Entity<IdentityRole>()
+			.HasData(
+				new IdentityRole
+				{
+					Id = "7e648d4e-a530-4cd4-b8d7-8be891780f71",
+					Name = ApplicationUserRoles.Broker,
+					NormalizedName = ApplicationUserRoles.Broker.ToUpper(),
+				},
+				new IdentityRole
+				{
+					Id = "bcd2b11c-e243-4310-a9c3-3180c1b743ea",
+					Name = ApplicationUserRoles.BrokerAdmin,
+					NormalizedName = ApplicationUserRoles.BrokerAdmin.ToUpper(),
+				});
+
+
+			modelBuilder.Entity<BrokerFirm>()
+				.HasData(
+					new BrokerFirm()
+					{
+						Name = "Ankeborg",
+						BrokerFirmId = 1,
+					}
+				);
+
+            var hasher = new PasswordHasher<ApplicationUser>();
+            modelBuilder.Entity<ApplicationUser>()
+                .HasData(
+                    new ApplicationUser()
+                    {
+                        Id = "cda42790-efce-43b0-b569-41648d6c8e82",
+                        Email = "kalle@ankeborg.com",
+                        NormalizedEmail = "kalle@ankeborg.com",
+                        UserName = "kalle@ankeborg.com",
+                        NormalizedUserName = "kalle@ankeborg.com",
+                        EmailConfirmed = true,
+                        PasswordHash = hasher.HashPassword(null, "123456789Ab!"),
+						FirstName = "Kalle",
+						LastName= "Anka"
+                    }
+                );
+
+   //         
+			//modelBuilder.Entity<Broker>()
+			//	.HasData(
+			//		new Broker()
+			//		{
+			//			BrokerFirm = new BrokerFirm() { BrokerFirmId = 1, Name = "Ankeborg" }, 
+			//			BrokerId = 1,
+			//			User = new ApplicationUser() { 
+							
+   //                     }
+			//		}
+			//	);
+
         }
 
 		/// <summary>

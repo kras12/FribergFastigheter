@@ -1,7 +1,6 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 
@@ -70,6 +69,14 @@ namespace FribergFastigheter.Server.Data.Repositories
         {
             return await applicationDbContext.Brokers
                 .AsNoTracking().FirstOrDefaultAsync(b => b.BrokerId == id);
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<Broker?> GetBrokerByUserIdAsync(string id)
+        {
+            return await applicationDbContext.Brokers
+                .AsNoTracking().FirstOrDefaultAsync(b => b.User.Id == id);
         }
 
         public async Task<List<Broker>> GetAllBrokersAsync()

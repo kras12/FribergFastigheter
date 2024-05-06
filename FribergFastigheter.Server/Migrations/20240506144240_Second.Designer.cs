@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace FribergFastigheterApi.Migrations
+namespace FribergFastigheter.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240414180848_Init")]
-    partial class Init
+    [Migration("20240506144240_Second")]
+    partial class Second
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,167 @@ namespace FribergFastigheterApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FribergFastigheter.Data.Entities.Housing", b =>
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "cda42790-efce-43b0-b569-41648d6c8e82",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "745c112a-ef41-4d8b-beed-8265ffcc1504",
+                            Email = "kalle@ankeborg.com",
+                            EmailConfirmed = true,
+                            FirstName = "Kalle",
+                            LastName = "Anka",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "kalle@ankeborg.com",
+                            NormalizedUserName = "kalle@ankeborg.com",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDfQbvmzxHhbJmx5Q2zoEOAzVZ/6MEFaxsqi/uLy0K8RqVZ2oTXLtoF6iAaaksJpGw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "24bf3030-75ac-462e-907d-7e4d1e0c11fd",
+                            TwoFactorEnabled = false,
+                            UserName = "kalle@ankeborg.com"
+                        });
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Broker", b =>
+                {
+                    b.Property<int>("BrokerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrokerId"));
+
+                    b.Property<int>("BrokerFirmId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProfileImageImageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("BrokerId");
+
+                    b.HasIndex("BrokerFirmId");
+
+                    b.HasIndex("ProfileImageImageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Brokers");
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.BrokerFirm", b =>
+                {
+                    b.Property<int>("BrokerFirmId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrokerFirmId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LogotypeImageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("BrokerFirmId");
+
+                    b.HasIndex("LogotypeImageId");
+
+                    b.ToTable("BrokerFirms");
+
+                    b.HasData(
+                        new
+                        {
+                            BrokerFirmId = 1,
+                            Description = "",
+                            Name = "Ankeborg"
+                        });
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
                 {
                     b.Property<int>("HousingId")
                         .ValueGeneratedOnAdd()
@@ -93,50 +253,7 @@ namespace FribergFastigheterApi.Migrations
                     b.ToTable("Housings");
                 });
 
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Broker", b =>
-                {
-                    b.Property<int>("BrokerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrokerId"));
-
-                    b.Property<int>("BrokerFirmId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("BrokerId");
-
-                    b.HasIndex("BrokerFirmId");
-
-                    b.ToTable("Brokers");
-                });
-
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.BrokerFirm", b =>
-                {
-                    b.Property<int>("BrokerFirmId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrokerFirmId"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("BrokerFirmId");
-
-                    b.ToTable("BrokerFirms");
-                });
-
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.HousingCategory", b =>
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.HousingCategory", b =>
                 {
                     b.Property<int>("HousingCategoryId")
                         .ValueGeneratedOnAdd()
@@ -175,7 +292,7 @@ namespace FribergFastigheterApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Image", b =>
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Image", b =>
                 {
                     b.Property<int>("ImageId")
                         .ValueGeneratedOnAdd()
@@ -197,7 +314,7 @@ namespace FribergFastigheterApi.Migrations
                     b.ToTable("Image");
                 });
 
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Municipality", b =>
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Municipality", b =>
                 {
                     b.Property<int>("MunicipalityId")
                         .ValueGeneratedOnAdd()
@@ -1666,27 +1783,208 @@ namespace FribergFastigheterApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Data.Entities.Housing", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.HasOne("FribergFastigheterApi.Data.Entities.BrokerFirm", "BrokerFirm")
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "7e648d4e-a530-4cd4-b8d7-8be891780f71",
+                            Name = "Broker",
+                            NormalizedName = "BROKER"
+                        },
+                        new
+                        {
+                            Id = "bcd2b11c-e243-4310-a9c3-3180c1b743ea",
+                            Name = "BrokerAdmin",
+                            NormalizedName = "BROKERADMIN"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Broker", b =>
+                {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.BrokerFirm", "BrokerFirm")
+                        .WithMany("Brokers")
+                        .HasForeignKey("BrokerFirmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.Image", "ProfileImage")
+                        .WithMany()
+                        .HasForeignKey("ProfileImageImageId");
+
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BrokerFirm");
+
+                    b.Navigation("ProfileImage");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.BrokerFirm", b =>
+                {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.Image", "Logotype")
+                        .WithMany()
+                        .HasForeignKey("LogotypeImageId");
+
+                    b.Navigation("Logotype");
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
+                {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.BrokerFirm", "BrokerFirm")
                         .WithMany()
                         .HasForeignKey("BrokerFirmId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FribergFastigheterApi.Data.Entities.Broker", "Broker")
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.Broker", "Broker")
                         .WithMany()
                         .HasForeignKey("BrokerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FribergFastigheterApi.Data.Entities.HousingCategory", "Category")
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.HousingCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryHousingCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FribergFastigheterApi.Data.Entities.Municipality", "Municipality")
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.Municipality", "Municipality")
                         .WithMany()
                         .HasForeignKey("MunicipalityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1701,32 +1999,72 @@ namespace FribergFastigheterApi.Migrations
                     b.Navigation("Municipality");
                 });
 
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Broker", b =>
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Image", b =>
                 {
-                    b.HasOne("FribergFastigheterApi.Data.Entities.BrokerFirm", "BrokerFirm")
-                        .WithMany("Brokers")
-                        .HasForeignKey("BrokerFirmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BrokerFirm");
-                });
-
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Image", b =>
-                {
-                    b.HasOne("FribergFastigheter.Data.Entities.Housing", null)
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.Housing", null)
                         .WithMany("Images")
                         .HasForeignKey("HousingId");
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Data.Entities.Housing", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.Navigation("Images");
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.BrokerFirm", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.BrokerFirm", b =>
                 {
                     b.Navigation("Brokers");
+                });
+
+            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

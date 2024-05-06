@@ -1,5 +1,4 @@
-﻿using FribergFastigheter.Data.Entities;
-using FribergFastigheterApi.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 
 namespace FribergFastigheter.Server.HelperClasses.Data
 {
@@ -11,6 +10,8 @@ namespace FribergFastigheter.Server.HelperClasses.Data
     public class HousingSeedData
     {
         #region Properties
+
+        public List<BrokerFirm> BrokerFirms { get; set; } = new();
 
         /// <summary>
         /// Returns a list of categories associated with the housings.

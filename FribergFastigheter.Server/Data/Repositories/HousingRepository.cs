@@ -1,7 +1,6 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 

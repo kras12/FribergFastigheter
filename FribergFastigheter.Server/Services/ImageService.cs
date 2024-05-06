@@ -1,7 +1,5 @@
-﻿using FribergFastigheter.Data.Entities;
-using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Shared.Enums;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;

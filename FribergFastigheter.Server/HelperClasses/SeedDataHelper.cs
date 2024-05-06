@@ -1,7 +1,6 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.HelperClasses.Data;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheterApi.Data.Entities;
 using FribergFastigheterApi.HelperClasses.Data;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Concurrent;
@@ -142,6 +141,13 @@ namespace FribergFastigheter.HelperClasses
             result.SeedImageUrls.HousingImageUrls = _housingImages.Keys.ToList();
             result.SeedImageUrls.BrokerImages = _brokerImages.Keys.ToList();
             result.SeedImageUrls.BrokerFirmImages = _brokerFirmImages.Keys.ToList();
+            result.BrokerFirms = _brokerFirms.Values.ToList();
+
+            result.BrokerFirms.ForEach(brokerFirm =>
+                brokerFirm.Brokers.RemoveAll(broker =>
+                    !result.Housings.Any(housing => housing.Broker == broker)));
+
+            result.BrokerFirms.RemoveAll(x => x.Brokers.Count == 0);
 
             ResetLookupData();
             return result;
@@ -175,14 +181,14 @@ namespace FribergFastigheter.HelperClasses
                     _brokerFirmImages.TryAdd(parsedBrokerFirmImage, new Image(Path.GetFileName(parsedBrokerFirmImage)));
                     _brokerFirms.TryAdd(parsedBrokerFirmName, new BrokerFirm(parsedBrokerFirmName, logotype: _brokerFirmImages[parsedBrokerFirmImage]));
 
-                    if (!_brokerFirms[parsedBrokerFirmName].Brokers.Any(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
-                        && x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
+                    if (!_brokerFirms[parsedBrokerFirmName].Brokers.Any(x => x.User.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
+                        && x.User.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower().Replace(" ", "")}.se";
+                        string password = $"A{Guid.NewGuid()}-{Guid.NewGuid()}!";
                         string phoneNumber = $"070-{new Random().Next(1_000_000, 2_000_000)}";
-                        _brokerFirms[parsedBrokerFirmName].Brokers.Add(new Broker(
-                            parsedBrokerFirstName, parsedBrokerLastName, email, phoneNumber, _brokerFirms[parsedBrokerFirmName],
-                            parsedBrokerDescription, _brokerImages[parsedBrokerImage]));
+                        _brokerFirms[parsedBrokerFirmName].Brokers.Add(new Broker(_brokerFirms[parsedBrokerFirmName], parsedBrokerDescription, _brokerImages[parsedBrokerImage])
+                        { User = new ApplicationUser(parsedBrokerFirstName, parsedBrokerLastName, email, phoneNumber, password) });
                     }
                 }
             }
@@ -211,8 +217,8 @@ namespace FribergFastigheter.HelperClasses
                         out string? _, out string? _))
             {
                 housing.BrokerFirm = _brokerFirms[parsedBrokerFirmName];
-                housing.Broker = _brokerFirms[parsedBrokerFirmName].Brokers.Single(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
-                        && x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
+                housing.Broker = _brokerFirms[parsedBrokerFirmName].Brokers.Single(x => x.User.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
+                        && x.User.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
             }
 
             if (TryParseLivingArea(groupedData, out double? parsedLivingArea))

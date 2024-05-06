@@ -1,4 +1,4 @@
-﻿using FribergFastigheterApi.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 
 namespace FribergFastigheter.Server.Data.Interfaces
 {
@@ -18,6 +18,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task<List<Broker>> GetAllBrokersAsync();
         Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId);
         Task<Broker?> GetBrokerByIdAsync(int id);
+        public Task<Broker?> GetBrokerByUserIdAsync(string id);
         Task<Image?> GetProfileImage(int brokerId);
         Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
         Task<bool> OwnsImage(int brokerId, int imageId);

@@ -1,5 +1,5 @@
 ﻿using FribergFastigheter.Shared.Dto.Statistics;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 
 namespace FribergFastigheter.Server.Data.Interfaces
 {

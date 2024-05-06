@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using System.ComponentModel.DataAnnotations;
