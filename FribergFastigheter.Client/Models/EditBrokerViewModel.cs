@@ -53,6 +53,23 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public string PhoneNumber { get; set; } = "";
 
-		#endregion
-	}
+        /// <summary>
+        /// The broker profile image.
+        /// </summary>
+        public ImageViewModel? ProfileImage { get; set; }
+
+        public string ProfileImageOrPlaceholder
+        {
+            get
+            {
+                if (ProfileImage == null)
+                {
+                    return "/Graphics/profile-image-placeholder.jpg";
+                }
+                return ProfileImage.Url;
+            }
+        }
+
+        #endregion
+    }
 }
