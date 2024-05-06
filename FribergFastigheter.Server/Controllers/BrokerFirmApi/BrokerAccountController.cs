@@ -102,7 +102,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 var applicationUser = new ApplicationUser(
                     registerBrokerDto.FirstName,
                     registerBrokerDto.LastName,
-                    registerBrokerDto.UserName,
+                    registerBrokerDto.Email,
+                    registerBrokerDto.Email,
                     registerBrokerDto.PhoneNumber,
                     registerBrokerDto.Password
                     );
