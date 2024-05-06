@@ -20,7 +20,7 @@ namespace FribergFastigheter.Client.Components
         /// <summary>
         /// True if the user have chosen to delete the profile image.
         /// </summary>
-        private bool _deleteProfileImage = new();
+        private bool _deleteProfileImage = false;
         private IBrowserFile? _uploadedProfileImage = null;
 
         #endregion
@@ -99,13 +99,14 @@ namespace FribergFastigheter.Client.Components
  
         private async Task CloseEditForm()
         {
+            ///TODO Make an reset method instead
             await CloseEditBroker.InvokeAsync();
         }
 
         private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
         {
+            BrokerInput.ProfileImage = null;
             _deleteProfileImage = true;
-            Broker.ProfileImage = null;
         }
 
         private void OnFileUploadChanged(InputFileChangeEventArgs e)
