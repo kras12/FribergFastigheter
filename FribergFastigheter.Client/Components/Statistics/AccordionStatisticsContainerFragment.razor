@@ -1,0 +1,15 @@
+﻿@*
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+*@
+@{
+	string accordionElementIdString = Guid.NewGuid().ToString();
+}
+<div class="accordion accordion-flush" id="@accordionElementIdString">
+	@if (ChildContent != null)
+	{
+		<CascadingValue Value="accordionElementIdString">
+			@ChildContent
+		</CascadingValue>
+	}	
+</div>

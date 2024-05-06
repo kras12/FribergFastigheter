@@ -18,10 +18,10 @@ namespace FribergFastigheter.Client.Components
         #region Fields
 
         /// <summary>
-        /// A image the user have chosen to delete.
+        /// True if the user have chosen to delete the profile image.
         /// </summary>
-        private ImageViewModel ImageToDelete = new();
-        private IBrowserFile? UploadedProfileImage = null;
+        private bool _deleteProfileImage = new();
+        private IBrowserFile? _uploadedProfileImage = null;
 
         #endregion
 
@@ -87,8 +87,11 @@ namespace FribergFastigheter.Client.Components
             BrokerInput.BrokerFirm.BrokerFirmId = BrokerFirmId;
             await BrokerFirmApiService.UpdateBroker(Broker.BrokerId, AutoMapper.Map<EditBrokerDto>(BrokerInput));
             AutoMapper.Map(BrokerInput!, Broker);
-            await BrokerFirmApiService.DeleteProfileImage(Broker.BrokerFirm.BrokerFirmId,Broker.BrokerId, ImageToDelete.ImageId);
-            if(UploadedProfileImage != null)
+            if (_deleteProfileImage)
+            {
+                await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerFirm.BrokerFirmId, Broker.BrokerId);
+            }            
+            if(_uploadedProfileImage != null)
             {
                 Broker.ProfileImage = await UploadImages(Broker.BrokerId);
             }
@@ -104,7 +107,7 @@ namespace FribergFastigheter.Client.Components
 
         private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
         {
-            ImageToDelete = image;
+            _deleteProfileImage = true;
         }
 
         private void OnFileUploadChanged(InputFileChangeEventArgs e)
@@ -116,18 +119,18 @@ namespace FribergFastigheter.Client.Components
                 "image/png"
             };
 
-            UploadedProfileImage = e.GetMultipleFiles(maximumFileCount: 1)
+            _uploadedProfileImage = e.GetMultipleFiles(maximumFileCount: 1)
                 .FirstOrDefault(x => allowedImageTypes.Contains(x.ContentType));
         }
 
         private async Task<ImageViewModel> UploadImages(int brokerId)
         {
-            if (UploadedProfileImage == null)
+            if (_uploadedProfileImage == null)
             {
                 throw new InvalidOperationException("No image to upload was found");
             }
-            var result = await BrokerFirmApiService.UploadImages(BrokerFirmId, brokerId, UploadedProfileImage);
-            UploadedProfileImage = null;
+            var result = await BrokerFirmApiService.UploadBrokerProfileImage(BrokerFirmId, brokerId, _uploadedProfileImage);
+            _uploadedProfileImage = null;
             return result != null ? AutoMapper.Map<ImageViewModel>(result) : new ImageViewModel();
             
         }

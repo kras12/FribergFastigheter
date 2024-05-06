@@ -29,11 +29,11 @@ namespace FribergFastigheter.Client.Components
 
         #region Methods
 
-        ///// <summary>
-        ///// Event handler for when the user clicks any of the dialog buttons. 
-        ///// </summary>
-        ///// <param name="result">The result of the user action.</param>
-        ///// <returns>A <see cref="Task"/>.</returns>
+        /// <summary>
+        /// Event handler for when the user clicks any of the dialog buttons. 
+        /// </summary>
+        /// <param name="result">The result of the user action.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
         private Task OnDialogButtonClickedEventHandler()
         {
             return OnDialogButtonClicked.InvokeAsync();

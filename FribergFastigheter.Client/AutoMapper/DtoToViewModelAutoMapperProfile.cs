@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models;
 using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Statistics;
 
 namespace FribergFastigheter.Client.AutoMapper
 {
@@ -21,6 +22,8 @@ namespace FribergFastigheter.Client.AutoMapper
 			CreateMap<MunicipalityDto, MunicipalityViewModel>();
 			CreateMap<ImageDto, ImageViewModel>();
 			CreateMap<PaginationDto, PaginationViewModel>();
+			CreateMap<BrokerFirmStatisticsDto, BrokerFirmStatisticsViewModel>();
+			CreateMap<StatisticItemDto, StatisticItemViewModel>();
 
 			CreateMap<BrokerFirmDto, BrokerFirmViewModel>()
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace FribergFastigheter.Server.Controllers.HousingApi
 {
-	[Route("api/Housing/BrokerFirm")]
+	[Route("housing-api")]
 	[ApiController]
 	public class HousingBrokerFirmController : ControllerBase
 	{
@@ -59,7 +59,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: Marcus -->
-		[HttpGet("{id:int}")]
+		[HttpGet("broker-firm/{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
@@ -72,7 +72,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
-            _imageService.PrepareDto(HttpContext, result);
+            _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
 			return Ok(result);
 		}

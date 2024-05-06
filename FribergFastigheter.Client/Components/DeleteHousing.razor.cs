@@ -75,7 +75,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (result == DialogResults.UserConfirmed)
             {
-                await BrokerFirmApiService.DeleteHousing(BrokerFirmId, Housing.HousingId, Housing.Images.Select(x => x.ImageId).ToList());
+                await BrokerFirmApiService.DeleteHousing(BrokerFirmId, Housing.HousingId);
                 await OnHousingDeleted.InvokeAsync(Housing);       
             }
         }

@@ -89,13 +89,8 @@ namespace FribergFastigheter.Client.Components
             return Task.Run(
                async () =>
                {
-                   var categories = await BrokerFirmApiService.GetHousingCategories();
-
-                   if (categories != null)
-                   {
-                       CreateHousingInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(categories));
-                       CreateHousingInput.SelectedCategoryId = CreateHousingInput.HousingCategories.First().HousingCategoryId;
-                   }
+                   CreateHousingInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(await BrokerFirmApiService.GetHousingCategories()));
+                   CreateHousingInput.SelectedCategoryId = CreateHousingInput.HousingCategories.First().HousingCategoryId;
                });
         }
 
@@ -109,14 +104,9 @@ namespace FribergFastigheter.Client.Components
         {
             return Task.Run(
                async () =>
-               {
-                   var municipalities = await BrokerFirmApiService.GetMunicipalities();
-
-                   if (municipalities != null)
-                   {
-                       CreateHousingInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(municipalities));
-                       CreateHousingInput.SelectedMunicipalityId = CreateHousingInput.Municipalities.First().MunicipalityId;
-                   }
+               { 
+                    CreateHousingInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(await BrokerFirmApiService.GetMunicipalities()));
+                    CreateHousingInput.SelectedMunicipalityId = CreateHousingInput.Municipalities.First().MunicipalityId;
                });
         }
 
@@ -171,7 +161,7 @@ namespace FribergFastigheter.Client.Components
             CreateHousingInput.BrokerId = BrokerId;
             CreateHousingInput.BrokerFirmId = BrokerFirmId;
             var newHousing = await BrokerFirmApiService.CreateHousing(BrokerFirmId, AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
-            newHousing!.Images = await UploadImages(newHousing!.HousingId);
+            newHousing.Images = await UploadImages(newHousing.HousingId);
             await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
         }        
 
@@ -184,7 +174,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (_uploadedFiles.Count > 0)
             {
-                return await BrokerFirmApiService.UploadImages(BrokerFirmId, housingId, _uploadedFiles);
+                return await BrokerFirmApiService.UploadHousingImages(BrokerFirmId, housingId, _uploadedFiles);
             }
 
             return new List<ImageDto>();

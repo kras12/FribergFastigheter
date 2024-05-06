@@ -1,0 +1,29 @@
+﻿@*
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+*@
+@{
+    string pageId = Guid.NewGuid().ToString();
+    string activeClass = IsDefaultPage ? "active" : "";
+}
+<div class="tab-pane fade show mt-3 @(activeClass)" id="@PageId" role="tabpanel" aria-labelledby="@(PageId)-button">
+    <div class="row">
+        <div class="col">
+            <div class="h5 card-title text-uppercase text-muted text-align-left mb-0">@Label</div>
+            <span class="h2 font-weight-bold mb-0">@Value</span>
+        </div>
+        <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+            <div class="icon icon-shape bg-yellow text-white rounded-circle shadow">
+                <i class="@FontAwesomeIconClass"></i>
+            </div>
+        </div>
+    </div>
+    @if (HaveTrendData)
+    {
+        string arrowClass = ValueChangeInPercentage > 0 ? "fas fa-arrow-up" : "fas fa-arrow-down";
+        <p class="mt-3 mb-0 text-muted text-sm">
+            <span class="text-warning mr-2"><i class="@arrowClass"></i> @($"{ValueChangeInPercentage:N2}")%</span>
+            <span class="text-nowrap">@ValueChangeSinceText</span>
+        </p>
+    }
+</div>

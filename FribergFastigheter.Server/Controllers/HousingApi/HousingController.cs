@@ -15,7 +15,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
     /// </summary>
     /// <!-- Author: Marcus, Jimmie -->
     /// <!-- Co Authors: -->
-    [Route("api/Housing")]
+    [Route("housing-api")]
     [ApiController]
     public class HousingController : ControllerBase
     {
@@ -55,9 +55,9 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <returns>An embedded collection of <see cref="HousingCategoryDto"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        [HttpGet("Category")]
+        [HttpGet("housing/categories")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<HousingCategoryDto>>> GetCategories()
+        public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
         {
             return Ok(_mapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories()));
         }
@@ -69,7 +69,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: Marcus -->
-		[HttpGet("{id:int}")]
+		[HttpGet("housing/{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HousingDto>> GetHousingById(int id)
@@ -82,7 +82,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
             }
 
             var result = _mapper.Map<HousingDto>(housing);
-            _imageService.PrepareDto(HttpContext, result);
+            _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
             return Ok(result);
         }
@@ -90,6 +90,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <summary>
         /// An API endpoint for searching housing objects. 
         /// </summary>
+        /// <param name="brokerId">An optional broker filter.</param>
         /// <param name="municipalityId">An optional municipality filter.</param>
         /// <param name="housingCategoryId">An optional housing category filter.</param>
         /// <param name="limitHousings">An optional max limit for number of retrieved housings.</param>
@@ -102,21 +103,21 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <returns>A <see cref="HousingSearchResultDto"/> object containing the results.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        [HttpGet("Search")]
+        [HttpGet("housings")]
         [ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<HousingSearchResultDto>> GetHousings(int? municipalityId = null, int? housingCategoryId = null,
+        public async Task<ActionResult<HousingSearchResultDto>> SearchHousings(int? brokerId = null, int? municipalityId = null, int? housingCategoryId = null,
             int? limitHousings = null, int? limitImagesPerHousing = null,
             decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
         {
             var result = new HousingSearchResultDto();
 
-            result.Housings = (await _housingRepository.GetHousingsAsync(municipalityId: municipalityId, housingCategoryId: housingCategoryId,
+            result.Housings = (await _housingRepository.GetHousingsAsync(brokerId: brokerId, municipalityId: municipalityId, housingCategoryId: housingCategoryId,
                     limitHousings: limitHousings, limitImagesPerHousing: limitImagesPerHousing,
                     minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows))
                 .Select(x => _mapper.Map<HousingDto>(x))
                 .ToList();
 
-            _imageService.PrepareDto(HttpContext, result.Housings);
+            _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result.Housings);
 
             if (limitHousings != null && result.Housings.Count > 0)
             {
@@ -134,31 +135,12 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         }
 
         /// <summary>
-        /// An API endpoint for retrieving housing objects being handled by a broker.
-        /// </summary>
-        /// <param name="brokerId">The ID of the broker.</param>
-        /// <param name="limitImagesPerHousing">An optional max limit for number of retrieved images per housing.</param>
-        /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        [HttpGet("Broker/{brokerId:int}/Housing")]
-        [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<HousingDto>>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null)
-        {
-            var housings = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsByBrokerId(brokerId, limitImagesPerHousing: limitImagesPerHousing));
-            _imageService.PrepareDto(HttpContext, housings);
-
-            return Ok(housings);
-        }
-
-        /// <summary>
         /// An API endpoint for fetching all municipalities.
         /// </summary>
         /// <returns>An embedded collection of <see cref="MunicipalityDto"/>.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        [HttpGet("Municipality")]
+        [HttpGet("municipalities")]
         [ProducesResponseType<MunicipalityDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MunicipalityDto>>> GetMunicipalities()
         {
