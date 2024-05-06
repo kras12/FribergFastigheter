@@ -5,12 +5,13 @@ using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FribergFastigheter.Server.Controllers.HousingApi
 {
-	[Route("api/Housing/Broker")]
+	[Route("housing-api")]
 	[ApiController]
 	public class HousingBrokerController : ControllerBase
 	{
@@ -59,7 +60,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: Marcus -->
-		[HttpGet("{id:int}")]
+		[HttpGet("broker/{id:int}")]
 		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById(int id)
@@ -72,7 +73,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			}
 
 			var result = _mapper.Map<BrokerDto>(broker);
-            _imageService.PrepareDto(HttpContext, result);
+            _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
 			return Ok(result);
 		}

@@ -75,14 +75,9 @@ namespace FribergFastigheter.Client.Pages
             return Task.Run(
                async () =>
                {
-                   var categories = await HousingApi.GetHousingCategories();
-
-                   if (categories != null)
-                   {
-                       HousingSearchFormInput.HousingCategories.Add(HousingCategoryViewModel.AllCategories);
-                       HousingSearchFormInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(categories));
-                       HousingSearchFormInput.SelectedCategoryId = HousingSearchFormInput.HousingCategories.First().HousingCategoryId;
-                   }
+                    HousingSearchFormInput.HousingCategories.Add(HousingCategoryViewModel.AllCategories);
+                    HousingSearchFormInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(await HousingApi.GetHousingCategories()));
+                    HousingSearchFormInput.SelectedCategoryId = HousingSearchFormInput.HousingCategories.First().HousingCategoryId;
                });
         }
 
@@ -97,14 +92,9 @@ namespace FribergFastigheter.Client.Pages
             return Task.Run(
                async () =>
                {
-                   var municipalities = await HousingApi.GetMunicipalities();
-
-                   if (municipalities != null)
-                   {
-                       HousingSearchFormInput.Municipalities.Add(MunicipalityViewModel.AllMunicipalities);
-                       HousingSearchFormInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(municipalities));
-                       HousingSearchFormInput.SelectedMunicipalityId = HousingSearchFormInput.Municipalities.First().MunicipalityId;
-                   }
+                   HousingSearchFormInput.Municipalities.Add(MunicipalityViewModel.AllMunicipalities);
+                   HousingSearchFormInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(await HousingApi.GetMunicipalities()));
+                   HousingSearchFormInput.SelectedMunicipalityId = HousingSearchFormInput.Municipalities.First().MunicipalityId;
                });
         }
 
@@ -139,18 +129,11 @@ namespace FribergFastigheter.Client.Pages
                 minLivingArea: HousingSearchFormInput.MinLivingArea, maxLivingArea: HousingSearchFormInput.MaxLivingArea, 
                 offsetRows: offsetRows);
 
-            _lastHousingSearchInput = AutoMapper.Map<HousingSearchInputViewModel>(this.HousingSearchFormInput);            
-            HousingSearchResult = null;
-
-            if (result != null)
-            {
-                HousingSearchResult = AutoMapper.Map<HousingSearchResultViewModel>(result);
-                // TODO - Find a better way to retrieve the URLS
-                HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
-            }
-
-            _haveSearchedHousings = true;
-            
+            _lastHousingSearchInput = AutoMapper.Map<HousingSearchInputViewModel>(HousingSearchFormInput);
+            HousingSearchResult = AutoMapper.Map<HousingSearchResultViewModel>(result);
+            // TODO - Find a better way to retrieve the URLS
+            HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
+            _haveSearchedHousings = true;            
         }
 
         #endregion

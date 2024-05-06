@@ -79,7 +79,7 @@ namespace FribergFastigheter.Client.Components
                 {
                     Broker.ProfileImage = new ImageViewModel();
                 }
-                await BrokerFirmApiService.DeleteBroker(BrokerFirmId, Broker.BrokerId, Broker.ProfileImage.ImageId);
+                await BrokerFirmApiService.DeleteBroker(Broker.BrokerId, BrokerFirmId);
                 await OnBrokerDeleted.InvokeAsync(Broker);
             } 
         }

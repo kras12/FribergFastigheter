@@ -1,0 +1,24 @@
+﻿@*
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+*@
+@if (_pages.Count > 0)
+{
+    <ul class="nav nav-tabs" role="tablist">
+        @foreach (var page in _pages)
+        {
+            string activeClass = page.IsDefaultPage ? "active" : "";
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(activeClass)" id="@(page.PageId)-button" data-bs-toggle="tab" data-bs-target="#@(page.PageId)" type="button" role="tab" aria-controls="@(page.PageId)" aria-selected="true">@(page.ButtonText)</button>
+            </li>
+        }
+    </ul>
+}
+@if (ChildContent != null)
+{
+    <div class="tab-content" id="@(Guid.NewGuid().ToString())">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>    
+    </div>
+}

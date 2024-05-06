@@ -11,27 +11,24 @@ namespace FribergFastigheter.Server.Data.Interfaces
 	public interface IHousingRepository
     {
         Task AddAsync(Housing housing);
-		Task DeleteAsync(int housingId);
+		Task DeleteHousing(int housingId);
 		Task DeleteAsync(Housing housing);
 		Task<Broker> GetBroker(int housingId);
-		Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null, int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null);
-        Task<Housing?> GetHousingByIdAsync(int id);
+		Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null, int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null);
         Task UpdateAsync(Housing housing);
 		Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
 		Task<bool> Exists(int id);
 		Task<List<Image>> GetImages(int housingId, List<int>? imageIds = null);
 		Task<bool> HousingExists(int housingId);
         Task<bool> OwnsImage(int housingId, int imageId);
-        Task<int> DeleteImages(int housingId, List<int> imageIds);
+        Task<int> DeleteImages(int housingId, List<int>? imageIds = null);
         Task<int> DeleteImage(int housingId, int imageId);
         Task<Image?> GetImagebyId(int housingId, int imageId);
         Task AddImages(int housingId, List<Image> imageIds);
         Task<List<HousingCategory>> GetHousingCategories();
         Task<List<Municipality>> GetMunicipalities();
         Task<int> GetHousingsCountAsync(int? brokerId = null, int? brokerFirm = null, int? municipalityId = null, int? housingCategoryId = null, decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null);
-		Task<List<Housing>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
-        Task<List<Housing>> GetHousingsByBrokerFirmId(int brokerFirmId, int? limitImagesPerHousing = null);
-        Task<bool> OwnsImages(int housingId, List<int> imageIds);
-        Task<int> GetHousingCountByBrokerId(int brokerId);
+		Task<bool> OwnsImages(int housingId, List<int> imageIds);
+		Task<Housing?> GetHousingByIdAsync(int housingId, int? brokerFirmId = null);
     }
 }

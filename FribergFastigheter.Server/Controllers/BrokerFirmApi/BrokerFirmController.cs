@@ -8,6 +8,8 @@ using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using FribergFastigheter.Shared.Dto.Statistics;
+using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,7 +20,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 	/// </summary>
 	/// <!-- Author: Jimmie -->
 	/// <!-- Co Authors: -->
-	[Route("api/BrokerFirm")]
+	[Route("broker-firm-api")]
 	[ApiController]
 	public class BrokerFirmController : ControllerBase
 	{
@@ -67,10 +69,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		[HttpGet("{id:int}")]
+		[HttpGet("firm/{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
+		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById(int id)
 		{
 			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
 
@@ -80,10 +82,31 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
-            _imageservice.PrepareDto(HttpContext, result);
+            _imageservice.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
 			return Ok(result);
 		}
+
+        /// <summary>
+        /// An API endpoint for fetching statistics for a broker firm. 
+        /// </summary>
+        /// <param name="id">The ID of the broker firm.</param>
+        /// <returns>An embedded collection of <see cref="BrokerFirmStatisticsDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+        [HttpGet("firm/{id:int}/statistics")]
+        [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics(int id)
+		{
+            if (!await _brokerFirmRepository.Exists(id))
+            {
+                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
+            }
+
+			var result = await _brokerFirmRepository.GetStatistics(id);
+            return Ok(result);
+        }
 		
 		// TODO - Wait until identity is implemented before we decide whether to include or remove this feature. 
 		/// <summary>
@@ -93,7 +116,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <param name="brokerFirmDto">The serialized DTO object.</param>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		//[HttpPut("{id:int}")]
+		//[HttpPut("firm/{id:int}")]
 		//[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
 		//public async Task<ActionResult> Put(int id, [FromBody] BrokerFirmDto brokerFirmDto )
 		//{
