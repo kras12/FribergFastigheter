@@ -49,6 +49,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
                 .Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
             Brokers = result;
 
+
             BrokerFirm = Mapper.Map<BrokerFirmSummaryViewModel>(await BrokerFirmApiService.GetBrokerFirmById(BrokerFirmId));      
         }
 

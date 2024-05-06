@@ -75,6 +75,7 @@ namespace FribergFastigheter.Client.Components
 
             if (result == DialogResults.UserConfirmed)
             {
+                ///TODO 
                 if (Broker.ProfileImage == null)
                 {
                     Broker.ProfileImage = new ImageViewModel();

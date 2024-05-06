@@ -83,6 +83,7 @@ namespace FribergFastigheter.Client.Components
 
         private async Task OnValidSubmit()
         {
+            Broker.ProfileImage = null;
             BrokerInput.BrokerFirm.BrokerFirmId = BrokerFirmId;
             await BrokerFirmApiService.UpdateBroker(Broker.BrokerId, AutoMapper.Map<EditBrokerDto>(BrokerInput));
             AutoMapper.Map(BrokerInput!, Broker);
@@ -96,13 +97,14 @@ namespace FribergFastigheter.Client.Components
  
         private async Task CloseEditForm()
         {
+            ///TODO Make an reset method instead
+            ImageToDelete = null;
             await CloseEditBroker.InvokeAsync();
         }
 
         private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
         {
             ImageToDelete = image;
-            Broker.ProfileImage = null;
         }
 
         private void OnFileUploadChanged(InputFileChangeEventArgs e)
