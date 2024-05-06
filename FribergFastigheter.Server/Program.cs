@@ -102,6 +102,7 @@ namespace FribergFastigheter
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequiredLength = 10;
+                options.User.AllowedUserNameCharacters += "åäö";
 
             })
             .AddRoles<IdentityRole>()
