@@ -31,12 +31,6 @@ namespace FribergFastigheter.Server.Data.Entities
 		{
             #region Checks
 
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user), $"The value of parameter '{nameof(user)}' can't be null.");
-            }
-
-
             if (brokerFirm == null)
 			{
 				throw new ArgumentNullException(nameof(brokerFirm), $"The value of parameter '{nameof(brokerFirm)}' can't be null.");
