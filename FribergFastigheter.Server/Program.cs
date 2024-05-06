@@ -7,6 +7,7 @@ using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.HelperClasses.Data;
 using FribergFastigheter.Server.Services;
+using FribergFastigheter.Shared.Dto;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -102,7 +103,7 @@ namespace FribergFastigheter
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequiredLength = 10;
-                options.User.AllowedUserNameCharacters += "Ã¥Ã¤Ã¶";
+                options.User.AllowedUserNameCharacters += "åäö";
 
             })
             .AddRoles<IdentityRole>()
@@ -172,90 +173,21 @@ namespace FribergFastigheter
 
 			using (var scope = app.Services.CreateScope())
 			{
-				var services = scope.ServiceProvider;
+                var services = scope.ServiceProvider;
 				var context = services.GetRequiredService<ApplicationDbContext>();
-                var configuration = services.GetRequiredService<IConfiguration>();
                 context.Database.Migrate();
 
+#if DEBUG
                 if (!context.Housings.Any())
-                {					
-					//SeedMockData(context, configuration);
+                {
+                    var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
+                    var seedHelper = new SeedDataHelper(seedFile);
+                    seedHelper.SeedMockData(app).Wait();
 				}
-
-                //CopyMockDataImagesToUploadFolder(configuration);
+#endif
             }        
 
             app.Run();
-        }
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        [Conditional("DEBUG")]
-		private static void SeedMockData(ApplicationDbContext context, IConfiguration configuration)
-		{
-            // Database
-			var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
-            var seedHelper = new SeedDataHelper(seedFile);
-			var seedData = seedHelper.GetSeedData();
-
-            var housingCategories = context.HousingCategories.ToDictionary(x => x.CategoryName);
-            var municipalities = context.Municipalities.ToDictionary(x => x.MunicipalityName);
-
-            foreach (var housing in seedData.Housings)
-            {
-                housing.Category = housingCategories[housing.Category.CategoryName];
-                housing.Municipality = municipalities[housing.Municipality.MunicipalityName];
-                context.Housings.Add(housing);
-            }
-
-            context.SaveChanges();
-
-            var roles = context.Roles.ToList();
-
-            foreach (var brokerFirm in seedData.BrokerFirms)
-            {
-                var superBroker = brokerFirm.Brokers.First();
-                var brokerId = context.Brokers.Where(x => x.User.UserName == superBroker.User.UserName).Select(x => x.User.Id).Single();
-                var roleId = roles.Single(x => x.Name == ApplicationUserRoles.BrokerAdmin).Id;
-                context.UserRoles.Add(new IdentityUserRole<string>() { UserId = brokerId, RoleId = roleId });
-
-                foreach (var broker in brokerFirm.Brokers.Skip(1))
-                {
-                    brokerId = context.Brokers.Where(x => x.User.UserName == broker.User.UserName).Select(x => x.User.Id).Single();
-                    roleId = roles.Single(x => x.Name == ApplicationUserRoles.Broker).Id;
-                    context.UserRoles.Add(new IdentityUserRole<string>() { UserId = brokerId, RoleId = roleId });
-                }
-            }
-
-            context.SaveChanges();
-
-            // Save urls for images to download
-            string outputFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DebugSeedImageUrls");
-            if (!Directory.Exists(outputFolder))
-            {
-                Directory.CreateDirectory(outputFolder);
-            }
-
-            File.WriteAllLines(Path.Combine(outputFolder, "SeedImageUrls.txt"), seedData.SeedImageUrls.AllImageUrls);
-        }
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        [Conditional("DEBUG")]
-        private static void CopyMockDataImagesToUploadFolder(IConfiguration configuration)
-        {
-            // Copy images
-            foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
-            {
-                string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.GetSection("FileStorage").GetSection("UploadFolderName").Value!);
-
-                if (!Directory.Exists(destinationFolder))
-                {
-                    Directory.CreateDirectory(destinationFolder);
-                }
-
-                File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
-            }
-        }
+        }         
     }
 }

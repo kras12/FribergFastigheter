@@ -3,6 +3,7 @@ using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheter.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace FribergFastigheter.Server.Data.Repositories
 {
@@ -37,7 +38,15 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-		public async Task DeleteAsync(BrokerFirm brokerFirm)
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task AddAsync(List<BrokerFirm> brokerFirms)
+        {
+            await applicationDbContext.BrokerFirms.AddRangeAsync(brokerFirms);            
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(BrokerFirm brokerFirm)
         {
             applicationDbContext.BrokerFirms.Remove(brokerFirm);
             await applicationDbContext.SaveChangesAsync();

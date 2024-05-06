@@ -21,5 +21,6 @@ namespace FribergFastigheter.Server.Data.Interfaces
 		Task<bool> HaveBroker(int brokerFirmId, int brokerId);
         Task<bool> Exists(int brokerFirmId);
         Task<BrokerFirmStatisticsDto> GetStatistics(int brokerFirmId);
+        Task AddAsync(List<BrokerFirm> brokerFirms);
     }
 }

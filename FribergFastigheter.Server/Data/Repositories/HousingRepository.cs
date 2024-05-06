@@ -31,17 +31,28 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         #region Methods
 
-        public async Task AddAsync(Housing housing)
+        public Task AddAsync(Housing housing)
         {
-            applicationDbContext.Brokers.Attach(housing.Broker);
-            applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
-            applicationDbContext.HousingCategories.Attach(housing.Category);
-            applicationDbContext.Municipalities.Attach(housing.Municipality);
-            await applicationDbContext.Housings.AddAsync(housing);
+            return AddAsync(new List<Housing>() { housing });
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task AddAsync(List<Housing> housings)
+        {
+            foreach (var housing in housings)
+            {
+                applicationDbContext.Brokers.Attach(housing.Broker);
+                applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
+                applicationDbContext.HousingCategories.Attach(housing.Category);
+                applicationDbContext.Municipalities.Attach(housing.Municipality);
+                await applicationDbContext.Housings.AddAsync(housing);
+            }
+            
             await applicationDbContext.SaveChangesAsync();
         }
 
-		public Task DeleteHousing(int housingId)
+        public Task DeleteHousing(int housingId)
 		{
             return DeleteAsync(new Housing() { HousingId = housingId });
 		}
