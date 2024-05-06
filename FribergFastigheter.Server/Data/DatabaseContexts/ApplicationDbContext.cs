@@ -164,47 +164,6 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 					Name = ApplicationUserRoles.BrokerAdmin,
 					NormalizedName = ApplicationUserRoles.BrokerAdmin.ToUpper(),
 				});
-
-
-			modelBuilder.Entity<BrokerFirm>()
-				.HasData(
-					new BrokerFirm()
-					{
-						Name = "Ankeborg",
-						BrokerFirmId = 1,
-					}
-				);
-
-            var hasher = new PasswordHasher<ApplicationUser>();
-            modelBuilder.Entity<ApplicationUser>()
-                .HasData(
-                    new ApplicationUser()
-                    {
-                        Id = "cda42790-efce-43b0-b569-41648d6c8e82",
-                        Email = "kalle@ankeborg.com",
-                        NormalizedEmail = "kalle@ankeborg.com",
-                        UserName = "kalle@ankeborg.com",
-                        NormalizedUserName = "kalle@ankeborg.com",
-                        EmailConfirmed = true,
-                        PasswordHash = hasher.HashPassword(null, "123456789Ab!"),
-						FirstName = "Kalle",
-						LastName= "Anka"
-                    }
-                );
-
-   //         
-			//modelBuilder.Entity<Broker>()
-			//	.HasData(
-			//		new Broker()
-			//		{
-			//			BrokerFirm = new BrokerFirm() { BrokerFirmId = 1, Name = "Ankeborg" }, 
-			//			BrokerId = 1,
-			//			User = new ApplicationUser() { 
-							
-   //                     }
-			//		}
-			//	);
-
         }
 
 		/// <summary>

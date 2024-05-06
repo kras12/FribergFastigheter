@@ -22,6 +22,74 @@ namespace FribergFastigheter.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FribergFastigheter.Data.Entities.Housing", b =>
+                {
+                    b.Property<int>("HousingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HousingId"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("AncillaryArea")
+                        .HasColumnType("float");
+
+                    b.Property<int>("BrokerFirmId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BrokerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BuildYear")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryHousingCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("LandArea")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LivingArea")
+                        .HasColumnType("float");
+
+                    b.Property<decimal?>("MonthlyFee")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<int>("MunicipalityId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<int?>("RoomCount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("YearlyRunningCost")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("HousingId");
+
+                    b.HasIndex("BrokerFirmId");
+
+                    b.HasIndex("BrokerId");
+
+                    b.HasIndex("CategoryHousingCategoryId");
+
+                    b.HasIndex("MunicipalityId");
+
+                    b.ToTable("Housings", (string)null);
+                });
+
             modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -93,29 +161,9 @@ namespace FribergFastigheter.Server.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "cda42790-efce-43b0-b569-41648d6c8e82",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "745c112a-ef41-4d8b-beed-8265ffcc1504",
-                            Email = "kalle@ankeborg.com",
-                            EmailConfirmed = true,
-                            FirstName = "Kalle",
-                            LastName = "Anka",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "kalle@ankeborg.com",
-                            NormalizedUserName = "kalle@ankeborg.com",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDfQbvmzxHhbJmx5Q2zoEOAzVZ/6MEFaxsqi/uLy0K8RqVZ2oTXLtoF6iAaaksJpGw==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "24bf3030-75ac-462e-907d-7e4d1e0c11fd",
-                            TwoFactorEnabled = false,
-                            UserName = "kalle@ankeborg.com"
-                        });
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Broker", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Broker", b =>
                 {
                     b.Property<int>("BrokerId")
                         .ValueGeneratedOnAdd()
@@ -145,10 +193,10 @@ namespace FribergFastigheter.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Brokers");
+                    b.ToTable("Brokers", (string)null);
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.BrokerFirm", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.BrokerFirm", b =>
                 {
                     b.Property<int>("BrokerFirmId")
                         .ValueGeneratedOnAdd()
@@ -171,86 +219,10 @@ namespace FribergFastigheter.Server.Migrations
 
                     b.HasIndex("LogotypeImageId");
 
-                    b.ToTable("BrokerFirms");
-
-                    b.HasData(
-                        new
-                        {
-                            BrokerFirmId = 1,
-                            Description = "",
-                            Name = "Ankeborg"
-                        });
+                    b.ToTable("BrokerFirms", (string)null);
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
-                {
-                    b.Property<int>("HousingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HousingId"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("AncillaryArea")
-                        .HasColumnType("float");
-
-                    b.Property<int>("BrokerFirmId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BrokerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BuildYear")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryHousingCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("LandArea")
-                        .HasColumnType("float");
-
-                    b.Property<double>("LivingArea")
-                        .HasColumnType("float");
-
-                    b.Property<decimal?>("MonthlyFee")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<int>("MunicipalityId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<int?>("RoomCount")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("YearlyRunningCost")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
-
-                    b.HasKey("HousingId");
-
-                    b.HasIndex("BrokerFirmId");
-
-                    b.HasIndex("BrokerId");
-
-                    b.HasIndex("CategoryHousingCategoryId");
-
-                    b.HasIndex("MunicipalityId");
-
-                    b.ToTable("Housings");
-                });
-
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.HousingCategory", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.HousingCategory", b =>
                 {
                     b.Property<int>("HousingCategoryId")
                         .ValueGeneratedOnAdd()
@@ -264,7 +236,7 @@ namespace FribergFastigheter.Server.Migrations
 
                     b.HasKey("HousingCategoryId");
 
-                    b.ToTable("HousingCategories");
+                    b.ToTable("HousingCategories", (string)null);
 
                     b.HasData(
                         new
@@ -289,7 +261,7 @@ namespace FribergFastigheter.Server.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Image", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Image", b =>
                 {
                     b.Property<int>("ImageId")
                         .ValueGeneratedOnAdd()
@@ -308,10 +280,10 @@ namespace FribergFastigheter.Server.Migrations
 
                     b.HasIndex("HousingId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Image", (string)null);
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Municipality", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Municipality", b =>
                 {
                     b.Property<int>("MunicipalityId")
                         .ValueGeneratedOnAdd()
@@ -325,7 +297,7 @@ namespace FribergFastigheter.Server.Migrations
 
                     b.HasKey("MunicipalityId");
 
-                    b.ToTable("Municipalities");
+                    b.ToTable("Municipalities", (string)null);
 
                     b.HasData(
                         new
@@ -1927,15 +1899,50 @@ namespace FribergFastigheter.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Broker", b =>
+            modelBuilder.Entity("FribergFastigheter.Data.Entities.Housing", b =>
                 {
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.BrokerFirm", "BrokerFirm")
+                    b.HasOne("FribergFastigheterApi.Data.Entities.BrokerFirm", "BrokerFirm")
+                        .WithMany()
+                        .HasForeignKey("BrokerFirmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FribergFastigheterApi.Data.Entities.Broker", "Broker")
+                        .WithMany()
+                        .HasForeignKey("BrokerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FribergFastigheterApi.Data.Entities.HousingCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryHousingCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FribergFastigheterApi.Data.Entities.Municipality", "Municipality")
+                        .WithMany()
+                        .HasForeignKey("MunicipalityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Broker");
+
+                    b.Navigation("BrokerFirm");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Municipality");
+                });
+
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Broker", b =>
+                {
+                    b.HasOne("FribergFastigheterApi.Data.Entities.BrokerFirm", "BrokerFirm")
                         .WithMany("Brokers")
                         .HasForeignKey("BrokerFirmId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.Image", "ProfileImage")
+                    b.HasOne("FribergFastigheterApi.Data.Entities.Image", "ProfileImage")
                         .WithMany()
                         .HasForeignKey("ProfileImageImageId");
 
@@ -1952,53 +1959,18 @@ namespace FribergFastigheter.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.BrokerFirm", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.BrokerFirm", b =>
                 {
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.Image", "Logotype")
+                    b.HasOne("FribergFastigheterApi.Data.Entities.Image", "Logotype")
                         .WithMany()
                         .HasForeignKey("LogotypeImageId");
 
                     b.Navigation("Logotype");
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.Image", b =>
                 {
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.BrokerFirm", "BrokerFirm")
-                        .WithMany()
-                        .HasForeignKey("BrokerFirmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.Broker", "Broker")
-                        .WithMany()
-                        .HasForeignKey("BrokerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.HousingCategory", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryHousingCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.Municipality", "Municipality")
-                        .WithMany()
-                        .HasForeignKey("MunicipalityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Broker");
-
-                    b.Navigation("BrokerFirm");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Municipality");
-                });
-
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Image", b =>
-                {
-                    b.HasOne("FribergFastigheter.Server.Data.Entities.Housing", null)
+                    b.HasOne("FribergFastigheter.Data.Entities.Housing", null)
                         .WithMany("Images")
                         .HasForeignKey("HousingId");
                 });
@@ -2054,14 +2026,14 @@ namespace FribergFastigheter.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.BrokerFirm", b =>
-                {
-                    b.Navigation("Brokers");
-                });
-
-            modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
+            modelBuilder.Entity("FribergFastigheter.Data.Entities.Housing", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("FribergFastigheterApi.Data.Entities.BrokerFirm", b =>
+                {
+                    b.Navigation("Brokers");
                 });
 #pragma warning restore 612, 618
         }
