@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Server.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Constants;
+using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.HelperClasses.Data;
 using FribergFastigheter.Shared.Dto;
@@ -152,6 +153,8 @@ namespace FribergFastigheter.HelperClasses
                 var roles = context.Roles.ToList();
                 foreach (var brokerFirm in _brokerFirms.Values.ToList())
                 {
+                    bool isFirstBroker = true;
+
                     foreach (var broker in brokerFirm.Brokers)
                     {
                         // User
@@ -161,6 +164,16 @@ namespace FribergFastigheter.HelperClasses
                         {
                             throw new Exception("User creation failed");
                         }
+
+                        string role = isFirstBroker ? ApplicationUserRoles.BrokerAdmin : role = ApplicationUserRoles.Broker;
+                        var identityResult = await userManager.AddToRoleAsync(broker.User, role);
+
+                        if (identityResult == null)
+                        {
+                            throw new Exception("User role assignment failed");
+                        }
+
+                        isFirstBroker = false;
                     }                    
                 }
 
