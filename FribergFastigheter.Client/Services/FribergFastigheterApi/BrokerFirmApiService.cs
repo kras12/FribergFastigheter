@@ -139,8 +139,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         {
             List<KeyValuePair<string, string>> queries = new()
             {
-                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()),
-                new KeyValuePair<string, string>("returnCreatedBroker", true.ToString())
+                new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString())
             };
 
             var response = await _httpClient.PostAsJsonAsync($"{BrokersApiEndPoint}/{BuildQueryString(queries)}", broker);
