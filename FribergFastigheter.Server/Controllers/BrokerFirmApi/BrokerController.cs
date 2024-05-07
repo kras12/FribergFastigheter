@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using FribergFastigheter.Server.Data.Constants;
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
 using FribergFastigheter.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -44,6 +47,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// </summary>
         private readonly IMapper _autoMapper;
 
+        /// <summary>
+        /// The injected user manager.
+        /// </summary>
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        /// <summary>
+        /// The injected token service. 
+        /// </summary>
+        private readonly ITokenService _tokenService;
+
+        // <summary>
+        /// The injected signin manager.
+        /// </summary>
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
         #endregion
 
         #region Constructors
@@ -54,12 +72,20 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="brokerRepository">The injected broker repository.</param>
         /// <param name="mapper">The injected Auto Mapper.</param>
         /// <param name="imageService">The injected imageService properties.</param>
-        public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IImageService imageService, IBrokerFirmRepository brokerFirmRepository)
+        /// <param name="brokerFirmRepository"The injected brokerfirm repository.></param>
+        /// <param name="signInManager">The injected signin manager.</param>
+        /// <param name="tokenService">The injected token service. </param>
+        /// <param name="userManager">The injected user manager.</param>
+        public BrokerController(IBrokerRepository brokerRepository, IMapper mapper, IImageService imageService, 
+            IBrokerFirmRepository brokerFirmRepository, UserManager<ApplicationUser> userManager, ITokenService tokenService, SignInManager<ApplicationUser> signInManager)
         {
             _brokerRepository = brokerRepository;
             _autoMapper = mapper;
             _imageService = imageService;
             _brokerFirmRepository = brokerFirmRepository;
+            _userManager = userManager;
+            _tokenService = tokenService;
+            _signInManager = signInManager;
         }
 
         #endregion
@@ -69,18 +95,15 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <summary>
         /// An API endpoint for searching broker objects by brokerFirmId. 
         /// </summary>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
+        [Authorize]
         [HttpGet("brokers")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers([Required] int brokerFirmId)
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers()
         {
-            if(await _brokerFirmRepository.Exists(brokerFirmId) == false)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced brokerfirm doesn't exist."));
-            }
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             
             var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(brokerFirmId))
                 .Select(x => _autoMapper.Map<BrokerDto>(x))
@@ -94,15 +117,16 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for fetching a broker object. 
         /// </summary>
         /// <param name="id">The ID of the broker to fetch.</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker search.</param>
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
+        [Authorize]
         [HttpGet("broker/{id:int}")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokerById([Required] int id, [Required] int brokerFirmId)
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokerById([Required] int id)
         {
             var broker = await _brokerRepository.GetBrokerByIdAsync(id);
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
 
             if (broker == null)
             {
@@ -120,45 +144,20 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         }
 
         /// <summary>
-        /// An API endpoint for creating broker objects. 
-        /// </summary>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the creating the new broker.</param>
-        /// <param name="createBrokerDto">The serialized DTO object.</param>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: -->
-        [HttpPost("brokers")]
-        public async Task<ActionResult> CreateBroker([Required] int brokerFirmId, [FromBody] RegisterBrokerDto newBrokerDto, bool returnCreatedBroker)
-        {
-            if (brokerFirmId != newBrokerDto.BrokerFirmId)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted broker object."));
-            }
-            var newBroker = _autoMapper.Map<Broker>(newBrokerDto);
-            await _brokerRepository.AddAsync(newBroker);
-
-            if (returnCreatedBroker)
-            {
-                var result = _autoMapper.Map<BrokerDto>(await _brokerRepository.GetBrokerByIdAsync(newBroker.BrokerId));
-                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
-                return CreatedAtAction(nameof(GetBrokerById), new { id = newBroker.BrokerId }, result);
-            }
-            else
-            {
-                return Created();
-            }
-        }
-
-        /// <summary>
         /// An API endpoint for updating broker objects. 
         /// </summary>
         /// <param name="id">The ID of the broker associated with the update</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker being edited.</param>
         /// <param name="editBrokerDto">The serialized DTO object.</param>
         /// /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
+        [Authorize(policy: ApplicationPolicies.BrokerAdmin)]
         [HttpPut("broker/{id:int}")]
-        public async Task<ActionResult> UpdateBroker([Required] int id, [Required] int brokerFirmId, [FromBody] EditBrokerDto editBrokerDto)
+        public async Task<ActionResult> UpdateBroker([Required] int id, [FromBody] EditBrokerDto editBrokerDto)
         {
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+
             if (id != editBrokerDto.BrokerId)
             {
 				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
@@ -167,8 +166,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
+            else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
+            }
 
-			var existingBroker = await _brokerRepository.GetBrokerByIdAsync(id);
+            var existingBroker = await _brokerRepository.GetBrokerByIdAsync(id);
 
             if (existingBroker == null)
             {
@@ -184,17 +187,24 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for deleting broker objects. 
         /// </summary>
         /// <param name="id">The ID of the broker object to delete.</param>
-        /// <param name="brokerFirmId">The ID of the brokerfirm associated with the broker being edited.</param>
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
         /// TODO: The delete a broker object does not work because of conflict with the housing object that have said broker as a property. Maybe a check and send a suitable response.
+        [Authorize(policy: ApplicationPolicies.BrokerAdmin)]
         [HttpDelete("broker/{id}")]
-        public async Task<ActionResult> DeleteBroker(int id, [Required] int brokerFirmId)
+        public async Task<ActionResult> DeleteBroker(int id)
         {
-            if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+            
+            if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
+            else if (userRole != ApplicationUserRoles.BrokerAdmin)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can delete brokers."));
+            }          
 
             await _brokerRepository.DeleteAsync(id);
             return Ok();
@@ -204,17 +214,25 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for deleting housing images. 
         /// </summary>
         /// <param name="id">The ID of the broker object the image belongs to</param>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the image belongs to.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
+        [Authorize]
         [HttpDelete("broker/{id:int}/profile-image")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteProfileImage([Required] int id, [Required] int brokerFirmId)
+        public async Task<ActionResult> DeleteProfileImage([Required] int id)
         {
-            if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+
+            if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+            }
+            else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
             }
 
             var image = await _brokerRepository.GetProfileImage(id);
@@ -228,24 +246,32 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             // Should never get here
             return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No image with that ID was found."));
-        }        
+        }
 
         /// <summary>
         /// An API endpoint for creating images. 
         /// </summary>
-        /// <param name="brokerFirmId">The ID of the broker firm associated with the broker object the image belongs to.</param>
         /// <param name="id">The ID of the broker object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
+        [Authorize]
         [HttpPost("broker/{id:int}/profile-image")]
         [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateProfileImage([Required] int id, [Required] int brokerFirmId, [FromForm] IFormFile file)
+        public async Task<ActionResult> CreateProfileImage([Required] int id, [FromForm] IFormFile file)
         {
-            if (!await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+
+            if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker object doesn't belong to the broker firm."));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
+            else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
+            };
 
             Image imageEntity = new(await _imageService.SaveImageToDiskAsync(file));
             await _brokerRepository.AddImage(id, imageEntity);
@@ -253,6 +279,126 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, imageDto);
 
             return Ok(imageDto);
+        }        
+
+        /// <summary>
+        /// API endpoint for registering a new broker.
+        /// </summary>
+        /// <param name="registerBrokerDto">The input data for the broker to create.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="IActionResult"/>.</returns>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [Authorize(Policy = ApplicationPolicies.BrokerAdmin)]
+        [HttpPost("brokers/register")]
+        [ProducesResponseType<CreatedBrokerDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+
+        public async Task<IActionResult> Register([FromBody] RegisterBrokerDto registerBrokerDto)
+        {
+            try
+            {
+                int brokerFirmId = int.Parse(User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerFirmId)!.Value);
+                string userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+
+                if (brokerFirmId != registerBrokerDto.BrokerFirmId)
+                {
+                    return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "You can't create a broker for a different broker firm."));
+                }
+                else if (userRole != ApplicationUserRoles.BrokerAdmin)
+                {
+                    return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify create brokers."));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Model validation failed"));
+                }
+
+                var applicationUser = new ApplicationUser(
+                    registerBrokerDto.FirstName,
+                    registerBrokerDto.LastName,
+                    registerBrokerDto.Email,
+                    registerBrokerDto.Email,
+                    registerBrokerDto.PhoneNumber,
+                registerBrokerDto.Password
+                );
+
+                var createUserResult = await _userManager.CreateAsync(applicationUser, registerBrokerDto.Password);
+
+                if (createUserResult.Succeeded)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(applicationUser, ApplicationUserRoles.Broker);
+
+                    if (roleResult.Succeeded)
+                    {
+                        var brokerUserIdClaim = User.FindFirst(x => x.Type == ApplicationUserClaims.UserId);
+                        var user = _userManager.Users.First(x => x.Id == brokerUserIdClaim!.Value);
+
+                        var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(brokerFirmId);
+
+                        var broker = new Broker(
+                            brokerFirm!,
+                            registerBrokerDto.Description,
+                            user: applicationUser);
+                        await _brokerRepository.AddAsync(broker);
+
+                        return Ok(_autoMapper.Map<CreatedBrokerDto>(broker.User));
+                    }
+                    else
+                    {
+                        return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Failed to add user role."));
+                    }
+                }
+                else
+                {
+                    return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Failed to create user."));
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "User registration failed."));
+            }
+        }
+
+        /// <summary>
+        /// API endpoint to handle broker login.
+        /// </summary>
+        /// <param name="loginDto">The login credentials.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="IActionResult"/>.</returns>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->       
+        [HttpPost("brokers/login")]
+        [ProducesResponseType<LoginResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Model validation failed"));
+            }
+
+            var user = _userManager.Users.First(x => x.UserName == loginDto.UserName);
+
+            if (user != null)
+            {
+                var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: false);
+
+                if (result != null)
+                {
+                    var broker = await _brokerRepository.GetBrokerByUserIdAsync(user.Id);
+
+                    if (broker != null)
+                    {
+                        return Ok(new LoginResponseDto()
+                        {
+                            UserName = user!.UserName!,
+                            Token = await _tokenService.CreateToken(broker)
+                        });
+                    }
+                }
+            }
+
+            return Unauthorized(new ErrorMessageDto(System.Net.HttpStatusCode.Unauthorized, "User not found and/or password incorrect."));
         }
 
         #endregion
