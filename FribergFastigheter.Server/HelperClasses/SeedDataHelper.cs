@@ -257,7 +257,7 @@ namespace FribergFastigheter.HelperClasses
                         string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower()
                             .Replace(" ", "")}.se".Replace("é", "e").Replace("&", "").Replace("/", "").Replace(" ", "");
                         string userName = email;
-                        string password = $"A{Guid.NewGuid()}-{Guid.NewGuid()}!";
+                        string password = $"Aa!123456789";
                         string phoneNumber = $"070-{new Random().Next(1_000_000, 2_000_000)}";
                         _brokerFirms[parsedBrokerFirmName].Brokers.Add(new Broker(_brokerFirms[parsedBrokerFirmName], parsedBrokerDescription, _brokerImages[parsedBrokerImage])
                         { User = new ApplicationUser(parsedBrokerFirstName, parsedBrokerLastName, userName, email, phoneNumber, password, emailConfirmed: true) });
