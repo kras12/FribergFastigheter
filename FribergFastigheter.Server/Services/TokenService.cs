@@ -1,5 +1,6 @@
 ﻿using FribergFastigheter.Server.Data.Constants;
 using FribergFastigheter.Server.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,7 +18,7 @@ namespace FribergFastigheter.Server.Services
         #region Fields
 
         /// <summary>
-        /// The inject configuration.
+        /// The injected configuration.
         /// </summary>
         private readonly IConfiguration _config;
 
@@ -26,6 +27,11 @@ namespace FribergFastigheter.Server.Services
         /// </summary>
         private readonly SymmetricSecurityKey _key;
 
+        /// <summary>
+        /// The injected user manager.
+        /// </summary>
+        private readonly UserManager<ApplicationUser> _userManager;
+
         #endregion
 
         #region Constructors
@@ -33,11 +39,13 @@ namespace FribergFastigheter.Server.Services
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="config">The inject configuration.</param>
-        public TokenService(IConfiguration config)
+        /// <param name="config">The injected configuration manager.</param>
+        /// <param name="userManager">The injected user manager.</param>
+        public TokenService(IConfiguration config, UserManager<ApplicationUser> userManager)
         {
             _config = config;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));
+            _userManager = userManager;
         }
 
         #endregion
@@ -49,16 +57,23 @@ namespace FribergFastigheter.Server.Services
         /// </summary>
         /// <param name="broker">The broker to create the token for.</param>
         /// <returns>The created token as a <see cref="string"/>.</returns>
-        public string CreateToken(Broker broker)
+        public async Task<string> CreateToken(Broker broker)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, broker.User.Email!),
                 new Claim(JwtRegisteredClaimNames.GivenName, broker.User.UserName!),
-                new Claim(BrokerUserClaims.BrokerId, broker.BrokerId.ToString()),
-                new Claim(BrokerUserClaims.BrokerFirmId, broker.BrokerFirm.BrokerFirmId.ToString()),
-                new Claim(BrokerUserClaims.UserId, broker.User.Id.ToString())
+                new Claim(ApplicationUserClaims.BrokerId, broker.BrokerId.ToString()),
+                new Claim(ApplicationUserClaims.BrokerFirmId, broker.BrokerFirm.BrokerFirmId.ToString()),
+                new Claim(ApplicationUserClaims.UserId, broker.User.Id.ToString())
             };
+
+            var roles = await _userManager.GetRolesAsync(broker.User);
+
+            foreach (string role in roles)
+            {
+                claims.Add(new Claim(ApplicationUserClaims.UserRole, role));
+            }
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptor = new SecurityTokenDescriptor

@@ -12,6 +12,6 @@ namespace FribergFastigheter.Server.Services
         /// </summary>
         /// <param name="broker">The broker to create the token for.</param>
         /// <returns>The created token as a <see cref="string"/>.</returns>
-        public string CreateToken(Broker broker);
+        public Task<string> CreateToken(Broker broker);
     }
 }

@@ -32,8 +32,10 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         public async Task AddAsync(Broker broker)
         {
-            applicationDbContext.BrokerFirms.Attach(broker.BrokerFirm);
-            await applicationDbContext.Brokers.AddAsync(broker);
+            applicationDbContext.ChangeTracker.Clear();
+            applicationDbContext.Users.Entry(broker.User).State = EntityState.Unchanged;
+            applicationDbContext.BrokerFirms.Entry(broker.BrokerFirm).State = EntityState.Unchanged;
+            applicationDbContext.Brokers.Add(broker);
             await applicationDbContext.SaveChangesAsync();
         }
 

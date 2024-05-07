@@ -134,7 +134,7 @@ namespace FribergFastigheter
             // Authorization
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => policy.RequireClaim(BrokerUserClaims.BrokerRole, ApplicationUserRoles.BrokerAdmin));
+                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
             });
 
 

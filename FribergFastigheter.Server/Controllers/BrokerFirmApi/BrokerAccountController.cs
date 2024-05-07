@@ -116,16 +116,16 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
                     if (roleResult.Succeeded)
                     {
-                        var brokerUserClaim = User.FindFirst(x => x.Type == BrokerUserClaims.UserId);
+                        var brokerUserClaim = User.FindFirst(x => x.Type == ApplicationUserClaims.UserId);
                         var user = _userManager.Users.First(x => x.Id == brokerUserClaim!.Value);
 
-                        var brokerFirmClaim = User.FindFirst(x => x.Type == BrokerUserClaims.BrokerFirmId);
+                        var brokerFirmClaim = User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerFirmId);
                         var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(int.Parse(brokerFirmClaim!.Value));
 
                         var broker = new Broker(
                             brokerFirm!,
                             registerBrokerDto.Description,
-                            user:user);
+                            user: applicationUser);
                         await _brokerRepository.AddAsync(broker);
  
                         return Ok(_autoMapper.Map<CreatedBrokerDto>(broker.User));
@@ -140,7 +140,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Failed to create user."));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "User registration failed."));
             }
@@ -178,7 +178,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                         return Ok(new LoginResponseDto()
                         {
                             UserName = user!.UserName!,
-                            Token = _tokenService.CreateToken(broker)
+                            Token = await _tokenService.CreateToken(broker)
                         });
                     }                    
                 }                
