@@ -9,6 +9,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
+using Microsoft.AspNetCore.Authorization;
+using FribergFastigheter.Server.Data.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -57,18 +59,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
             _imageservice = imageservice;
 		}
 
-		#endregion
+        #endregion
 
-		#region ApiEndPoints
+        #region ApiEndPoints
 
-		/// <summary>
-		/// An API endpoint for fetching a broker firm object.
-		/// </summary>
-		/// <param name="id">The ID of the broker firm to fetch.</param>
-		/// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		[HttpGet("firm/{id:int}")]
+        /// <summary>
+        /// An API endpoint for fetching a broker firm object.
+        /// </summary>
+        /// <param name="id">The ID of the broker firm to fetch.</param>
+        /// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
+        /// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+        [Authorize]
+        [HttpGet("firm/{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById(int id)
@@ -79,6 +82,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			{
 				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
 			}
+
+			if (int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value) != id)
+			{
+                return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Can't fetch data for another broker firm."));
+            }
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
             _imageservice.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
@@ -91,13 +99,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// </summary>
         /// <param name="id">The ID of the broker firm.</param>
         /// <returns>An embedded collection of <see cref="BrokerFirmStatisticsDto"/>.</returns>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
+		/// <!-- Author: Jimmie, Marcus -->
+        /// <!-- Co Authors: -->
+		[Authorize]
         [HttpGet("firm/{id:int}/statistics")]
         [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics(int id)
 		{
+            if (int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value) != id)
+            {
+                return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Can't fetch data for another broker firm."));
+            }
+
             if (!await _brokerFirmRepository.Exists(id))
             {
                 return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
@@ -106,7 +120,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 			var result = await _brokerFirmRepository.GetStatistics(id);
             return Ok(result);
         }
-		
+
 		// TODO - Wait until identity is implemented before we decide whether to include or remove this feature. 
 		/// <summary>
 		/// An API endpoint for updating broker firms.
@@ -117,7 +131,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <!-- Co Authors: -->
 		//[HttpPut("firm/{id:int}")]
 		//[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		//public async Task<ActionResult> Put(int id, [FromBody] BrokerFirmDto brokerFirmDto )
+		//public async Task<ActionResult> Update(int id, [FromBody] BrokerFirmDto brokerFirmDto)
 		//{
 		//	if (id != brokerFirmDto.BrokerFirmId)
 		//	{
