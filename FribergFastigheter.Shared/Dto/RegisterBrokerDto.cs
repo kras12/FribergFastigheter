@@ -3,7 +3,7 @@
 namespace FribergFastigheter.Shared.Dto
 {
     /// <summary>
-    /// A DTO class that represents a broker.
+    /// A DTO class that holds data for creating a broker. 
     /// </summary>
     /// <!-- Author: Marcus -->
     /// <!-- Co Authors: -->
@@ -12,10 +12,9 @@ namespace FribergFastigheter.Shared.Dto
         #region Properties
 
         /// <summary>
-        /// The firm that the broker belongs to.
-        /// TODO - Remove property
+        /// The description of the broker.
         /// </summary>
-        public int BrokerFirmId { get; set; }
+        public string Description { get; set; } = "";
 
         /// <summary>
         /// The username/email of the broker.
@@ -36,21 +35,16 @@ namespace FribergFastigheter.Shared.Dto
         public string LastName { get; set; } = "";
 
         /// <summary>
-        /// The phone number of the broker.
-        /// </summary>
-        [Required]
-        public string PhoneNumber { get; set; } = "";
-
-        /// <summary>
-        /// The description of the broker.
-        /// </summary>
-        public string Description { get; set; } = "";
-
-        /// <summary>
         ///The password for the broker.
         /// </summary>
         [Required]
         public string Password { get; set; } = "";
+
+        /// <summary>
+        /// The phone number of the broker.
+        /// </summary>
+        [Required]
+        public string PhoneNumber { get; set; } = "";
 
         #endregion
     }

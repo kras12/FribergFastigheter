@@ -1,4 +1,4 @@
-﻿using FribergFastigheter.Server.Data.Constants;
+﻿using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.HelperClasses.Data;

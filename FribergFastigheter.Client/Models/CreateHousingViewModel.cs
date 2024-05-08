@@ -14,11 +14,6 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The ID of the broker associated with the housing object.
         /// </summary>
-        public int BrokerFirmId { get; set; }
-
-        /// <summary>
-        /// The ID of the broker associated with the housing object.
-        /// </summary>
         public int BrokerId { get; set; }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.HelperClasses;
-using FribergFastigheter.Server.Data.Constants;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheterApi.HelperClasses.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

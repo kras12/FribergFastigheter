@@ -28,23 +28,19 @@ namespace FribergFastigheter.Server.AutoMapper
 
 			CreateMap<EditHousingDto, Housing>()
 			.ForMember(dest => dest.Broker, opt => opt.MapFrom(src => new Broker() { BrokerId = src.BrokerId }))
-			.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 			.ForMember(dest => dest.Category, opt => opt.MapFrom(src => new HousingCategory() { HousingCategoryId = src.CategoryId }))
 			.ForMember(dest => dest.Municipality, opt => opt.MapFrom(src => new Municipality() { MunicipalityId = src.MunicipalityId }));
 
 			CreateMap<CreateHousingDto, Housing>()
 			.ForMember(dest => dest.Broker, opt => opt.MapFrom(src => new Broker() { BrokerId = src.BrokerId }))
-			.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 			.ForMember(dest => dest.Category, opt => opt.MapFrom(src => new HousingCategory() { HousingCategoryId = src.CategoryId }))
 			.ForMember(dest => dest.Municipality, opt => opt.MapFrom(src => new Municipality() { MunicipalityId = src.MunicipalityId }));
 
 			CreateMap<RegisterBrokerDto, Broker>()
-				.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }))
 				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
 
 			CreateMap<EditBrokerDto, Broker>()
-				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore())
-				.ForMember(dest => dest.BrokerFirm, opt => opt.MapFrom(src => new BrokerFirm() { BrokerFirmId = src.BrokerFirmId }));				
+				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());		
 		}
 	}
 }

@@ -1,7 +1,7 @@
 
 using FribergFastigheter.HelperClasses;
 using FribergFastigheter.Server.AutoMapper;
-using FribergFastigheter.Server.Data.Constants;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
@@ -22,6 +22,8 @@ using System.Text.Json.Serialization;
 
 namespace FribergFastigheter
 {
+    /// <!-- Author: Jimmie, Marcus -->
+    /// <!-- Co Authors: -->
     public class Program
     {
         public static void Main(string[] args)

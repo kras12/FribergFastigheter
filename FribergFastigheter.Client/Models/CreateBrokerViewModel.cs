@@ -12,11 +12,6 @@ namespace FribergFastigheter.Client.Models
         #region Properties
 
         /// <summary>
-        /// The firm that the broker belongs to.
-        /// </summary>
-        public int BrokerFirmId { get; set; }
-
-        /// <summary>
         /// The email of the broker.
         /// </summary>
         public string Email { get; set; } = "";

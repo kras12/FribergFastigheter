@@ -16,12 +16,6 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
         #region Fields
 
         /// <summary>
-        /// Temporary variable to hold the broker firm ID until identity is implemented. 
-        /// TODO - Delete when identity is implemented. 
-        /// </summary>
-        private int _brokerFirmId = 1;
-
-        /// <summary>
         /// The statistics for the broker firm. 
         /// </summary>
         private BrokerFirmStatisticsViewModel? _brokerFirmStatistics = null;
@@ -63,7 +57,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
         protected async override Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _brokerFirmStatistics = AutoMapper.Map<BrokerFirmStatisticsViewModel>(await BrokerFirmApiService.GetBrokerFirmStatistics(_brokerFirmId));
+            _brokerFirmStatistics = AutoMapper.Map<BrokerFirmStatisticsViewModel>(await BrokerFirmApiService.GetBrokerFirmStatistics());
         }
 
         #endregion

@@ -10,7 +10,7 @@ using System.Net;
 using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using Microsoft.AspNetCore.Authorization;
-using FribergFastigheter.Server.Data.Constants;
+using FribergFastigheter.Shared.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -71,22 +71,18 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
         [Authorize]
-        [HttpGet("firm/{id:int}")]
+        [HttpGet("firm")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById(int id)
+		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById()
 		{
-			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
+			var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(brokerFirmId);
 
 			if (brokerFirm == null)
 			{
-				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
+				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
 			}
-
-			if (int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value) != id)
-			{
-                return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Can't fetch data for another broker firm."));
-            }
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
             _imageservice.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
@@ -102,46 +98,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		/// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
 		[Authorize]
-        [HttpGet("firm/{id:int}/statistics")]
+        [HttpGet("firm/statistics")]
         [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics(int id)
+        public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics()
 		{
-            if (int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value) != id)
-            {
-                return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Can't fetch data for another broker firm."));
-            }
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var result = await _brokerFirmRepository.GetStatistics(brokerFirmId);
 
-            if (!await _brokerFirmRepository.Exists(id))
+            if (result == null)
             {
-                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
+                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
             }
-
-			var result = await _brokerFirmRepository.GetStatistics(id);
+			
             return Ok(result);
         }
-
-		// TODO - Wait until identity is implemented before we decide whether to include or remove this feature. 
-		/// <summary>
-		/// An API endpoint for updating broker firms.
-		/// </summary>
-		/// <param name="id">The ID of the broker firm to update.</param>
-		/// <param name="brokerFirmDto">The serialized DTO object.</param>
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		//[HttpPut("firm/{id:int}")]
-		//[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
-		//public async Task<ActionResult> Update(int id, [FromBody] BrokerFirmDto brokerFirmDto)
-		//{
-		//	if (id != brokerFirmDto.BrokerFirmId)
-		//	{
-		//		return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the supplied broker firm object."));
-		//	}
-
-		//	var brokerFirm = _mapper.Map<BrokerFirm>(brokerFirmDto);
-		//	await _brokerFirmRepository.UpdateAsync(brokerFirm);
-		//	return Ok();
-		//}
 
 		#endregion
 	}

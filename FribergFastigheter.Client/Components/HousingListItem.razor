@@ -103,7 +103,7 @@
                 <button type="button" class="btn btn-info" @onclick="(() => OverrideDescriptionTruncation(true))">Lång beskrivning</button>
             }            
             <button type="button" class="btn btn-primary" @onclick="@(() => OnEditHousingButtonClickedEventHandler())">Redigera</button>
-            <DeleteHousing Housing="Housing" BrokerFirmId="Housing.Broker.BrokerFirm.BrokerFirmId" OnHousingDeleted="OnHousingDeletedEventHandler"></DeleteHousing>
+            <DeleteHousing Housing="Housing" OnHousingDeleted="OnHousingDeletedEventHandler"></DeleteHousing>
         </div>
     }
 </div>

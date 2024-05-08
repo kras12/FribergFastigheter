@@ -39,12 +39,6 @@ namespace FribergFastigheter.Client.Components
         #region Properties
 
         /// <summary>
-        /// The ID of the broker firm the new broker belongs to.
-        /// </summary>
-        [Parameter]
-        public int BrokerFirmId { get; set; } = 1;
-
-        /// <summary>
         /// The model bound to the form.
         /// </summary>
         [SupplyParameterFromForm]
@@ -75,10 +69,10 @@ namespace FribergFastigheter.Client.Components
         /// <returns><see cref="Task"/>.</returns>
 		private async Task OnValidSubmit()
         {
-            CreateBrokerInput.BrokerFirmId = BrokerFirmId;
-            var newBroker = await BrokerFirmApiService.CreateBroker(BrokerFirmId, Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
-            newBroker!.ProfileImage = await UploadProfileImage(newBroker!.BrokerId);
-            await OnBrokerCreated.InvokeAsync(Mapper.Map<BrokerViewModel>(newBroker));
+            var newBroker = await BrokerFirmApiService.CreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
+            var newBrokerViewModel = Mapper.Map<BrokerViewModel>(newBroker);
+            newBrokerViewModel.ProfileImage = Mapper.Map<ImageViewModel>(await UploadProfileImage(newBroker!.BrokerId));
+            await OnBrokerCreated.InvokeAsync(newBrokerViewModel);
         }
 
         private async Task CloseCreateForm()
@@ -95,7 +89,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (UploadedProfileImage != null)
             {
-                return await BrokerFirmApiService.UploadBrokerProfileImage(BrokerFirmId, brokerId, UploadedProfileImage);
+                return await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, UploadedProfileImage);
             }
 
             return new ImageDto();

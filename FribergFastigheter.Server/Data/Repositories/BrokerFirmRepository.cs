@@ -60,13 +60,13 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <exception cref="Exception"></exception>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<BrokerFirmStatisticsDto> GetStatistics(int brokerFirmId)
+        public async Task<BrokerFirmStatisticsDto?> GetStatistics(int brokerFirmId)
         {
             var brokerFirm = await applicationDbContext.BrokerFirms.Where(x => x.BrokerFirmId == brokerFirmId).FirstOrDefaultAsync();
 
             if (brokerFirm == null)
             {
-                throw new Exception($"No broker firm found with the id '{brokerFirmId}'.");
+                return null;
             }            
 
             BrokerFirmStatisticsDto result = new();

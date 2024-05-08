@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
-using FribergFastigheter.Server.Data.Constants;
+using FribergFastigheter.Shared.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -217,23 +217,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// An API endpoint for creating housing objects. 
         /// </summary>
         /// <param name="newHousingDto">The serialized input data.</param>
-        /// <param name="returnCreatedHousing">True to return the created housing object.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
         [Authorize]
         [HttpPost("housings")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status201Created)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]        
-		public async Task<ActionResult> CreateHousing([FromBody] CreateHousingDto newHousingDto, bool returnCreatedHousing)
+		public async Task<ActionResult> CreateHousing([FromBody] CreateHousingDto newHousingDto)
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
-
-            if (brokerFirmId != newHousingDto.BrokerFirmId)
-			{
-				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted housing object."));
-			}
 
             if (brokerId != newHousingDto.BrokerId && userRole != ApplicationUserRoles.BrokerAdmin)
             {
@@ -241,18 +235,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
 
 			var newHousingEntity = _autoMapper.Map<Housing>(newHousingDto);
+            newHousingEntity.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId };
             await _housingRepository.AddAsync(newHousingEntity);
+            var result = _autoMapper.Map<HousingDto>(await _housingRepository.GetHousingByIdAsync(newHousingEntity.HousingId));
+            _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
-			if (returnCreatedHousing)
-			{
-                var result = _autoMapper.Map<HousingDto>(await _housingRepository.GetHousingByIdAsync(newHousingEntity.HousingId));
-                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
-                return CreatedAtAction(nameof(GetHousingById), new { id = newHousingEntity.HousingId }, result);
-            }
-			else
-			{
-                return Created();
-            }            
+            return CreatedAtAction(nameof(GetHousingById), new { id = newHousingEntity.HousingId }, result);           
         }
 
         /// <summary>
@@ -272,11 +260,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
-
-            if (brokerFirmId != updateHousingDto.BrokerFirmId)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker firm doesn't match the one in the posted housing object."));
-            }
 
             if (brokerId != updateHousingDto.BrokerId && userRole != ApplicationUserRoles.BrokerAdmin)
             {

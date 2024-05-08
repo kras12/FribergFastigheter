@@ -114,7 +114,7 @@ namespace FribergFastigheter.Client.Components
             return Task.Run(
                async () =>
                {
-                   Housing.Images = AutoMapper.Map<List<ImageViewModel>>(await BrokerFirmApiService.GetHousingImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId));                  
+                   Housing.Images = AutoMapper.Map<List<ImageViewModel>>(await BrokerFirmApiService.GetHousingImages(Housing.HousingId));                  
                });
         }
 
@@ -227,7 +227,7 @@ namespace FribergFastigheter.Client.Components
             AutoMapper.Map(EditHousingInput!, Housing);
 			Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
 			Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
-            await BrokerFirmApiService.DeleteImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+            await BrokerFirmApiService.DeleteImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
             Housing.Images.AddRange(await UploadImages());
             await OnHousingEdited.InvokeAsync(Housing);
         }
@@ -240,7 +240,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (_uploadedFiles.Count > 0)
             {
-                var result = await BrokerFirmApiService.UploadHousingImages(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.HousingId, _uploadedFiles);
+                var result = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
                 return result != null ? AutoMapper.Map<List<ImageViewModel>>(result) : new();
             }
 

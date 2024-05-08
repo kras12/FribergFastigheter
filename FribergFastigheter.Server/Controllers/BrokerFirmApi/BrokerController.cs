@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Server.Data.Constants;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
@@ -171,9 +171,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
             }
 
-            var existingBroker = await _brokerRepository.GetBrokerByIdAsync(id);
-
-            if (existingBroker == null)
+            if (!await _brokerRepository.Exists(id))
             {
 				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
 			}
@@ -300,11 +298,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 int brokerFirmId = int.Parse(User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerFirmId)!.Value);
                 string userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
 
-                if (brokerFirmId != registerBrokerDto.BrokerFirmId)
-                {
-                    return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "You can't create a broker for a different broker firm."));
-                }
-                else if (userRole != ApplicationUserRoles.BrokerAdmin)
+                if (userRole != ApplicationUserRoles.BrokerAdmin)
                 {
                     return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify create brokers."));
                 }
@@ -354,7 +348,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "Failed to create user."));
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, "User registration failed."));
             }

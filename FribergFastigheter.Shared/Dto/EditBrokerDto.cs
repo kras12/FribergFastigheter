@@ -6,20 +6,13 @@ using System.Threading.Tasks;
 
 namespace FribergFastigheter.Shared.Dto
 {
+    /// <summary>
+    /// A DTO class that contains data for editing a broker.
+    /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     public class EditBrokerDto
     {
-        #region Constructors
-
-        /// <summary>
-        /// A constructor.
-        /// </summary>
-        public EditBrokerDto()
-        {
-
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -28,19 +21,14 @@ namespace FribergFastigheter.Shared.Dto
         public int BrokerId { get; set; }
 
         /// <summary>
-        /// The firm that the broker belongs to.
+        /// The description of the broker.
         /// </summary>
-        public int BrokerFirmId { get; set; }
+        public string Description { get; set; } = "";
 
         /// <summary>
         /// The email of the broker.
         /// </summary>
         public string Email { get; set; } = "";
-
-        /// <summary>
-        /// The description of the broker.
-        /// </summary>
-        public string Description { get; set; } = "";
 
         /// <summary>
         /// The first name of the broker.
@@ -51,6 +39,7 @@ namespace FribergFastigheter.Shared.Dto
         /// The last name of the broker.
         /// </summary>
         public string LastName { get; set; } = "";
+
         /// <summary>
         /// The phone number of the broker.
         /// </summary>
