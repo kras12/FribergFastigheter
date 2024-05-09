@@ -35,6 +35,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string AdminBrokerByIdApiEndPoint = $"{ApiBase}/admin/broker/{IdPlaceHolder}";
 
+        /// <summary>
+        /// The register broker API endpoint address.
+        /// </summary>
+        private const string AdminBrokerCreationApiEndpoint = $"{ApiBase}/admin/brokers/create";
+
         #endregion
 
         #region BrokerApiConstants
@@ -43,11 +48,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// The broker API endpoint address.
         /// </summary>
         private const string BrokerByIdApiEndPoint = $"{ApiBase}/broker/{IdPlaceHolder}";
-
-        /// <summary>
-        /// The register broker API endpoint address.
-        /// </summary>
-        private const string BrokerCreationApiEndpoint = $"{ApiBase}/brokers/register";
 
         /// <summary>
         /// The broker login API endpoint address.
@@ -184,6 +184,22 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #region AdminMethods
 
         /// <summary>
+        /// Creates a new broker under the broker firm.
+        /// </summary>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: Jimmie -->
+        public async Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker)
+        {
+            await SetAuthorizationHeader();
+            var response = await _httpClient.PostAsJsonAsync($"{AdminBrokerCreationApiEndpoint}", broker);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<BrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return EnsureNotNull(result, "Failed to create or serialize the resulting broker object.");
+        }
+
+        /// <summary>
         /// Performs an admin edit of a broker.
         /// </summary>
         /// <param name="id">The ID of the broker to update.</param>
@@ -200,23 +216,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #endregion
 
-        #region BrokerMethods
-
-        /// <summary>
-        /// Creates a new broker under the broker firm.
-        /// </summary>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
-        public async Task<BrokerDto> CreateBroker([Required] RegisterBrokerDto broker)
-        {
-            await SetAuthorizationHeader();
-            var response = await _httpClient.PostAsJsonAsync($"{BrokerCreationApiEndpoint}", broker);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<BrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            return EnsureNotNull(result, "Failed to create or serialize the resulting broker object.");
-        }
+        #region BrokerMethods        
 
         /// <summary>
         /// Deletes a broker.

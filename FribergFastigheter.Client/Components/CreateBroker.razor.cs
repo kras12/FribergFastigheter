@@ -70,7 +70,7 @@ namespace FribergFastigheter.Client.Components
         /// <returns><see cref="Task"/>.</returns>
 		private async Task OnValidSubmit()
         {
-            var newBroker = await BrokerFirmApiService.CreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
+            var newBroker = await BrokerFirmApiService.AdminCreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
             var newBrokerViewModel = Mapper.Map<BrokerViewModel>(newBroker);
             newBrokerViewModel.ProfileImage = Mapper.Map<ImageViewModel>(await UploadProfileImage(newBroker!.BrokerId));
             await OnBrokerCreated.InvokeAsync(newBrokerViewModel);
