@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheterApi.Data.Entities
+namespace FribergFastigheter.Server.Data.Entities
 {
 	/// <summary>
 	/// Entity class that represents a municipality.

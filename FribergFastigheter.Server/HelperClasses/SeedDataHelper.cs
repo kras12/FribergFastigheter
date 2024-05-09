@@ -1,9 +1,12 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Shared.Constants;
+using FribergFastigheter.Server.Data.Entities;
+using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.HelperClasses.Data;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheterApi.Data.DatabaseContexts;
 using FribergFastigheterApi.HelperClasses.Data;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Identity;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,37 +36,30 @@ namespace FribergFastigheter.HelperClasses
         #region Fields
 
         /// <summary>
-        /// A lookup collection for broker firm images.
+        /// A collection of all urls for all images.
         /// </summary>
-        /// <remarks>Key: Full URL.</remarks>
-        private Dictionary<string, Image> _brokerFirmImages = new();
+        private List<string> _allImageUrls { get; set; } = new();        
 
         /// <summary>
-        /// A lookup collection for broker firms
+        /// A lookup collection for broker firms.
         /// </summary>
-        private Dictionary<string, BrokerFirm> _brokerFirms = new();
-
-        /// <summary>
-        /// A lookup collection for broker images.
-        /// </summary>
-        /// <remarks>Key: Full URL.</remarks>
-        private Dictionary<string, Image> _brokerImages = new();
+        private Dictionary<string, BrokerFirm> _brokerFirms = new();        
 
         /// <summary>
         /// A lookup collection for housing categories.
         /// </summary>
-        private Dictionary<string, HousingCategory> _categories = new();
-
-        /// <summary>
-        /// A collection of grouped seed housing data.
-        /// </summary>
-        private List<GroupedHousingSeedData> _groupedHousingSeeds = new();
+        private Dictionary<string, HousingCategory> _categories = new();        
 
         /// <summary>
         /// A lookup collection for housing images.
         /// </summary>
         /// <remarks>Key: Full URL.</remarks>
         private Dictionary<string, Image> _housingImages = new();
+
+        /// <summary>
+        /// A collection of housings.
+        /// </summary>
+        private List<Housing> _housings = new();
 
         /// <summary>
         /// The path of the seed file.
@@ -99,22 +95,130 @@ namespace FribergFastigheter.HelperClasses
 
         #endregion
 
-        #region PublicMethods
+        #region PublicMethods        
 
         /// <summary>
-        /// Creates housing seed data from a json seed file.
+        /// Copys mock data image files to the upload folder. 
+        /// </summary>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        [Conditional("DEBUG")]
+        public void CopyMockDataImagesToUploadFolder(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var configuration = services.GetRequiredService<IConfiguration>();
+
+                // Copy images
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "Images")))
+                {
+                    string destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configuration.GetSection("FileStorage").GetSection("UploadFolderName").Value!);
+
+                    if (!Directory.Exists(destinationFolder))
+                    {
+                        Directory.CreateDirectory(destinationFolder);
+                    }
+
+                    File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), overwrite: true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Seeds mock data into the database.
+        /// </summary>
+        /// <param name="app">The web application to use for accessing services.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task SeedMockData(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                var configuration = services.GetRequiredService<IConfiguration>();
+                var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                var brokerFirmRepository = services.GetRequiredService<IBrokerFirmRepository>();
+                var brokerRepository = services.GetRequiredService<IBrokerRepository>();
+                var housingRepository = services.GetRequiredService<IHousingRepository>();
+
+                var housingCategories = context.HousingCategories.ToDictionary(x => x.CategoryName);
+                var municipalities = context.Municipalities.ToDictionary(x => x.MunicipalityName);
+
+                ReadSeedData();
+
+                // Broker firms, brokers and users
+                var roles = context.Roles.ToList();
+                foreach (var brokerFirm in _brokerFirms.Values.ToList())
+                {
+                    bool isFirstBroker = true;
+
+                    foreach (var broker in brokerFirm.Brokers)
+                    {
+                        // User
+                        var createUserResult = await userManager.CreateAsync(broker.User);
+
+                        if (!createUserResult.Succeeded)
+                        {
+                            throw new Exception("User creation failed");
+                        }
+
+                        string role = isFirstBroker ? ApplicationUserRoles.BrokerAdmin : role = ApplicationUserRoles.Broker;
+                        var identityResult = await userManager.AddToRoleAsync(broker.User, role);
+
+                        if (identityResult == null)
+                        {
+                            throw new Exception("User role assignment failed");
+                        }
+
+                        isFirstBroker = false;
+                    }                    
+                }
+
+                await brokerFirmRepository.AddAsync(_brokerFirms.Values.ToList());
+
+                // Houses 
+                foreach (var housing in _housings)
+                {
+                    housing.Category = housingCategories[housing.Category.CategoryName];
+                    housing.Municipality = municipalities[housing.Municipality.MunicipalityName];
+                    context.Housings.Add(housing);
+                }
+
+                await housingRepository.AddAsync(_housings);
+
+                // Save urls for images to download
+                string outputFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DebugSeedImageUrls");
+                if (!Directory.Exists(outputFolder))
+                {
+                    Directory.CreateDirectory(outputFolder);
+                }
+
+                File.WriteAllLines(Path.Combine(outputFolder, "SeedImageUrls.txt"), _allImageUrls);
+            }
+
+            ResetData();
+        }
+
+        #endregion
+
+        #region PrivateMethods
+
+        /// <summary>
+        /// Creates housing seed data from a json seed file and stores the data internally.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception"></exception>
-        public HousingSeedData GetSeedData()
+        private void ReadSeedData()
         {
-            ResetLookupData();
-            HousingSeedData result = new HousingSeedData();
+            ResetData();
             string json = File.ReadAllText(_jsonSeedFilePath);
             var seedDataRows = JsonSerializer.Deserialize<List<SeedFileDataRow>>(json) ?? throw new Exception("Failed to deserialize housing seed data input");
 
-            _groupedHousingSeeds = seedDataRows.GroupBy(
+        List<GroupedHousingSeedData> _groupedHousingSeeds = seedDataRows.GroupBy(
                keySelector: row => row.PageURL,
                elementSelector: row => row,
                resultSelector: (PageUrl, Rows) => new GroupedHousingSeedData()
@@ -126,46 +230,29 @@ namespace FribergFastigheter.HelperClasses
                })
                 .ToList();
 
-            CreateLookupTables();
-
             foreach (var groupedData in _groupedHousingSeeds)
             {
-                Housing newHousing = new();
-                ParseHousingData(newHousing, groupedData);
-
-                if (newHousing.Images.Count > 0 && newHousing.Category != null && newHousing.Broker != null && newHousing.BrokerFirm != null)
-                {
-                    result.Housings.Add(newHousing);
-                }
-            }
-
-            result.SeedImageUrls.HousingImageUrls = _housingImages.Keys.ToList();
-            result.SeedImageUrls.BrokerImages = _brokerImages.Keys.ToList();
-            result.SeedImageUrls.BrokerFirmImages = _brokerFirmImages.Keys.ToList();
-
-            ResetLookupData();
-            return result;
-        }
-
-        #endregion
-
-        #region PrivateMethods        
-
-        /// <summary>
-        /// Creates the lookup tables
-        /// </summary>
-		private void CreateLookupTables()
-        {
-            foreach (var groupedData in _groupedHousingSeeds)
-            {
+                // Municipalities
                 var parsedMunicipality = new Municipality(ParseMunicipality(groupedData));
                 _municipalities.TryAdd(parsedMunicipality.MunicipalityName, parsedMunicipality);
-                groupedData.Images.ForEach(x => _housingImages.TryAdd(x, new Image(Path.GetFileName(x))));
 
+                // Images
+                groupedData.Images.ForEach(x =>
+                {
+                    _housingImages.TryAdd(x, new Image(Path.GetFileName(x)));
+                    _allImageUrls.Add(x);
+                });
+
+                // Housing categories
                 if (TryParseHousingCategory(groupedData, out var parsedCategory))
                 {
                     _categories.TryAdd(parsedCategory.CategoryName, parsedCategory);
                 }
+
+                // Broker firm
+
+                Dictionary<string, Image> _brokerImages = new();
+                Dictionary<string, Image> _brokerFirmImages = new();                
 
                 if (TryParseBrokerFirm(groupedData, out string? parsedBrokerFirmName, out string? parsedBrokerFirmImage)
                     && TryParseBroker(groupedData, out string? parsedBrokerFirstName, out string? parsedBrokerLastName,
@@ -173,19 +260,38 @@ namespace FribergFastigheter.HelperClasses
                 {
                     _brokerImages.TryAdd(parsedBrokerImage, new Image(Path.GetFileName(parsedBrokerImage)));
                     _brokerFirmImages.TryAdd(parsedBrokerFirmImage, new Image(Path.GetFileName(parsedBrokerFirmImage)));
+                    _allImageUrls.Add(parsedBrokerImage);
+                    _allImageUrls.Add(parsedBrokerFirmImage);
                     _brokerFirms.TryAdd(parsedBrokerFirmName, new BrokerFirm(parsedBrokerFirmName, logotype: _brokerFirmImages[parsedBrokerFirmImage]));
 
-                    if (!_brokerFirms[parsedBrokerFirmName].Brokers.Any(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
-                        && x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
+                    if (!_brokerFirms[parsedBrokerFirmName].Brokers.Any(x => x.User.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
+                        && x.User.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower().Replace(" ", "")}.se";
+                        string email = $"{parsedBrokerFirstName.ToLower()}.{parsedBrokerLastName.ToLower()}@{parsedBrokerFirmName.ToLower()
+                            .Replace(" ", "")}.se".Replace("é", "e").Replace("&", "").Replace("/", "").Replace(" ", "");
+                        string userName = email;
+                        string password = $"Aa!123456789";
                         string phoneNumber = $"070-{new Random().Next(1_000_000, 2_000_000)}";
-                        _brokerFirms[parsedBrokerFirmName].Brokers.Add(new Broker(
-                            parsedBrokerFirstName, parsedBrokerLastName, email, phoneNumber, _brokerFirms[parsedBrokerFirmName],
-                            parsedBrokerDescription, _brokerImages[parsedBrokerImage]));
+                        _brokerFirms[parsedBrokerFirmName].Brokers.Add(new Broker(_brokerFirms[parsedBrokerFirmName], parsedBrokerDescription, _brokerImages[parsedBrokerImage])
+                        { User = new ApplicationUser(parsedBrokerFirstName, parsedBrokerLastName, userName, email, phoneNumber, password, emailConfirmed: true) });
                     }
                 }
+
+                // Housings
+                Housing newHousing = new();
+                ParseHousingData(newHousing, groupedData);
+
+                if (newHousing.Images.Count > 0 && newHousing.Category != null && newHousing.Broker != null && newHousing.BrokerFirm != null)
+                {
+                    _housings.Add(newHousing);
+                }
             }
+
+            _brokerFirms.Values.ToList().ForEach(brokerFirm =>
+                brokerFirm.Brokers.RemoveAll(broker =>
+                    !_housings.Any(housing => housing.Broker == broker)));
+
+            _brokerFirms.Values.ToList().RemoveAll(x => x.Brokers.Count == 0);
         }
 
         /// <summary>
@@ -211,8 +317,8 @@ namespace FribergFastigheter.HelperClasses
                         out string? _, out string? _))
             {
                 housing.BrokerFirm = _brokerFirms[parsedBrokerFirmName];
-                housing.Broker = _brokerFirms[parsedBrokerFirmName].Brokers.Single(x => x.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
-                        && x.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
+                housing.Broker = _brokerFirms[parsedBrokerFirmName].Brokers.Single(x => x.User.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
+                        && x.User.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
             }
 
             if (TryParseLivingArea(groupedData, out double? parsedLivingArea))
@@ -274,14 +380,14 @@ namespace FribergFastigheter.HelperClasses
         /// <summary>
         /// Resets lookup data.
         /// </summary>
-        private void ResetLookupData()
+        private void ResetData()
         {
             _categories = new();
             _municipalities = new();
             _housingImages = new();
-            _brokerFirms = new();
-            _groupedHousingSeeds = new();
+            _brokerFirms = new();   
         }
+
         /// <summary>
         /// Attempts to parse the housing ancillary area from serialized data.
         /// </summary>

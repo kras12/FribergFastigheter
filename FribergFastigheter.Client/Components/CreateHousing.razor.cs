@@ -45,12 +45,6 @@ namespace FribergFastigheter.Client.Components
         #region Properties
 
         /// <summary>
-        /// The ID of the broker firm the new housing belongs to.
-        /// </summary>
-        [Parameter]
-        public int BrokerFirmId { get; set; }
-
-        /// <summary>
         /// The ID of the broker the new housing belongs to.
         /// </summary>
         [Parameter]
@@ -159,8 +153,7 @@ namespace FribergFastigheter.Client.Components
 		private async Task OnValidSubmit()
         {
             CreateHousingInput.BrokerId = BrokerId;
-            CreateHousingInput.BrokerFirmId = BrokerFirmId;
-            var newHousing = await BrokerFirmApiService.CreateHousing(BrokerFirmId, AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
+            var newHousing = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
             newHousing.Images = await UploadImages(newHousing.HousingId);
             await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
         }        
@@ -174,7 +167,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (_uploadedFiles.Count > 0)
             {
-                return await BrokerFirmApiService.UploadHousingImages(BrokerFirmId, housingId, _uploadedFiles);
+                return await BrokerFirmApiService.UploadHousingImages(housingId, _uploadedFiles);
             }
 
             return new List<ImageDto>();

@@ -3,7 +3,7 @@
 namespace FribergFastigheter.Shared.Dto
 {
     /// <summary>
-    /// A DTO class that holds data for updating a housing.
+    /// A DTO class that holds data for editing a housing.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
@@ -15,11 +15,6 @@ namespace FribergFastigheter.Shared.Dto
         /// The ID of the broker associated with the housing object.
         /// </summary>
         public int BrokerId { get; set; }
-
-        /// <summary>
-        /// The ID of the broker associated with the housing object.
-        /// </summary>
-        public int BrokerFirmId { get; set; }
 
         /// <summary>
         /// The ID of the category associated with the housing object.

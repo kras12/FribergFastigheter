@@ -7,45 +7,40 @@ using System.Threading.Tasks;
 namespace FribergFastigheter.Shared.Dto
 {
     /// <summary>
-    /// A DTO class that contains data for editing a broker.
+    /// A DTO class that contains data for a created broker.
     /// </summary>
-    /// <!-- Author: Marcus -->
+    /// <!-- Author: Jimmie, Marcus -->
     /// <!-- Co Authors: -->
-    public class EditBrokerDto
+    public class CreatedBrokerDto
     {
         #region Properties
 
         /// <summary>
-        /// The ID of the broker.
+        /// The broker ID.
         /// </summary>
         public int BrokerId { get; set; }
 
         /// <summary>
-        /// The description of the broker.
-        /// </summary>
-        public string Description { get; set; } = "";
-
-        /// <summary>
-        /// The email of the broker.
+        /// The email for the broker. 
         /// </summary>
         public string Email { get; set; } = "";
 
         /// <summary>
-        /// The first name of the broker.
+        /// The first name for the broker. 
         /// </summary>
         public string FirstName { get; set; } = "";
 
         /// <summary>
-        /// The last name of the broker.
+        /// The last name for the broker. 
         /// </summary>
         public string LastName { get; set; } = "";
 
         /// <summary>
-        /// The phone number of the broker.
+        /// The user name for the broker. 
         /// </summary>
-        public string PhoneNumber { get; set; } = "";
+        public string UserName { get; set; } = "";
 
         #endregion
+
     }
 }
-

@@ -1,8 +1,7 @@
-﻿using FribergFastigheterApi.Data.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FribergFastigheter.Data.Entities
+namespace FribergFastigheter.Server.Data.Entities
 {
 	/// <summary>
 	/// An entity class that represents a housing object.

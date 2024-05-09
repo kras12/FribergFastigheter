@@ -1,5 +1,5 @@
 ﻿using FribergFastigheter.Shared.Dto.Statistics;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 
 namespace FribergFastigheter.Server.Data.Interfaces
 {
@@ -20,6 +20,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task<int> BrokerCount(int brokerFirmId);
 		Task<bool> HaveBroker(int brokerFirmId, int brokerId);
         Task<bool> Exists(int brokerFirmId);
-        Task<BrokerFirmStatisticsDto> GetStatistics(int brokerFirmId);
+        Task<BrokerFirmStatisticsDto?> GetStatistics(int brokerFirmId);
+        Task AddAsync(List<BrokerFirm> brokerFirms);
     }
 }

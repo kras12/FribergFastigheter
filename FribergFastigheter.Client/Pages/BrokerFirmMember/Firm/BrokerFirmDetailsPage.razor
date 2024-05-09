@@ -1,5 +1,11 @@
-﻿@page "/brokermember/brokerfirm/{id:int}"
+﻿@page "/brokermember/brokerfirm"
 @using FribergFastigheter.Client.Components
+@using Microsoft.AspNetCore.Authorization
+@*
+<!-- Author: Marcus -->
+<!-- Co Authors: -->
+*@
+@attribute [Authorize]
 
 @if(BrokerFirm != null)
 {

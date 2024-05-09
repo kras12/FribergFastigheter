@@ -1,0 +1,18 @@
+﻿@page "/login"
+@*
+<!-- Author: Jimmie, Marcus -->
+<!-- Co Authors: -->
+*@
+<EditForm Model="FormInput" OnValidSubmit="OnValidSubmit">
+	<DataAnnotationsValidator></DataAnnotationsValidator>
+
+	<label>Email</label>
+	<InputText @bind-Value="FormInput.UserName"></InputText>
+	<ValidationMessage For="@(() => FormInput.UserName)" />
+
+	<label>Password</label>
+	<InputText @bind-Value="FormInput.Password"></InputText>
+	<ValidationMessage For="@(() => FormInput.Password)" />
+
+	<button type="submit">Logga in</button>
+</EditForm>

@@ -1,7 +1,9 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.HelperClasses;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheterApi.HelperClasses.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +16,7 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 	/// </summary>
 	/// <!-- Author: Jimmie -->
 	/// <!-- Co Authors: Marcus -->
-	public class ApplicationDbContext : DbContext
+	public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	{
 		#region Constructors
 
@@ -143,6 +145,25 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
             modelBuilder.Entity<Broker>()
                 .Navigation(x => x.ProfileImage)
                 .AutoInclude();
+
+			modelBuilder.Entity<Broker>()
+				.Navigation(x => x.User)
+				.AutoInclude();
+
+			modelBuilder.Entity<IdentityRole>()
+			.HasData(
+				new IdentityRole
+				{
+					Id = "7e648d4e-a530-4cd4-b8d7-8be891780f71",
+					Name = ApplicationUserRoles.Broker,
+					NormalizedName = ApplicationUserRoles.Broker.ToUpper(),
+				},
+				new IdentityRole
+				{
+					Id = "bcd2b11c-e243-4310-a9c3-3180c1b743ea",
+					Name = ApplicationUserRoles.BrokerAdmin,
+					NormalizedName = ApplicationUserRoles.BrokerAdmin.ToUpper(),
+				});
         }
 
 		/// <summary>

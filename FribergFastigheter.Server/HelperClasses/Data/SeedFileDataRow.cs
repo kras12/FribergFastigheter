@@ -1,4 +1,4 @@
-﻿using FribergFastigheterApi.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 
 namespace FribergFastigheterApi.HelperClasses.Data
 {

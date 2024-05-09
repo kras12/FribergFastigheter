@@ -46,7 +46,7 @@ namespace FribergFastigheter.Client.Components
 
         [Parameter]
         public BrokerViewModel Broker { get; set; }
-        public int BrokerFirmId { get; set; } = 1;
+
         [SupplyParameterFromForm]
         private EditBrokerViewModel BrokerInput { get; set; } = null;
 
@@ -83,12 +83,12 @@ namespace FribergFastigheter.Client.Components
 
         private async Task OnValidSubmit()
         {
-            BrokerInput.BrokerFirm.BrokerFirmId = BrokerFirmId;
             await BrokerFirmApiService.UpdateBroker(Broker.BrokerId, AutoMapper.Map<EditBrokerDto>(BrokerInput));
-            AutoMapper.Map(BrokerInput!, Broker);
+            AutoMapper.Map(BrokerInput!, Broker);            
+
             if (_deleteProfileImage)
             {
-                await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerFirm.BrokerFirmId, Broker.BrokerId);
+                await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
             }            
             if(_uploadedProfileImage != null)
             {
@@ -128,7 +128,7 @@ namespace FribergFastigheter.Client.Components
             {
                 throw new InvalidOperationException("No image to upload was found");
             }
-            var result = await BrokerFirmApiService.UploadBrokerProfileImage(BrokerFirmId, brokerId, _uploadedProfileImage);
+            var result = await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, _uploadedProfileImage);
             _uploadedProfileImage = null;
             return result != null ? AutoMapper.Map<ImageViewModel>(result) : new ImageViewModel();
             
