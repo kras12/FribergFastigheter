@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Shared.Dto.Broker;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.BrokerFirm
 {
     /// <summary>
     /// A DTO class that represents a broker firm.
@@ -11,10 +12,10 @@ namespace FribergFastigheter.Shared.Dto
     {
         #region Properties
 
-		/// <summary>
-		/// The brokers at the firm.
-		/// </summary>
-		public List<BrokerDto> Brokers { get; set; } = new();
+        /// <summary>
+        /// The brokers at the firm.
+        /// </summary>
+        public List<BrokerDto> Brokers { get; set; } = new();
 
         #endregion
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Image
 {
     /// <summary>
     /// A DTO class that stores a collection of IDs for the images to delete. 
@@ -18,7 +18,7 @@ namespace FribergFastigheter.Shared.Dto
         /// </summary>
         public DeleteImagesDto()
         {
-            
+
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace FribergFastigheter.Shared.Dto
         /// <summary>
         /// A collection of IDs for the images to delete. 
         /// </summary>
-        public List<int> ImageIds { get; set; } = new();       
+        public List<int> ImageIds { get; set; } = new();
 
         #endregion
     }

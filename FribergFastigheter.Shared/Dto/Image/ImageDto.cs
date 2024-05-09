@@ -1,6 +1,6 @@
 ﻿using FribergFastigheter.Shared.Enums;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Image
 {
     public class ImageDto
     {

@@ -1,4 +1,8 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
+using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Statistics;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Housing
 {
     /// <summary>
     /// A DTO class that represents the result of a housing search.

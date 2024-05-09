@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Error
 {
     // <summary>
     /// A DTO class that represents an error message.

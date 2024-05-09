@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 

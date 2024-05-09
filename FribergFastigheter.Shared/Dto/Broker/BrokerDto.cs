@@ -1,20 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Image;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Broker
 {
     /// <summary>
     /// A DTO class that represents a broker.
     /// </summary>
-    /// <!-- Author: Marcus -->
+    /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class UpdateBrokerDto
+    public class BrokerDto
     {
         #region Properties
 
         /// <summary>
         /// The firm that the broker belongs to.
         /// </summary>
-        public int BrokerFirmId { get; set; }
+        public BrokerFirmSummaryDto BrokerFirm { get; set; }
 
         /// <summary>
         /// The ID of the broker.
@@ -25,6 +27,11 @@ namespace FribergFastigheter.Shared.Dto
         /// The email of the broker.
         /// </summary>
         public string Email { get; set; } = "";
+
+        /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        public string Description { get; set; } = "";
 
         /// <summary>
         /// The first name of the broker.
@@ -39,6 +46,11 @@ namespace FribergFastigheter.Shared.Dto
         /// The phone number of the broker.
         /// </summary>
         public string PhoneNumber { get; set; } = "";
+
+        /// <summary>
+        /// The broker profile image.
+        /// </summary>
+        public ImageDto? ProfileImage { get; set; } = null;
 
         #endregion
     }

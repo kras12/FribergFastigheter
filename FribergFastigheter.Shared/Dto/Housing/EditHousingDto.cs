@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Housing
 {
     /// <summary>
-    /// A DTO class that holds data for housing creation.
+    /// A DTO class that holds data for editing a housing.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class CreateHousingDto : HousingBaseDto
+    public class EditHousingDto : HousingBaseDto
     {
         #region Properties
 
@@ -20,6 +20,11 @@ namespace FribergFastigheter.Shared.Dto
         /// The ID of the category associated with the housing object.
         /// </summary>
         public int CategoryId { get; set; }
+
+        /// <summary>
+        /// The ID of the housing object.
+        /// </summary>
+        public int HousingId { get; set; }
 
         /// <summary>
         /// The ID of the municipality associated with the housing object.

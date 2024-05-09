@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Login
 {
     /// <summary>
-    /// A DTO class containing data for a login response.
+    /// A DTO class for logging in a user.
     /// </summary>
     /// <!-- Author: Marcus, Jimmie -->
     /// <!-- Co Authors: -->
-    public class LoginResponseDto
+    public class LoginDto
     {
         #region Properties
 
@@ -23,10 +23,10 @@ namespace FribergFastigheter.Shared.Dto
         public string UserName { get; set; } = "";
 
         /// <summary>
-        /// The token.
+        /// The password.
         /// </summary>
         [Required]
-        public string Token { get; set; } = "";
+        public string Password { get; set; } = "";
 
         #endregion
     }

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Server.Data.Entities;
-using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Error;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

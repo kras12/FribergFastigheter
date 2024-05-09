@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Housing
 {
     /// <summary>
     /// A DTO class that holds pagination data from a housing search.
@@ -23,7 +23,7 @@ namespace FribergFastigheter.Shared.Dto
         /// <summary>
         /// The page size was requested for the search.
         /// </summary>
-        public int PageSize { get; set; } 
+        public int PageSize { get; set; }
 
         /// <summary>
         /// The total number of housing objects that was found in the search.

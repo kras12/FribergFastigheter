@@ -4,13 +4,16 @@ using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
-using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.Login;
+using FribergFastigheter.Shared.Dto.Image;
+using FribergFastigheter.Shared.Dto.Error;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

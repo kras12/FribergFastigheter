@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Shared.Dto.Image;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.BrokerFirm
 {
     /// <summary>
     /// A DTO class that represents a broker firm.

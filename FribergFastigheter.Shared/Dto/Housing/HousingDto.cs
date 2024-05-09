@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.Image;
 
-namespace FribergFastigheter.Shared.Dto
+namespace FribergFastigheter.Shared.Dto.Housing
 {
     /// <summary>
     /// A base DTO class that represents a housing object.
