@@ -38,6 +38,7 @@ namespace FribergFastigheter.Client.AutoMapper
             CreateMap<MunicipalityViewModel, MunicipalityDto>();
             CreateMap<BrokerFirmSummaryViewModel, BrokerFirmSummaryDto>();
             CreateMap<ImageViewModel,  ImageDto>();
+            CreateMap<AdminEditBrokerViewModel, AdminEditBrokerDto>();
             CreateMap<EditBrokerViewModel, EditBrokerDto>();
             CreateMap<LoginViewModel, LoginDto>();
         }		

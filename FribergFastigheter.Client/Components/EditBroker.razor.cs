@@ -48,7 +48,7 @@ namespace FribergFastigheter.Client.Components
         public BrokerViewModel Broker { get; set; }
 
         [SupplyParameterFromForm]
-        private EditBrokerViewModel BrokerInput { get; set; } = null;
+        private AdminEditBrokerViewModel BrokerInput { get; set; }
 
         [Parameter]
         public EventCallback CloseEditBroker { get; set; }
@@ -72,7 +72,7 @@ namespace FribergFastigheter.Client.Components
                 throw new ArgumentNullException(nameof(Broker), "The broker object can't be null.");
             }
 
-            BrokerInput = AutoMapper.Map<EditBrokerViewModel>(Broker);
+            BrokerInput = AutoMapper.Map<AdminEditBrokerViewModel>(Broker);
         }
 
         protected override async Task OnParametersSetAsync()
@@ -83,7 +83,7 @@ namespace FribergFastigheter.Client.Components
 
         private async Task OnValidSubmit()
         {
-            await BrokerFirmApiService.UpdateBroker(Broker.BrokerId, AutoMapper.Map<EditBrokerDto>(BrokerInput));
+            await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(BrokerInput));
             AutoMapper.Map(BrokerInput!, Broker);            
 
             if (_deleteProfileImage)

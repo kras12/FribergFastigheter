@@ -22,6 +22,20 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public interface IBrokerFirmApiService
     {
+        #region AdminMethods
+
+        /// <summary>
+        /// Performs an admin edit of a broker.
+        /// </summary>
+        /// <param name="id">The ID of the broker to update.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: -->
+        public Task AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker);
+
+        #endregion
+
         #region BrokerMethods
 
         /// <summary>
@@ -41,6 +55,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
         public Task DeleteBroker([Required] int id);
+
+        /// <summary>
+        /// Performs a regular edit on the logged in broker. 
+        /// </summary>
+        /// <param name="id">The ID of the broker to update.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: Marcus -->
+        public Task EditBroker([Required] int brokerId, [Required] EditBrokerDto broker);
 
         /// <summary>
         /// Fetches data for a broker. 
@@ -67,16 +91,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
         public Task Login(LoginDto loginData);
-
-        /// <summary>
-        /// Updates a broker.
-        /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie  -->
-        /// <!-- Co Authors: Marcus -->
-        public Task UpdateBroker([Required] int brokerId, [Required] EditBrokerDto broker);
 
         #endregion
 

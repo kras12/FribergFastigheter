@@ -1,25 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Shared.Dto.Broker
 {
     /// <summary>
-    /// A view model class that represents a broker.
+    /// A DTO class that contains data for when an administrator is editing a broker.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class UpdateBrokerViewModel
+    public class AdminEditBrokerDto
     {
         #region Properties
-
-        /// <summary>
-        /// The firm that the broker belongs to.
-        /// </summary>
-        public int BrokerFirmId { get; set; }
 
         /// <summary>
         /// The ID of the broker.
         /// </summary>
         public int BrokerId { get; set; }
+
+        /// <summary>
+        /// The description of the broker.
+        /// </summary>
+        public string Description { get; set; } = "";
 
         /// <summary>
         /// The email of the broker.
@@ -44,3 +48,4 @@ namespace FribergFastigheter.Client.Models
         #endregion
     }
 }
+

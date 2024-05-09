@@ -93,7 +93,79 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
         #endregion
 
+        #region AdminApiEndpoints
+
+        /// <summary>
+        /// An API endpoint for editing broker objects. 
+        /// </summary>
+        /// <param name="id">The ID of the broker associated with the update</param>
+        /// <param name="AdminEditBrokerDto">The serialized DTO object.</param>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors:  -->
+        [Authorize(policy: ApplicationPolicies.BrokerAdmin)]
+        [HttpPut("admin/broker/{id:int}")]
+        public async Task<ActionResult> AdminEditBroker([Required] int id, [FromBody] AdminEditBrokerDto editBrokerDto)
+        {
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+
+            if (id != editBrokerDto.BrokerId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
+            }
+            else if (userRole != ApplicationUserRoles.BrokerAdmin)
+            {
+                return Unauthorized(new ErrorMessageDto(HttpStatusCode.Unauthorized, "This action requires the administrator role."));
+            }
+
+            var broker = await _brokerRepository.GetBrokerByIdAsync(id);
+
+            if (broker == null || broker.BrokerFirm.BrokerFirmId != brokerFirmId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+            }
+
+            _autoMapper.Map(editBrokerDto, broker);
+            await _brokerRepository.UpdateAsync(broker);
+            return Ok();
+        }
+
+        #endregion
+
         #region ApiEndPoints
+
+        /// <summary>
+        /// An API endpoint for updating broker objects. 
+        /// </summary>
+        /// <param name="id">The ID of the broker associated with the update</param>
+        /// <param name="editBrokerDto">The serialized DTO object.</param>
+        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Co Authors:  -->
+        [Authorize(policy: ApplicationPolicies.BrokerAdmin)]
+        [HttpPut("broker/{id:int}")]
+        public async Task<ActionResult> EditBroker([Required] int id, [FromBody] EditBrokerDto editBrokerDto)
+        {
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+
+            if (id != editBrokerDto.BrokerId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
+            }
+            else if (brokerId != id)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
+            }
+            else if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+            }            
+
+            var broker = await _brokerRepository.GetBrokerByIdAsync(id);
+            _autoMapper.Map(editBrokerDto, broker!);
+            await _brokerRepository.UpdateAsync(broker!);
+            return Ok();
+        }
 
         /// <summary>
         /// An API endpoint for searching broker objects by brokerFirmId. 
@@ -144,44 +216,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
             return Ok(result);
-        }
-
-        /// <summary>
-        /// An API endpoint for updating broker objects. 
-        /// </summary>
-        /// <param name="id">The ID of the broker associated with the update</param>
-        /// <param name="editBrokerDto">The serialized DTO object.</param>
-        /// <!-- Author: Marcus, Jimmie -->
-        /// <!-- Co Authors:  -->
-        [Authorize(policy: ApplicationPolicies.BrokerAdmin)]
-        [HttpPut("broker/{id:int}")]
-        public async Task<ActionResult> UpdateBroker([Required] int id, [FromBody] EditBrokerDto editBrokerDto)
-        {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
-
-            if (id != editBrokerDto.BrokerId)
-            {
-				return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
-			}
-            else if (! await _brokerRepository.IsOwnedByBrokerFirm(id, brokerFirmId))
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
-            }
-            else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
-            }
-
-            if (!await _brokerRepository.Exists(id))
-            {
-				return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
-			}
-
-			var broker = _autoMapper.Map<Broker>(editBrokerDto);
-            await _brokerRepository.UpdateAsync(broker);
-            return Ok();
         }
 
         /// <summary>

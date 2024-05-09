@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 namespace FribergFastigheter.Client.Models
 {
     /// <summary>
-    /// A view model class that represents a broker.
+    /// A view model class for when an administrator is editing a broker. 
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class EditBrokerViewModel
+    public class AdminEditBrokerViewModel
     {
         #region Properties
 
@@ -26,6 +26,25 @@ namespace FribergFastigheter.Client.Models
         /// The description of the broker.
         /// </summary>
         public string Description { get; set; } = "";
+
+        /// <summary>
+        /// The email of the broker.
+        /// </summary>
+        public string Email { get; set; } = "";
+        /// <summary>
+        /// The first name of the broker.
+        /// </summary>
+        public string FirstName { get; set; } = "";
+
+        /// <summary>
+        /// The last name of the broker.
+        /// </summary>
+        public string LastName { get; set; } = "";
+
+        /// <summary>
+        /// The phone number of the broker.
+        /// </summary>
+        public string PhoneNumber { get; set; } = "";
 
         /// <summary>
         /// The broker profile image.
