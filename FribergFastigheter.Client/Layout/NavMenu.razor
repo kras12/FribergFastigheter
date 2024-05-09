@@ -1,8 +1,11 @@
 ﻿@using FribergFastigheter.Client.Components
+@using FribergFastigheter.Shared.Constants
 @*
 <!-- Author: Jimmie -->
 <!-- Co Authors: -->
 *@
+
+
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">Fribergs Fastigheter</a>
@@ -13,18 +16,24 @@
         <div class="collapse navbar-collapse" id="mainNavigationMenu">
             <ul class="navbar-nav justify-content-between w-100">
                 <div class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Bostäder</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="brokermember">Mäklare - Hem</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="brokermember/housing/list">Mäklare - Bostäder</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="brokermember/broker/list">Mäklare - Mäklare</a>
-                    </li>
+                    <AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
+                        <Authorized>
+                            <li class="nav-item">
+                                <a class="nav-link" href="brokermember">Hem</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="brokermember/housing/list">Bostäder</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="brokermember/broker/list">Mäklare</a>
+                            </li>
+                        </Authorized>
+                        <NotAuthorized>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/">Hem</a>
+                            </li>                           
+                        </NotAuthorized>
+                    </AuthorizeView>                    
                 </div>
                 <LoginButton />
             </ul>
