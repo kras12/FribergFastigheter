@@ -1,9 +1,11 @@
 ﻿@page "/brokermember/housing/list"
 @using FribergFastigheter.Client.Components
+@using Microsoft.AspNetCore.Authorization
 @*
     <!-- Author: Jimmie -->
 <!-- Co Authors: -->
 *@
+@attribute [Authorize]
 <div class="vertical-page-container">
 	<HousingList Housings="_housings" TruncateLongDescriptions="true"></HousingList>
 </div>

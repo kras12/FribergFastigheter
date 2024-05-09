@@ -1,6 +1,11 @@
 ﻿@page "/brokermember/broker/{id:int}"
 @using FribergFastigheter.Client.Components
-
+@using Microsoft.AspNetCore.Authorization
+@*
+<!-- Author: Marcus -->
+<!-- Co Authors: -->
+*@
+@attribute [Authorize]
 @if(Broker != null)
 {
     <FribergFastigheter.Client.Components.BrokerDetails Broker="Broker" /> 

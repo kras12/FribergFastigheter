@@ -1,15 +1,20 @@
 ﻿@using FribergFastigheter.Client.HelperClasses
+@using FribergFastigheter.Shared.Constants
 @* 
     <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
-<div hidden="@(!_isCreatingHousing)" class="vertical-page-section">
-    <CreateHousing BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
-</div>
+<AuthorizeView>
+    <div hidden="@(!_isCreatingHousing)" class="vertical-page-section">
+        <CreateHousing BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
+    </div>
+</AuthorizeView>
 <div hidden="@_isCreatingHousing" class="vertical-page-section">
-	<div class="d-flex flex-row justify-content-center">
-		<button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
-	</div>
+    <AuthorizeView>
+	    <div class="d-flex flex-row justify-content-center">
+		    <button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
+	    </div>
+    </AuthorizeView>
     <div class="d-flex flex-column gap-4 full-width">
         @foreach (var housing in Housings)
         {
