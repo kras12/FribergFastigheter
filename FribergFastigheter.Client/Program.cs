@@ -1,11 +1,16 @@
+using Blazored.LocalStorage;
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace FribergFastigheter.Client
 {
+    /// <!-- Author: Jimmie, Marcus -->
+    /// <!-- Co Authors: -->
     public class Program
 	{
 		public static async Task Main(string[] args)
@@ -15,14 +20,21 @@ namespace FribergFastigheter.Client
 			builder.RootComponents.Add<HeadOutlet>("head::after");
 
 			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
+            builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+            builder.Services.AddBlazoredLocalStorage();
 
-			builder.Services.AddOidcAuthentication(options =>
+            builder.Services.AddOidcAuthentication(options =>
 			{
 				// Configure your authentication provider options here.
 				// For more information, see https://aka.ms/blazor-standalone-auth
 				builder.Configuration.Bind("Local", options.ProviderOptions);
 			});
-            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
+
+            builder.Services.AddAuthorizationCore(options =>
+            {
+                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+            });
 
             // Add API services with typed http clients
             /// <!-- Author: Jimmie -->
@@ -37,10 +49,7 @@ namespace FribergFastigheter.Client
             builder.Services.AddHttpClient<IBrokerFirmApiService, BrokerFirmApiService>(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["FribergFastigheterApiBaseUrl"]!);
-            });
-
-            // Auto Mapper
-            builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));            
+            });            
 
             await builder.Build().RunAsync();
 		}

@@ -17,12 +17,6 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         #region Fields       
 
         /// <summary>
-        /// Temporary ID variable for which broker firm to use performing actions.
-        /// TODO - Replace with data from identity later.
-        /// </summary>
-        private int _brokerFirmId = 1;
-
-        /// <summary>
         /// A collection of housing objects to show in the listing.
         /// </summary>
         private List<HousingViewModel> _housings = new();
@@ -63,7 +57,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
 		protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(_brokerFirmId, limitImagesPerHousing: 3));
+            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(limitImagesPerHousing: 3));
         }
 
 		#endregion

@@ -1,6 +1,5 @@
 ﻿using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Shared.Enums;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;

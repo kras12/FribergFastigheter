@@ -1,9 +1,11 @@
 ﻿@page "/brokermember"
 @using FribergFastigheter.Client.Components.Statistics
+@using Microsoft.AspNetCore.Authorization
 @* 
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
+@attribute [Authorize]
 <div class="vertical-page-container">
 	@if (_brokerFirmStatistics != null)
 	{

@@ -41,13 +41,6 @@ namespace FribergFastigheter.Client.Components
         #region Properties
 
         /// <summary>
-        /// Temporary parameter to store the broker firm ID.
-        /// TODO - Replace with identity data. 
-        /// </summary>
-        [Parameter]
-        public int BrokerFirmId { get; set; }
-
-        /// <summary>
         /// The broker object that can be deleted. 
         /// </summary>
         [Parameter]
@@ -80,7 +73,7 @@ namespace FribergFastigheter.Client.Components
                 {
                     Broker.ProfileImage = new ImageViewModel();
                 }
-                await BrokerFirmApiService.DeleteBroker(Broker.BrokerId, BrokerFirmId);
+                await BrokerFirmApiService.DeleteBroker(Broker.BrokerId);
                 await OnBrokerDeleted.InvokeAsync(Broker);
             } 
         }

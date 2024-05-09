@@ -1,5 +1,11 @@
 ﻿@page "/brokermember/broker/list"
 @using FribergFastigheter.Client.Components
+@using Microsoft.AspNetCore.Authorization
+@*
+<!-- Author: Marcus -->
+<!-- Co Authors: -->
+*@
+@attribute [Authorize]
 
 @if (Brokers != null && BrokerFirm != null)
 {

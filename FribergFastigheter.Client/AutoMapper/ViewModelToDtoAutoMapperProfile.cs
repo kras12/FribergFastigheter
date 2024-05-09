@@ -18,19 +18,15 @@ namespace FribergFastigheter.Client.AutoMapper
 		{
             CreateMap<EditHousingViewModel, EditHousingDto>()
             .ForMember(dest => dest.BrokerId, opt => opt.MapFrom(src => src.BrokerId))
-            .ForMember(dest => dest.BrokerFirmId, opt => opt.MapFrom(src => src.BrokerFirmId))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategoryId))
             .ForMember(dest => dest.MunicipalityId, opt => opt.MapFrom(src => src.SelectedMunicipalityId));
 
             CreateMap<CreateHousingViewModel, CreateHousingDto>()
             .ForMember(dest => dest.BrokerId, opt => opt.MapFrom(src => src.BrokerId))
-            .ForMember(dest => dest.BrokerFirmId, opt => opt.MapFrom(src => src.BrokerFirmId))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.SelectedCategoryId))
             .ForMember(dest => dest.MunicipalityId, opt => opt.MapFrom(src => src.SelectedMunicipalityId));
 
-            CreateMap<CreateBrokerViewModel, CreateBrokerDto>()
-                .ForMember(dest => dest.BrokerFirmId, opt => opt.MapFrom(src => src.BrokerFirmId));
-
+            CreateMap<CreateBrokerViewModel, RegisterBrokerDto>();
             CreateMap<HousingViewModel, HousingDto>();
             CreateMap<HousingCategoryViewModel, HousingCategoryDto>();
             CreateMap<BrokerViewModel,  BrokerDto>();
@@ -38,9 +34,8 @@ namespace FribergFastigheter.Client.AutoMapper
             CreateMap<MunicipalityViewModel, MunicipalityDto>();
             CreateMap<BrokerFirmSummaryViewModel, BrokerFirmSummaryDto>();
             CreateMap<ImageViewModel,  ImageDto>();
-
-            CreateMap<EditBrokerViewModel, EditBrokerDto>()
-                .ForMember(dest => dest.BrokerFirmId, opt => opt.MapFrom(src => src.BrokerFirm.BrokerFirmId));
+            CreateMap<EditBrokerViewModel, EditBrokerDto>();
+            CreateMap<LoginViewModel, LoginDto>();
         }		
 	}
 }

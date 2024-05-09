@@ -17,11 +17,6 @@ namespace FribergFastigheter.Shared.Dto
         public int BrokerId { get; set; }
 
         /// <summary>
-        /// The ID of the broker associated with the housing object.
-        /// </summary>
-        public int BrokerFirmId { get; set; }
-
-        /// <summary>
         /// The ID of the category associated with the housing object.
         /// </summary>
         public int CategoryId { get; set; }

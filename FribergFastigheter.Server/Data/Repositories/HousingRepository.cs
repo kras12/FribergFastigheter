@@ -1,7 +1,6 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -32,17 +31,28 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         #region Methods
 
-        public async Task AddAsync(Housing housing)
+        public Task AddAsync(Housing housing)
         {
-            applicationDbContext.Brokers.Attach(housing.Broker);
-            applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
-            applicationDbContext.HousingCategories.Attach(housing.Category);
-            applicationDbContext.Municipalities.Attach(housing.Municipality);
-            await applicationDbContext.Housings.AddAsync(housing);
+            return AddAsync(new List<Housing>() { housing });
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task AddAsync(List<Housing> housings)
+        {
+            foreach (var housing in housings)
+            {
+                applicationDbContext.Brokers.Attach(housing.Broker);
+                applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
+                applicationDbContext.HousingCategories.Attach(housing.Category);
+                applicationDbContext.Municipalities.Attach(housing.Municipality);
+                await applicationDbContext.Housings.AddAsync(housing);
+            }
+            
             await applicationDbContext.SaveChangesAsync();
         }
 
-		public Task DeleteHousing(int housingId)
+        public Task DeleteHousing(int housingId)
 		{
             return DeleteAsync(new Housing() { HousingId = housingId });
 		}
@@ -201,7 +211,8 @@ namespace FribergFastigheter.Server.Data.Repositories
             query = query
                 .IgnoreAutoIncludes()
                 .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
-                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm)
+                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
+                .Include(x => x.Broker).ThenInclude(x => x.User)
                 .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
                 .Include(x => x.BrokerFirm).ThenInclude(x => x.Brokers).ThenInclude(x => x.ProfileImage)
                 .Include(x => x.Images)

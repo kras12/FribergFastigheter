@@ -33,13 +33,6 @@ namespace FribergFastigheter.Client.Components
         private IBrokerFirmApiService BrokerFirmApiService { get; set; }
 #pragma warning restore CS8618 
 
-        /// <summary>
-        /// Temporary parameter to store the broker firm ID.
-        /// TODO - Replace with identity data. 
-        /// </summary>
-        [Parameter]
-        public int BrokerFirmId { get; set; }
-
 #pragma warning disable CS8618 
         /// <summary>
         /// The housing object that can be deleted. 
@@ -75,7 +68,7 @@ namespace FribergFastigheter.Client.Components
         {
             if (result == DialogResults.UserConfirmed)
             {
-                await BrokerFirmApiService.DeleteHousing(BrokerFirmId, Housing.HousingId);
+                await BrokerFirmApiService.DeleteHousing(Housing.HousingId);
                 await OnHousingDeleted.InvokeAsync(Housing);       
             }
         }

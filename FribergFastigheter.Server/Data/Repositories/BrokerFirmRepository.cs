@@ -1,8 +1,9 @@
 ﻿using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.Data.Entities;
+using FribergFastigheter.Server.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace FribergFastigheter.Server.Data.Repositories
 {
@@ -37,7 +38,15 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-		public async Task DeleteAsync(BrokerFirm brokerFirm)
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task AddAsync(List<BrokerFirm> brokerFirms)
+        {
+            await applicationDbContext.BrokerFirms.AddRangeAsync(brokerFirms);            
+            await applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(BrokerFirm brokerFirm)
         {
             applicationDbContext.BrokerFirms.Remove(brokerFirm);
             await applicationDbContext.SaveChangesAsync();
@@ -51,13 +60,13 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <exception cref="Exception"></exception>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<BrokerFirmStatisticsDto> GetStatistics(int brokerFirmId)
+        public async Task<BrokerFirmStatisticsDto?> GetStatistics(int brokerFirmId)
         {
             var brokerFirm = await applicationDbContext.BrokerFirms.Where(x => x.BrokerFirmId == brokerFirmId).FirstOrDefaultAsync();
 
             if (brokerFirm == null)
             {
-                throw new Exception($"No broker firm found with the id '{brokerFirmId}'.");
+                return null;
             }            
 
             BrokerFirmStatisticsDto result = new();

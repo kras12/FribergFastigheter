@@ -1,7 +1,6 @@
-﻿using FribergFastigheter.Data.Entities;
+﻿using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 
@@ -33,8 +32,10 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         public async Task AddAsync(Broker broker)
         {
-            applicationDbContext.BrokerFirms.Attach(broker.BrokerFirm);
-            await applicationDbContext.Brokers.AddAsync(broker);
+            applicationDbContext.ChangeTracker.Clear();
+            applicationDbContext.Users.Entry(broker.User).State = EntityState.Unchanged;
+            applicationDbContext.BrokerFirms.Entry(broker.BrokerFirm).State = EntityState.Unchanged;
+            applicationDbContext.Brokers.Add(broker);
             await applicationDbContext.SaveChangesAsync();
         }
 
@@ -70,6 +71,14 @@ namespace FribergFastigheter.Server.Data.Repositories
         {
             return await applicationDbContext.Brokers
                 .AsNoTracking().FirstOrDefaultAsync(b => b.BrokerId == id);
+        }
+
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<Broker?> GetBrokerByUserIdAsync(string id)
+        {
+            return await applicationDbContext.Brokers
+                .AsNoTracking().FirstOrDefaultAsync(b => b.User.Id == id);
         }
 
         public async Task<List<Broker>> GetAllBrokersAsync()

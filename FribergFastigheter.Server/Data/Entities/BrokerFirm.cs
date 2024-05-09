@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheterApi.Data.Entities
+namespace FribergFastigheter.Server.Data.Entities
 {
 	/// <summary>
 	/// An entity class that represent a broker firm.
