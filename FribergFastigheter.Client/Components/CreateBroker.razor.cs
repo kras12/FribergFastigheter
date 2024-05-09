@@ -86,14 +86,14 @@ namespace FribergFastigheter.Client.Components
         /// </summary>
         /// <param name="housingId">The ID of the housing object to upload the images for.</param>
         /// <returns>A collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
-        private async Task<ImageDto> UploadProfileImage(int brokerId)
+        private async Task<ImageDto?> UploadProfileImage(int brokerId)
         {
             if (UploadedProfileImage != null)
             {
                 return await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, UploadedProfileImage);
             }
 
-            return new ImageDto();
+            return null;
         }
 
         private void OnFileUploadChanged(InputFileChangeEventArgs e)

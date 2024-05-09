@@ -67,8 +67,11 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// The broker profile image.
         /// </summary>
-        public ImageViewModel? ProfileImage { get; set; } 
+        public ImageViewModel? ProfileImage { get; set; } = null;
 
+        /// <summary>
+        /// Returns the url for the profile image or a placeholder if no image exists.
+        /// </summary>
         public string ProfileImageOrPlaceholder 
         {
             get
