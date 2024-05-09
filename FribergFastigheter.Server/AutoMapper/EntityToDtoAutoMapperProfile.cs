@@ -29,7 +29,12 @@ namespace FribergFastigheter.Server.AutoMapper
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));
 
 			CreateMap<Broker, BrokerDto>()
-				.ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null));			
-		}		
+				.ForMember(dest => dest.ProfileImage, opt => opt.PreCondition(x => x.ProfileImage != null))
+				.ForMember(dest => dest.FirstName, opt => opt.MapFrom(x => x.User.FirstName))
+				.ForMember(dest => dest.LastName, opt => opt.MapFrom(x => x.User.LastName))
+				.ForMember(dest => dest.Email, opt => opt.MapFrom(x => x.User.Email))
+				.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(x => x.User.PhoneNumber));
+
+        }		
 	}
 }
