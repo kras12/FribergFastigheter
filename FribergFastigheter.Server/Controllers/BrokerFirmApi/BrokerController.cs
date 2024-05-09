@@ -325,7 +325,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(Policy = ApplicationPolicies.BrokerAdmin)]
         [HttpPost("brokers/register")]
-        [ProducesResponseType<CreatedBrokerDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> Register([FromBody] RegisterBrokerDto registerBrokerDto)
@@ -373,7 +373,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                             user: applicationUser);
                         await _brokerRepository.AddAsync(broker);
 
-                        return Ok(_autoMapper.Map<CreatedBrokerDto>(broker.User));
+                        return Ok(_autoMapper.Map<BrokerDto>(broker));
                     }
                     else
                     {

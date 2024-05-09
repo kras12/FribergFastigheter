@@ -23,7 +23,6 @@ namespace FribergFastigheter.Server.AutoMapper
 			CreateMap<HousingCategory, HousingCategoryDto>();
 			CreateMap<Municipality, MunicipalityDto>();
 			CreateMap<Image, ImageDto>();
-            CreateMap<ApplicationUser, CreatedBrokerDto>();
 
             CreateMap<BrokerFirm, BrokerFirmDto>()
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));

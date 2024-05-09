@@ -209,12 +209,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public async Task<CreatedBrokerDto> CreateBroker([Required] RegisterBrokerDto broker)
+        public async Task<BrokerDto> CreateBroker([Required] RegisterBrokerDto broker)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsJsonAsync($"{BrokerCreationApiEndpoint}", broker);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<CreatedBrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var result = await response.Content.ReadFromJsonAsync<BrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return EnsureNotNull(result, "Failed to create or serialize the resulting broker object.");
         }
 
@@ -291,7 +291,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             EnsureNotNull(result, "Failed to serialize the response.");
             await ((ApiAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Token);
-        }
+        }        
 
         #endregion
 
