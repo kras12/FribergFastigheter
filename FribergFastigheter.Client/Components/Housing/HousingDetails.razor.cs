@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Housing
 {
     /// <summary>
     /// Component that shows housing details.

@@ -3,7 +3,7 @@ using FribergFastigheter.Client.Models;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Broker
 {
     public partial class BrokerDetails : ComponentBase
     {

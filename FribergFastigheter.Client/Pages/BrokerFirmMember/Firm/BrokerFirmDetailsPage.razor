@@ -1,6 +1,9 @@
 ﻿@page "/brokermember/brokerfirm"
 @using FribergFastigheter.Client.Components
+@using FribergFastigheter.Client.Components.Housing
 @using Microsoft.AspNetCore.Authorization
+@using FribergFastigheter.Client.Components.BrokerFirm
+@using FribergFastigheter.Client.Components.Broker
 @*
 <!-- Author: Marcus -->
 <!-- Co Authors: -->
@@ -9,7 +12,7 @@
 
 @if(BrokerFirm != null)
 {
-    <FribergFastigheter.Client.Components.BrokerFirmDetails BrokerFirm="BrokerFirm" />
+    <BrokerFirmDetails BrokerFirm="BrokerFirm" />
     <div class="text-center">
     <button class="center" @onclick="@(() => OpenBrokerList())">Alla mäklare som jobbar för @BrokerFirm.Name</button>
     <button class="center" @onclick="@(() => OpenHousingList())">Alla hus objekt @BrokerFirm.Name har ute just nu</button>
@@ -20,10 +23,10 @@
     }
     else if (IsBrokerListorHousingListActive == false)
     {
-        <FribergFastigheter.Client.Components.HousingList Housings="Housings" />
+        <HousingList Housings="Housings" />
     }
     else
     {
-        <FribergFastigheter.Client.Components.BrokerList Brokers="Brokers" />
+        <BrokerList Brokers="Brokers" />
     }
 }

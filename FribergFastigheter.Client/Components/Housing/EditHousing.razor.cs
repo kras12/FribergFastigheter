@@ -5,7 +5,7 @@ using FribergFastigheter.Shared.Dto.Housing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Housing
 {
     /// <summary>
     /// A component that provides functionality to edit a housing object by displaying a form to the user.

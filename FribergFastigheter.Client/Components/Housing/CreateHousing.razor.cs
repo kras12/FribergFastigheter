@@ -6,7 +6,7 @@ using FribergFastigheter.Shared.Dto.Image;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Housing
 {
     /// <summary>
     /// A component that creates a new housing object by displaying a form to the user.

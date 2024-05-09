@@ -7,7 +7,7 @@ using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Broker
 {
     /// <summary>
     /// A page for listing brokers.

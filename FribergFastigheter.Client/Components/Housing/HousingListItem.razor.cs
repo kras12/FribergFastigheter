@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http.Headers;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Housing
 {
     /// <summary>
     /// A component that represents a housing list item. 
@@ -51,7 +51,7 @@ namespace FribergFastigheter.Client.Components
         /// Event triggers when the element have undergone transformation. 
         /// </summary>
         [Parameter]
-        public EventCallback<HousingViewModel> OnTransformed {  get; set; }
+        public EventCallback<HousingViewModel> OnTransformed { get; set; }
 
         /// <summary>
         /// Set to true to truncate long descriptions
@@ -100,7 +100,7 @@ namespace FribergFastigheter.Client.Components
         {
             _isInEditMode = false;
             return OnTransformed.InvokeAsync(housing);
-        }        
+        }
 
         /// <summary>
         /// Method invoked when the component has received parameters from its parent in

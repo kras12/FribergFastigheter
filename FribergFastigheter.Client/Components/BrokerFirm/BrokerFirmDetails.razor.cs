@@ -1,7 +1,7 @@
 ﻿using FribergFastigheter.Client.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.BrokerFirm
 {
     public partial class BrokerFirmDetails : ComponentBase
     {
@@ -15,7 +15,7 @@ namespace FribergFastigheter.Client.Components
 
         public BrokerFirmDetails()
         {
-            
+
         }
 
         #endregion

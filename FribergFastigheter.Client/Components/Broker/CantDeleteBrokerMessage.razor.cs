@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using static FribergFastigheter.Client.Components.ConfirmButton;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Broker
 {
     public partial class CantDeleteBrokerMessage : ComponentBase
     {

@@ -1,5 +1,6 @@
 ﻿@page "/brokermember/broker/list"
 @using FribergFastigheter.Client.Components
+@using FribergFastigheter.Client.Components.Broker
 @using Microsoft.AspNetCore.Authorization
 @*
 <!-- Author: Marcus -->
@@ -9,6 +10,6 @@
 
 @if (Brokers != null && BrokerFirm != null)
 {
-    <FribergFastigheter.Client.Components.BrokerList BrokerFirm="BrokerFirm" Brokers="Brokers" />
+    <BrokerList BrokerFirm="BrokerFirm" Brokers="Brokers" />
 }
 

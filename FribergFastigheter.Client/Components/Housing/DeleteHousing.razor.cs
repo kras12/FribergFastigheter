@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using static FribergFastigheter.Client.Components.ConfirmButton;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Housing
 {
     /// <summary>
     /// A component that displays a delete button and handles deletion of a housing object. 

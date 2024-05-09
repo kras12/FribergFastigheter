@@ -6,7 +6,7 @@ using FribergFastigheter.Shared.Dto.Image;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Broker
 {
     /// <summary>
     /// A component that creates a new broker object by displaying a form to the user.
@@ -51,9 +51,9 @@ namespace FribergFastigheter.Client.Components
         [Parameter]
         public EventCallback<BrokerViewModel> OnBrokerCreated { get; set; }
         [Parameter]
-        public EventCallback<bool> CloseCreateNewBroker {  get; set; }
+        public EventCallback<bool> CloseCreateNewBroker { get; set; }
 
-        
+
 
         #endregion
 

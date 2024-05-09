@@ -5,7 +5,7 @@ using FribergFastigheter.Shared.Dto.Broker;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace FribergFastigheter.Client.Components
+namespace FribergFastigheter.Client.Components.Broker
 {
 
     /// <summary>

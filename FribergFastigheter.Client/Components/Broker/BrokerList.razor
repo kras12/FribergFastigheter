@@ -15,11 +15,11 @@
     
     @if (IsNewBrokerFormActive == true)
     {
-        <FribergFastigheter.Client.Components.CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
+        <CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
     }
     @if (IsEditBrokerFormActive == true)
     {
-        <FribergFastigheter.Client.Components.EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
+        <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
     }
 
     <div class="broker-list">
@@ -46,7 +46,7 @@
                         </h5>
                         <div class="d-flex flex-row gap-3">
                             <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
-                            <FribergFastigheter.Client.Components.DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
+                            <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
                         </div>
                     </div>
                 </div>
