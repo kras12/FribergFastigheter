@@ -211,7 +211,8 @@ namespace FribergFastigheter.Server.Data.Repositories
             query = query
                 .IgnoreAutoIncludes()
                 .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
-                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm)
+                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
+                .Include(x => x.Broker).ThenInclude(x => x.User)
                 .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
                 .Include(x => x.BrokerFirm).ThenInclude(x => x.Brokers).ThenInclude(x => x.ProfileImage)
                 .Include(x => x.Images)
