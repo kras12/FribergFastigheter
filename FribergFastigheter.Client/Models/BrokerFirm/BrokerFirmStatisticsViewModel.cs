@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Shared.Dto.Statistics
+namespace FribergFastigheter.Client.Models.BrokerFirm
 {
     /// <summary>
     /// A view model class that contains statistics for a broker firm. 

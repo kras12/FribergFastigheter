@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Client.Models;
+﻿using FribergFastigheter.Client.Models.Housing;
+using FribergFastigheter.Client.Models.Image;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

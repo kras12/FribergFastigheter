@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Models.Housing;
+using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
 using FribergFastigheter.Shared.Dto.Housing;

@@ -1,7 +1,7 @@
 ﻿using FribergFastigheter.Shared.Dto;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// View model for input data for a housing search form.

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using static FribergFastigheter.Client.Components.ConfirmButton;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 

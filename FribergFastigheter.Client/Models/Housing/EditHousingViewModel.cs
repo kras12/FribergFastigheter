@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// A DTO class that holds data for editing a housing object.

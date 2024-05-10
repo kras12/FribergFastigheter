@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// A view model class that represents a municipality.
@@ -16,7 +16,7 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public MunicipalityViewModel()
         {
-            
+
         }
 
         /// <summary>

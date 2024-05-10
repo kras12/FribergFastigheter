@@ -1,9 +1,10 @@
-﻿using FribergFastigheter.Client.Models;
-using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Models.Broker;
 
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 {

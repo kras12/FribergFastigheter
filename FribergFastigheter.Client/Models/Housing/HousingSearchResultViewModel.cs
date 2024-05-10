@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// A view model class that represents the result of a housing search.

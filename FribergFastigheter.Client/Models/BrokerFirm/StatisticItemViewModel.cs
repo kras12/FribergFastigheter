@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Shared.Dto.Statistics
+namespace FribergFastigheter.Client.Models.BrokerFirm
 {
     /// <summary>
     /// A view model class that stores a number under a key.
@@ -23,7 +23,7 @@ namespace FribergFastigheter.Shared.Dto.Statistics
         /// <summary>
         /// The value for the statistic.
         /// </summary>
-        public int Value { get; set; } 
+        public int Value { get; set; }
 
         #endregion
     }

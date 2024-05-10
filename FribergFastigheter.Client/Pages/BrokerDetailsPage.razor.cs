@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Pages
 {
-	/// <summary>
-	/// The housing broker page. 
-	/// This page displays the information about the housing object's broker.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public partial class BrokerDetailsPage : ComponentBase
+    /// <summary>
+    /// The housing broker page. 
+    /// This page displays the information about the housing object's broker.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public partial class BrokerDetailsPage : ComponentBase
 	{
 		#region InjectedServiceProperties
 #pragma warning disable CS8618

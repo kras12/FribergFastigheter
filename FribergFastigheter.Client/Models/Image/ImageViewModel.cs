@@ -1,6 +1,6 @@
 ﻿using FribergFastigheter.Shared.Enums;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Image
 {
     /// <summary>
     /// A view model class that represents an image.

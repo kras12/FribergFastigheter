@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Broker
 {
     /// <summary>
     /// A view model class that represents a broker.

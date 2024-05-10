@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Client.Models.Image;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Broker
 {
     /// <summary>
     /// A view model class for when an administrator is editing a broker. 
@@ -11,11 +12,6 @@ namespace FribergFastigheter.Client.Models
     public class AdminEditBrokerViewModel
     {
         #region Properties
-
-        /// <summary>
-        /// The firm that the broker belongs to.
-        /// </summary>
-        public BrokerFirmSummaryViewModel BrokerFirm { get; set; } = new();
 
         /// <summary>
         /// The ID of the broker.

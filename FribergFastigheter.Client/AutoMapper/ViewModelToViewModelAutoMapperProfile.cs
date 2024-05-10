@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Shared.Dto;
 
 namespace FribergFastigheter.Client.AutoMapper
 {
-	/// <summary>
-	/// An auto mapper profile that contains mappings for converting view model classes to other view model classes classes.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public class ViewModelToViewModelAutoMapperProfile : Profile
+    /// <summary>
+    /// An auto mapper profile that contains mappings for converting view model classes to other view model classes classes.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public class ViewModelToViewModelAutoMapperProfile : Profile
 	{
         /// <summary>
         /// Constructor.

@@ -1,4 +1,4 @@
-﻿using FribergFastigheter.Client.Models;
+﻿using FribergFastigheter.Client.Models.Housing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 

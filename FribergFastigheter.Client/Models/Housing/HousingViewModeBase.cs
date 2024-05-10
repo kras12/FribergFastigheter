@@ -1,7 +1,7 @@
 ﻿using FribergFastigheter.Client.Pages;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// A view model base class that represents a housing object.

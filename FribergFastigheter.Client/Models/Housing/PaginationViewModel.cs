@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// A view model class that holds pagination data for searches.
@@ -33,7 +33,7 @@ namespace FribergFastigheter.Client.Models
                 }
                 else
                 {
-                    return (TotalResults / PageSize.Value) + (TotalResults % PageSize.Value != 0 ? 1 : 0);
+                    return TotalResults / PageSize.Value + (TotalResults % PageSize.Value != 0 ? 1 : 0);
                 }
             }
         }

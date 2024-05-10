@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Net.Http.Json;
 using FribergFastigheter.Shared.Dto;
-using FribergFastigheter.Client.Models;
 using AutoMapper;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Client.Models.Housing;
 
 namespace FribergFastigheter.Client.Pages
 {

@@ -1,18 +1,20 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Models.Image;
+using FribergFastigheter.Shared.Dto;
 using System.ComponentModel.DataAnnotations;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Broker
 {
     public class BrokerViewModel
     {
         #region Constructors
 
-    /// <summary>
+        /// <summary>
         /// A constructor.
-    /// </summary>
+        /// </summary>
         public BrokerViewModel()
-    {
-            
+        {
+
         }
 
         #endregion
@@ -72,25 +74,25 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// Returns the url for the profile image or a placeholder if no image exists.
         /// </summary>
-        public string ProfileImageOrPlaceholder 
+        public string ProfileImageOrPlaceholder
         {
             get
             {
-                if(ProfileImage == null)
+                if (ProfileImage == null)
                 {
                     return "/Graphics/profile-image-placeholder.jpg";
                 }
                 return ProfileImage.Url;
-            } 
+            }
         }
 
-		/// <summary>
-		/// An optional URL linking to the housing object.
-		/// </summary>
-		public string? Url { get; set; } = null;
+        /// <summary>
+        /// An optional URL linking to the housing object.
+        /// </summary>
+        public string? Url { get; set; } = null;
 
         public int? HousingsCount { get; set; } = null;
 
-		#endregion
-	}
+        #endregion
+    }
 }

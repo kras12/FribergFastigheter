@@ -1,4 +1,4 @@
-﻿using FribergFastigheter.Client.Models;
+﻿using FribergFastigheter.Client.Models.BrokerFirm;
 using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Components.BrokerFirm

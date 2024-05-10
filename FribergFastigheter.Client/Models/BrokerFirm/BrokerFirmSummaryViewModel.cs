@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FribergFastigheter.Client.Models.Image;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.BrokerFirm
 {
     /// <summary>
     /// A view model class that represents a broker firm.
@@ -31,11 +32,11 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public string Name { get; set; } = "";
 
-		/// <summary>
-		/// An optional URL linking to the housing object.
-		/// </summary>
-		public string? Url { get; set; } = null;
+        /// <summary>
+        /// An optional URL linking to the housing object.
+        /// </summary>
+        public string? Url { get; set; } = null;
 
-		#endregion
-	}
+        #endregion
+    }
 }

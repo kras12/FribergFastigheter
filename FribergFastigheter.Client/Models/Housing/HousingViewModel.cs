@@ -1,6 +1,8 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.Image;
+using FribergFastigheter.Shared.Dto;
 
-namespace FribergFastigheter.Client.Models
+namespace FribergFastigheter.Client.Models.Housing
 {
     /// <summary>
     /// A view model class that represents a housing object.
