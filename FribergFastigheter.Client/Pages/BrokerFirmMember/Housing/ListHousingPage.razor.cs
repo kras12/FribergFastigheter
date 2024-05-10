@@ -23,7 +23,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
 
         #endregion
 
-        #region InjectServiceProperties
+        #region Properties
 #pragma warning disable CS8618
 
         /// <summary>
@@ -39,10 +39,6 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         private IBrokerFirmApiService BrokerFirmApiService { get; set; }
 
 #pragma warning restore CS8618
-        #endregion
-
-        #region Properties
-
         #endregion
 
         #region Methods
