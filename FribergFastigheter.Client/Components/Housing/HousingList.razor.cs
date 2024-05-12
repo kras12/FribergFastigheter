@@ -26,9 +26,9 @@ namespace FribergFastigheter.Client.Components.Housing
             Brokers
         }
 
-		#endregion
+        #endregion
 
-		#region Fields
+        #region Fields
 
 		/// <summary>
 		/// The current filter applied to the list.
@@ -46,6 +46,11 @@ namespace FribergFastigheter.Client.Components.Housing
 		private bool _isCreatingHousing = false;
 
         /// <summary>
+        /// The ID of the logged in broker if any.
+        /// </summary>
+        private int? _loggedInBrokerId = null;
+
+        /// <summary>
         /// An element ID to scroll to on next rendering.
         /// </summary>
         private string? _scrollToELementId = null;
@@ -53,6 +58,14 @@ namespace FribergFastigheter.Client.Components.Housing
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// The authentication state task. 
+        /// </summary>
+        [CascadingParameter]
+#pragma warning disable CS8618
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+#pragma warning restore CS8618 
 
         /// <summary>
         /// Set to true to enable editing controls for brokers. 
@@ -96,22 +109,30 @@ namespace FribergFastigheter.Client.Components.Housing
 			}
 		}
 
-		/// <inheritdoc/>
-		protected override async Task OnParametersSetAsync()
+        /// <inheritdoc/>
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            var state = await AuthenticationStateTask;
+            _loggedInBrokerId = int.Parse(state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+        }
+
+        /// <inheritdoc/>
+        protected override async Task OnParametersSetAsync()
 		{
 			await base.OnParametersSetAsync();
 			RemoveHousingFilter();
-		}
+		}        
 
-		#endregion
+        #endregion
 
-		#region Methods
+        #region Methods
 
-		/// <summary>
-		/// Scrolls to the element.
-		/// </summary>
-		/// <param name="housing">The housing object to scroll to.</param>
-		public void ScrollToElement(HousingViewModel housing)
+        /// <summary>
+        /// Scrolls to the element.
+        /// </summary>
+        /// <param name="housing">The housing object to scroll to.</param>
+        public void ScrollToElement(HousingViewModel housing)
 		{
 			_scrollToELementId = $"HousingListItem-{housing.HousingId}";
 		}
@@ -152,6 +173,8 @@ namespace FribergFastigheter.Client.Components.Housing
                         Broker = brokers.First()
                     })
                     .Select(x => x.Broker)
+                    .OrderBy(x => x.FirstName)
+                    .ThenBy(x => x.LastName)
                     .ToList();
         }        
 
