@@ -6,18 +6,9 @@ using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Statistics;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using System.Threading.Tasks;
 
 namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
@@ -171,7 +162,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         private async Task SetAuthorizationHeader()
         {
-            var token = await ((ApiAuthenticationStateProvider)_authenticationStateProvider).GetTokenAsync();
+            var token = await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).GetTokenAsync();
 
             if (token != null)
             {
@@ -290,7 +281,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             EnsureNotNull(result, "Failed to serialize the response.");
-            await ((ApiAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Token);
+            await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Token);
         }        
 
         #endregion

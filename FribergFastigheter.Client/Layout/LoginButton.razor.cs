@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models.BrokerFirm;
-using FribergFastigheter.Client.Services;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto.Login;
 using Microsoft.AspNetCore.Components;
@@ -86,7 +85,7 @@ namespace FribergFastigheter.Client.Layout
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task OnLogoutButtonClicked()
         {
-            await ((ApiAuthenticationStateProvider)AuthenticationStateProvider).RemoveTokenAsync();
+            await ((BrokerFirmAuthenticationStateProvider)AuthenticationStateProvider).RemoveTokenAsync();
             NavigationManager.NavigateToLogout("/");
         }
 

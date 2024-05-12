@@ -1,16 +1,17 @@
 ﻿using Blazored.LocalStorage;
+using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace FribergFastigheter.Client.Services
+namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
     /// <summary>
     /// A service that provides information about the authentication state of the current user.
     /// </summary>
     /// <!-- Author: Jimmie, Marcus -->
     /// <!-- Co Authors: -->
-    public class ApiAuthenticationStateProvider : AuthenticationStateProvider
+    public class BrokerFirmAuthenticationStateProvider : AuthenticationStateProvider
     {
         #region Fields
 
@@ -18,6 +19,11 @@ namespace FribergFastigheter.Client.Services
         /// The injected local storage service.
         /// </summary>
         private readonly ILocalStorageService _localStorageService;
+
+        /// <summary>
+        /// The token. 
+        /// </summary>
+        private string? _token = null;
 
         #endregion
 
@@ -27,7 +33,7 @@ namespace FribergFastigheter.Client.Services
         /// A constructor. 
         /// </summary>
         /// <param name="localStorageService">The injected local storage service.</param>
-        public ApiAuthenticationStateProvider(ILocalStorageService localStorageService)
+        public BrokerFirmAuthenticationStateProvider(ILocalStorageService localStorageService)
         {
             _localStorageService = localStorageService;
         }
@@ -42,16 +48,19 @@ namespace FribergFastigheter.Client.Services
         /// <returns>A <see cref="Task"/> that contains the <see cref="AuthenticationState"/>.</returns>
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var savedToken = await _localStorageService.GetItemAsStringAsync("FribergFastigheterApiToken");
-
-            if (string.IsNullOrEmpty(savedToken))
-            {                
-                return new AuthenticationState(new System.Security.Claims.ClaimsPrincipal(new ClaimsIdentity()));
+            if (_token == null)
+            {
+                _token = await _localStorageService.GetItemAsStringAsync("FribergFastigheterApiToken");
             }
 
-            var parsedToken = new JwtSecurityTokenHandler().ReadJwtToken(savedToken);
+            if (string.IsNullOrEmpty(_token))
+            {
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(parsedToken.Claims, "BrokerFirmApiUser")));
+            var parsedToken = new JwtSecurityTokenHandler().ReadJwtToken(_token);
+
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(parsedToken.Claims, authenticationType: "BrokerFirmApiUser", nameType: JwtRegisteredClaimNames.GivenName, roleType: ApplicationUserClaims.UserRole)));
         }
 
         /// <summary>
@@ -86,6 +95,7 @@ namespace FribergFastigheter.Client.Services
         public async Task RemoveTokenAsync()
         {
             await _localStorageService.RemoveItemAsync("FribergFastigheterApiToken");
+            _token = null;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
@@ -97,6 +107,7 @@ namespace FribergFastigheter.Client.Services
         public async Task SetTokenAsync(string token)
         {
             await _localStorageService.SetItemAsStringAsync("FribergFastigheterApiToken", token);
+            _token = token;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 

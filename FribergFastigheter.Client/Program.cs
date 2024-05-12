@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client
 
 			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
-            builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider, BrokerFirmAuthenticationStateProvider>();
             builder.Services.AddBlazoredLocalStorage();
 
             builder.Services.AddOidcAuthentication(options =>
