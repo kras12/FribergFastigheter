@@ -5,11 +5,11 @@ using System.Diagnostics;
 namespace FribergFastigheter.Client.AuthorizationHandlers
 {
     /// <summary>
-    /// Authorization handler with built in requirement to handle authorization for create, delete and edit of housing objects. 
+    /// Authorization handler with built in requirement to handle preliminary authorization for create, delete and edit of housing objects. 
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class ManageHousingAuthorizationHandler : AuthorizationHandler<ManageHousingAuthorizationHandler>, IAuthorizationRequirement
+    public class ManageHousingPreAuthorizationHandler : AuthorizationHandler<ManageHousingPreAuthorizationHandler>, IAuthorizationRequirement
     {
         #region Enums
 
@@ -40,7 +40,7 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
         /// Constructor
         /// </summary>
         /// <param name="editType">The action type associated with this instance.</param>
-        public ManageHousingAuthorizationHandler(ActionTypes editType)
+        public ManageHousingPreAuthorizationHandler(ActionTypes editType)
         {
             _editType = editType;
         }
@@ -56,7 +56,7 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
         /// <param name="requirement">The requirement to handle.</param>
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <exception cref="ArgumentException"></exception>
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageHousingAuthorizationHandler requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageHousingPreAuthorizationHandler requirement)
         {
             if (!context.User.HasClaim(c => c.Type == ApplicationUserClaims.BrokerId) ||
                 !context.User.HasClaim(c => c.Type == ApplicationUserClaims.BrokerFirmId) ||
@@ -66,14 +66,14 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
                 return Task.CompletedTask;
             }
 
-            if (_editType != ActionTypes.CreateHousing && context.Resource is not IAuthEditHousing)
+            if (_editType != ActionTypes.CreateHousing && context.Resource is not IHousingPreAuthorizationData)
             {
-                throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IAuthEditHousing)}'.");
+                throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IHousingPreAuthorizationData)}'.");
             }
 
             var brokerFirmId = int.Parse(context.User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(context.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var housingOwner = context.Resource as IAuthEditHousing;
+            var authorizationData = context.Resource as IHousingPreAuthorizationData;
 
 
             switch (_editType)
@@ -88,8 +88,8 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
 
                 case ActionTypes.DeleteHousing:
                 case ActionTypes.EditHousing:
-                    if (housingOwner != null && housingOwner.BrokerFirmId == brokerFirmId
-                        && (housingOwner.BrokerId == brokerId || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin)))
+                    if (authorizationData != null && authorizationData.ExistingHousingBrokerFirmId == brokerFirmId
+                        && (authorizationData.ExistingHousingBrokerId == brokerId || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin)))
                     {
                         context.Succeed(requirement);
                         return Task.CompletedTask;
@@ -99,7 +99,7 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
                 default:
                     break;
             }
-
+            
             context.Fail();
             return Task.CompletedTask;
         }

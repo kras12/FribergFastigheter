@@ -10,7 +10,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingViewModel : HousingViewModelBase, IAuthEditHousing
+    public class HousingViewModel : HousingViewModelBase, IHousingPreAuthorizationData
     {
         #region Properties
 
@@ -51,7 +51,7 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The broker firm ID
         /// </summary>
-        int IAuthEditHousing.BrokerFirmId
+        int IHousingPreAuthorizationData.ExistingHousingBrokerFirmId
         {
             get
             {
@@ -62,7 +62,7 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The broker ID
         /// </summary>
-        int IAuthEditHousing.BrokerId
+        int IHousingPreAuthorizationData.ExistingHousingBrokerId
         {
             get
             {
@@ -73,7 +73,7 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The housing ID.
         /// </summary>
-        int IAuthEditHousing.HousingId
+        int IHousingPreAuthorizationData.HousingId
         {
             get
             {
