@@ -44,13 +44,13 @@ namespace FribergFastigheter.Client
                     policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
 
                 options.AddPolicy(ApplicationPolicies.CanCreateHousing, policy => 
-                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
+                    policy.Requirements.Add(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.CreateHousing)));
 
                 options.AddPolicy(ApplicationPolicies.CanDeleteHousing, policy => 
-                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+                    policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.DeleteHousing)));
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousing, policy => 
-                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
+                    policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
             });
 
             // Add API services with typed http clients
