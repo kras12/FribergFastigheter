@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Client.Models.Broker;
+﻿using FribergFastigheter.Client.AuthorizationHandlers;
+using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Shared.Dto;
 
@@ -9,7 +10,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingViewModel : HousingViewModelBase
+    public class HousingViewModel : HousingViewModelBase, IAuthEditHousing
     {
         #region Properties
 
@@ -42,6 +43,43 @@ namespace FribergFastigheter.Client.Models.Housing
         /// An optional URL linking to the housing object.
         /// </summary>
         public string? Url { get; set; } = null;
+
+        #endregion
+
+        #region IAuthEditHousing
+
+        /// <summary>
+        /// The broker firm ID
+        /// </summary>
+        int IAuthEditHousing.BrokerFirmId
+        {
+            get
+            {
+                return Broker.BrokerFirm.BrokerFirmId;
+            }
+        }
+        
+        /// <summary>
+        /// The broker ID
+        /// </summary>
+        int IAuthEditHousing.BrokerId
+        {
+            get
+            {
+                return Broker.BrokerId;
+            }
+        }
+
+        /// <summary>
+        /// The housing ID.
+        /// </summary>
+        int IAuthEditHousing.HousingId
+        {
+            get
+            {
+                return HousingId;
+            }
+        }
 
         #endregion
     }
