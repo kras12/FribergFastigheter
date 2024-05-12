@@ -210,7 +210,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="id">The ID of the broker object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpPost("broker/{id:int}/profile-image")]
         [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -270,7 +270,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="id">The ID of the broker object the image belongs to</param>
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors:  -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpDelete("broker/{id:int}/profile-image")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -342,7 +342,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors:  -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("broker/{id:int}")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokerById([Required] int id)
@@ -371,7 +371,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors:  -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("brokers")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers()

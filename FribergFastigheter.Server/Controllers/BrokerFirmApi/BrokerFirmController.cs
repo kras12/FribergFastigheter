@@ -71,7 +71,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -98,7 +98,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <returns>An embedded collection of <see cref="BrokerFirmStatisticsDto"/>.</returns>
 		/// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-		[Authorize]
+		[Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm/statistics")]
         [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]

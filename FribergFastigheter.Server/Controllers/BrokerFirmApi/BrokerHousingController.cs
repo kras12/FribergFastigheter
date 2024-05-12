@@ -76,7 +76,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="id">The ID of the housing object to delete.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.CanDeleteHousing)]
         [HttpDelete("housing/{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -114,7 +114,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded collection of <see cref="HousingDto"/>.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -143,7 +143,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded collection of <see cref="HousingCategoryDto"/>.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/categories")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
@@ -158,7 +158,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 		/// <returns>An embedded <see cref="int"/></returns>
 		/// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housings/count")]
         public async Task<ActionResult<int>> GetHousingCountByBrokerId([Required] int? brokerId = null)
         {
@@ -181,7 +181,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housings")]
         [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -207,7 +207,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded collection of <see cref="MunicipalityDto"/>.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("municipalities")]
         [ProducesResponseType<MunicipalityDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MunicipalityDto>>> GetMunicipalities()
@@ -221,7 +221,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="newHousingDto">The serialized input data.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.CanCreateHousing)]
         [HttpPost("housings")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status201Created)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]        
@@ -253,7 +253,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="updateHousingDto">The serialized DTO object.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.CanEditHousing)]
         [HttpPut("housing/{id:int}")]
 		[ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -285,7 +285,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.CanDeleteHousing)]
         [HttpDelete("housing/{housingId:int}/image/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -333,7 +333,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="deleteImagesDto">Contains a collection of IDs for the images to delete.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpDelete("housing/{housingId:int}/images")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
@@ -380,7 +380,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded <see cref="FileResult"/> object.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{housingId:int}/image/{id:int}")]
         [ProducesResponseType<FileContentResult>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -426,7 +426,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>A collection of <see cref="ImageDto"/> objects if successful.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{housingId:int}/images")]
         [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -462,7 +462,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <returns>An embedded <see cref="FileResult"/> object.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{housingId:int}/images/archive")]
         [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK, "application/zip")]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -502,7 +502,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="files">A collection of uploaded image files.</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpPost("housing/{housingId:int}/images")]
         [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
