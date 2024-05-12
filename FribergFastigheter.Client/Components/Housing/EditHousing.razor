@@ -3,7 +3,8 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: -->
 *@
-@if (EditHousingInput != null)
+<AuthorizeView Policy="@ApplicationPolicies.Broker">
+    @if (EditHousingInput != null)
 {
     <div class="card full-width">
         <div class="card-header d-flex flex-row justify-content-center">Redigera husobjekt</div>
@@ -130,3 +131,4 @@
         </div>
     </div>
 }
+</AuthorizeView>

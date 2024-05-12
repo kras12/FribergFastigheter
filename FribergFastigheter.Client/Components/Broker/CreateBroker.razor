@@ -1,4 +1,5 @@
-﻿<div class="card full-width">
+﻿<AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
+    <div class="card full-width">
     <div class="card-header d-flex flex-row justify-content-center">Skapa mäklare</div>
     <div class="card-body">
         <EditForm Model="CreateBrokerInput" OnValidSubmit="OnValidSubmit">
@@ -49,3 +50,4 @@
     
     </div>        
 </div>
+</AuthorizeView>

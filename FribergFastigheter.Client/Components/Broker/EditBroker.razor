@@ -1,4 +1,5 @@
-﻿<div class="card full-width">
+﻿<AuthorizeView Policy="@ApplicationPolicies.Broker">
+    <div class="card full-width">
     <div class="card-header d-flex flex-row justify-content-center">Editera denna mäklare</div>
     <div class="card-body">
         <EditForm Model="BrokerInput" OnValidSubmit="OnValidSubmit">
@@ -52,3 +53,4 @@
 
     </div>
 </div>
+</AuthorizeView>

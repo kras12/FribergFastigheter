@@ -1,18 +1,20 @@
-﻿<div class="vertical-page-container">
-    <div><img class="broker-firm-logotype-big" src="@BrokerFirm.Logotype.Url" /></div>
-    <div style="padding-top: 3rem"><h2>Lite om @BrokerFirm.Name:</h2></div>
-        <div class="broker-details">
+﻿<AuthorizeView Policy="@ApplicationPolicies.Broker">
+    <div class="vertical-page-container">
+        <div><img class="broker-firm-logotype-big" src="(@BrokerFirm.Logotype?.Url ?? "")" /></div>
+        <div style="padding-top: 3rem"><h2>Lite om @BrokerFirm.Name:</h2></div>
+            <div class="broker-details">
 
-            @if (String.IsNullOrEmpty(@BrokerFirm.Description))
-            {
-                <i>Mäklarbyrån har inte fyllt i någon beskrivning.</i>
-            }
-            else
-            {
-                <p>@BrokerFirm.Description</p>
-            }
-        </div>
-</div>
+                @if (String.IsNullOrEmpty(@BrokerFirm.Description))
+                {
+                    <i>Mäklarbyrån har inte fyllt i någon beskrivning.</i>
+                }
+                else
+                {
+                    <p>@BrokerFirm.Description</p>
+                }
+            </div>
+    </div>
+</AuthorizeView>
 
    
 

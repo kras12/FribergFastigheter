@@ -2,7 +2,8 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
-<div class="card w-100">
+<AuthorizeView Policy="@ApplicationPolicies.Broker">
+    <div class="card w-100">
     <div class="card-header d-flex flex-row justify-content-center">Skapa bostadsobjekt</div>
     <div class="card-body">
         <EditForm Model="CreateHousingInput" OnValidSubmit="OnValidSubmit">
@@ -95,3 +96,4 @@
         </EditForm>
     </div>        
 </div>
+</AuthorizeView>
