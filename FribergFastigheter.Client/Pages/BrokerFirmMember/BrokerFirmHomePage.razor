@@ -7,7 +7,7 @@
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
 *@
-@attribute [Authorize]
+@attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 <div class="vertical-page-container">
 	@if (_brokerFirmStatistics != null)
 	{

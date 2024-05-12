@@ -3,12 +3,13 @@
 @using FribergFastigheter.Client.Components
 @using FribergFastigheter.Client.Components.Housing
 @using FribergFastigheter.Client.Layout.BrokerFirmMember
+@using FribergFastigheter.Shared.Constants
 @using Microsoft.AspNetCore.Authorization
 @*
     <!-- Author: Jimmie -->
 <!-- Co Authors: -->
 *@
-@attribute [Authorize]
+@attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 <div class="vertical-page-container">
 	<HousingList Housings="_housings" TruncateLongDescriptions="true" EnableEditingControls="true"></HousingList>
 </div>

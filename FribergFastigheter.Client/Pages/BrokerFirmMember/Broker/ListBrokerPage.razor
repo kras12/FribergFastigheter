@@ -8,7 +8,7 @@
 <!-- Author: Marcus -->
 <!-- Co Authors: -->
 *@
-@attribute [Authorize]
+@attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 
 @if (Brokers != null && BrokerFirm != null)
 {
