@@ -3,6 +3,11 @@
     background-color: #dbdbdb;
 }
 
+/*Card - Links*/
+.card a {
+    text-decoration: none;
+}
+
 /* Inactive links */
 a.inactive-link {
     cursor: default;

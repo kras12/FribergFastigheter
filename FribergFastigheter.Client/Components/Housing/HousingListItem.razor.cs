@@ -1,6 +1,5 @@
 ﻿using FribergFastigheter.Client.Models.Housing;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http.Headers;
 
 namespace FribergFastigheter.Client.Components.Housing
@@ -28,6 +27,9 @@ namespace FribergFastigheter.Client.Components.Housing
 
         #region Properties
 #pragma warning disable CS8618
+
+        [Parameter]
+        public bool EnableEditingControls { get; set; } = false;
 
         /// <summary>
         /// The ID of list element.
@@ -62,7 +64,7 @@ namespace FribergFastigheter.Client.Components.Housing
 #pragma warning restore CS8618
         #endregion
 
-        #region Methods     
+        #region Methods
 
         /// <summary>
         /// Event handler for when an editing process for a housing object was cancelled.
