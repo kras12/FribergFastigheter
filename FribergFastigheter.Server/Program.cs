@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
+using FribergFastigheter.Server.Services.AuthorizationHandlers;
 
 namespace FribergFastigheter
 {
@@ -135,9 +136,24 @@ namespace FribergFastigheter
             });
 
             // Authorization
-            builder.Services.AddAuthorization(options =>
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
+            builder.Services.AddAuthorizationCore(options =>
             {
-                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+                options.AddPolicy(ApplicationPolicies.Broker, policy =>
+                    policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.Broker, ApplicationUserRoles.BrokerAdmin));
+
+                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy =>
+                    policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateHousing, policy =>
+                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousing, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditHousing, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
             });
 
 
