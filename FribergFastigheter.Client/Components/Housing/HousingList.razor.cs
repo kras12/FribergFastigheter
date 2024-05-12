@@ -31,12 +31,6 @@ namespace FribergFastigheter.Client.Components.Housing
 		#region Fields
 
 		/// <summary>
-		/// The ID of the broker to assign when creating a new housing object.
-		/// TODO - Replace with data from identity later.
-		/// </summary>
-		private int _createHousingBrokerId = 1;
-
-		/// <summary>
 		/// The current filter applied to the list.
 		/// </summary>
 		private FilterTypes _currentListFilter = FilterTypes.All;

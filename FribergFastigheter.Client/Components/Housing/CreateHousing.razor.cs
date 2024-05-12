@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components.Housing
@@ -46,15 +48,17 @@ namespace FribergFastigheter.Client.Components.Housing
         #region Properties
 
         /// <summary>
-        /// The ID of the broker the new housing belongs to.
+        /// The authentication state task. 
         /// </summary>
-        [Parameter]
-        public int BrokerId { get; set; }
+        [CascadingParameter]
+#pragma warning disable CS8618 
+		private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+#pragma warning restore CS8618 
 
-        /// <summary>
-        /// The model bound to the form.
-        /// </summary>
-        [SupplyParameterFromForm]
+		/// <summary>
+		/// The model bound to the form.
+		/// </summary>
+		[SupplyParameterFromForm]
         private CreateHousingViewModel CreateHousingInput { get; set; } = new();
 
         /// <summary>
@@ -153,8 +157,8 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <returns><see cref="Task"/>.</returns>
 		private async Task OnValidSubmit()
         {
-            CreateHousingInput.BrokerId = BrokerId;
-            var newHousing = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
+			CreateHousingInput.BrokerId = int.Parse((await AuthenticationStateTask).User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerId)!.Value);
+			var newHousing = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
             newHousing.Images = await UploadImages(newHousing.HousingId);
             await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
         }        

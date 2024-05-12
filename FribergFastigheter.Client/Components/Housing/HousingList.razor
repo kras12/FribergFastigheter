@@ -6,7 +6,7 @@
 *@
 
 <div hidden="@(!_isCreatingHousing)" class="vertical-page-section">
-    <CreateHousing BrokerId="_createHousingBrokerId" OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
+    <CreateHousing OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
 </div>
 <div hidden="@_isCreatingHousing" class="vertical-page-section">
     @if (EnableEditingControls)
