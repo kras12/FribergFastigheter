@@ -6,7 +6,7 @@
     <div class="card w-100">
     <div class="card-header d-flex flex-row justify-content-center">Skapa bostadsobjekt</div>
     <div class="card-body">
-        <EditForm Model="CreateHousingInput" OnValidSubmit="OnValidSubmit">
+            <EditForm Context="FormContext" Model="CreateHousingInput" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator></DataAnnotationsValidator>
             <div class="d-flex flex-column gap-3 w-100 align-items-center">
                 @* Input fields *@
