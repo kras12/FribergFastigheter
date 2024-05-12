@@ -1,0 +1,5 @@
+﻿.edit-images-container 
+{
+    max-height: 40vh;
+    overflow-y: auto;
+}
