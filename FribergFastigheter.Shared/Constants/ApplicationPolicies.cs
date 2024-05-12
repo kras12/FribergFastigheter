@@ -10,6 +10,11 @@
         #region Constants
         
         /// <summary>
+        /// The broker policy.
+        /// </summary>
+        public const string Broker = "Broker";
+
+        /// <summary>
         /// The broker admin policy.
         /// </summary>
         public const string BrokerAdmin = "BrokerAdmin";

@@ -33,7 +33,11 @@ namespace FribergFastigheter.Client
 
             builder.Services.AddAuthorizationCore(options =>
             {
-                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+                options.AddPolicy(ApplicationPolicies.Broker, policy => 
+                    policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.Broker, ApplicationUserRoles.BrokerAdmin));
+
+                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => 
+                    policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
             });
 
             // Add API services with typed http clients
