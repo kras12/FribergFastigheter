@@ -5,16 +5,14 @@ using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Services
 {
+    /// <summary>
+    /// Performs housing searches and helps maintains state (search input and search results).
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
     public class HousingSearchService
     {
         #region Fields
-
-        /// <summary>
-        /// Contains the input used for the last housing search.
-        /// </summary>
-        private HousingSearchInputViewModel _lastHousingSearchInput { get; set; } = new();
-
-        
 
         /// <summary>
         /// The injected auto mapper.
@@ -26,19 +24,14 @@ namespace FribergFastigheter.Client.Services
         /// </summary>
         private IHousingApiService _housingApi { get; set; }
 
+        /// <summary>
+        /// Contains the input used for the last housing search.
+        /// </summary>
+        private HousingSearchInputViewModel _lastHousingSearchInput { get; set; } = new();        
+
         #endregion
 
-        #region InjectedServiceProperties
-#pragma warning disable CS8618
-
-
-
-#pragma warning restore CS8618
-        #endregion
-
-        #region OtherProperties
-
-        public Task InitalizeTask { get; private set; }
+        #region OtherProperties        
 
         /// <summary>
         /// True if the user have performed a housing search.
@@ -46,20 +39,30 @@ namespace FribergFastigheter.Client.Services
         public bool HaveSearchedHousings { get; set; } = false;
 
         /// <summary>
-        /// The result of the housing search.
-        /// </summary>
-        public HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;
-
-        /// <summary>
         /// Binds the input data from the housing search form.
         /// </summary>
         [SupplyParameterFromForm]
         public HousingSearchInputViewModel HousingSearchFormInput { get; set; } = new();
 
+        /// <summary>
+        /// The result of the housing search.
+        /// </summary>
+        public HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;        
+
+        /// <summary>
+        /// The task for initializing service data. Wait for this task before starting to use the service. 
+        /// </summary>
+        public Task InitalizeTask { get; private set; }
+
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="autoMapper">The injected auto mapper.</param>
+        /// <param name="housingApi">The injected service for the housing API.</param>
         public HousingSearchService(IMapper autoMapper, IHousingApiService housingApi)
         {
             _autoMapper = autoMapper;
@@ -104,9 +107,6 @@ namespace FribergFastigheter.Client.Services
                    HousingSearchFormInput.SelectedMunicipalityId = HousingSearchFormInput.Municipalities.First().MunicipalityId;
                });
         }
-
-        
-
 
         /// <summary>
         /// Performs a search for housing objects and populates the collection.
