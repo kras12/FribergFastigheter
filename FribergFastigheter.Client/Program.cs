@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using FribergFastigheter.Client.AuthorizationHandlers;
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
@@ -31,6 +32,8 @@ namespace FribergFastigheter.Client
 				builder.Configuration.Bind("Local", options.ProviderOptions);
 			});
 
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
             builder.Services.AddAuthorizationCore(options =>
             {
                 options.AddPolicy(ApplicationPolicies.Broker, policy => 
@@ -38,6 +41,15 @@ namespace FribergFastigheter.Client
 
                 options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => 
                     policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateHousing, policy => 
+                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousing, policy => 
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditHousing, policy => 
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
             });
 
             // Add API services with typed http clients
