@@ -1,0 +1,24 @@
+﻿@*
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+*@
+@{
+    string headingId = Guid.NewGuid().ToString();
+    string pageId = Guid.NewGuid().ToString();
+    string pageButtonStylingClass = StartOpen ? "" : "collapsed";
+    string pageContainerVisibilityClass = StartOpen ? "show" : "";
+}
+<div class="accordion accordion-flush w-100" id="@AccordionContainerIdString">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="@headingId">
+            <button class="accordion-button @(pageButtonStylingClass)" type="button" data-bs-toggle="collapse" data-bs-target="#@pageId" aria-expanded="true" aria-controls="@pageId">
+                @ButtonText
+            </button>
+        </h2>
+        <div id="@pageId" class="accordion-collapse collapse @(pageContainerVisibilityClass)" aria-labelledby="@headingId" data-bs-parent="#@AccordionContainerIdString">
+            <div class="accordion-body">
+                @ChildContent             
+            </div>
+        </div>
+    </div>
+</div>
