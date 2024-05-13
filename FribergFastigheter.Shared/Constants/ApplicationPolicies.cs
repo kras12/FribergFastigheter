@@ -25,14 +25,29 @@
         public const string CanCreateHousing = "CanCreateHousing";
 
         /// <summary>
+        /// The can create housing resource policy.
+        /// </summary>
+        public const string CanCreateHousingResource = "CanCreateHousingResource";
+
+        /// <summary>
         /// The can delete housing policy.
         /// </summary>
         public const string CanDeleteHousing = "CanDeleteHousing";
 
         /// <summary>
+        /// The can delete housing resource policy.
+        /// </summary>
+        public const string CanDeleteHousingResource = "CanDeleteHousingResource";
+
+        /// <summary>
         /// The can edit housing policy.
         /// </summary>
         public const string CanEditHousing = "CanEditHousing";
+
+        /// <summary>
+        /// The can edit housing resource policy.
+        /// </summary>
+        public const string CanEditHousingResource = "CanEditHousingResource";
 
         #endregion
     }

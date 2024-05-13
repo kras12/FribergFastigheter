@@ -4,6 +4,8 @@ using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
@@ -34,6 +36,12 @@ namespace FribergFastigheter.Client.Components.Housing
         /// </summary>
         [Inject]
         private IMapper AutoMapper { get; set; }
+
+        /// <summary>
+        /// The injected authorization service. 
+        /// </summary>
+        [Inject]
+        private IAuthorizationService AuthorizationService { get; set; }
 
         /// <summary>
         /// The injected housing API service.
@@ -157,10 +165,22 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <returns><see cref="Task"/>.</returns>
 		private async Task OnValidSubmit()
         {
-			CreateHousingInput.BrokerId = int.Parse((await AuthenticationStateTask).User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerId)!.Value);
-			var newHousing = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
-            newHousing.Images = await UploadImages(newHousing.HousingId);
-            await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
+            var user = (await AuthenticationStateTask).User;
+            var brokerId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var authorizationData = new CreateHousingAuthorizationData(newHousingBrokerId: brokerId);
+            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanCreateHousingResource);
+
+            if (result.Succeeded)
+            {
+                CreateHousingInput.BrokerId = int.Parse((await AuthenticationStateTask).User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerId)!.Value);
+                var newHousing = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
+                newHousing.Images = await UploadImages(newHousing.HousingId);
+                await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
+            }
+            else
+            {
+                // TODO - show message.
+            }
         }        
 
         /// <summary>

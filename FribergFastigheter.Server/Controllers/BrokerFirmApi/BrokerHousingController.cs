@@ -12,8 +12,8 @@ using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Dto.Error;
-using FribergFastigheter.Server.Services.AuthorizationHandlers;
 using FribergFastigheter.Shared.Enums;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -92,8 +92,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         public async Task<ActionResult> CreateHousing([FromBody] CreateHousingDto newHousingDto)
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            var authData = new HousingAuthorizationData(newHousingBrokerId: newHousingDto.BrokerId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousing);
+            var authData = new CreateHousingAuthorizationData(newHousingBrokerId: newHousingDto.BrokerId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousingResource);
 
             if (result.Succeeded)
             {
@@ -125,6 +125,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateHousingImages([Required] int housingId, [FromForm] IFormFileCollection files)
         {
+            // TODO - USer authorization service
+
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
@@ -182,9 +184,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No matching housing object were found."));
             }
 
-            var authData = new HousingAuthorizationData(housingId: housing.HousingId, existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+            var authData = new DeleteHousingAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousing);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousingResource);
 
             if (result.Succeeded)
             {
@@ -208,13 +210,15 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize(policy: ApplicationPolicies.CanDeleteHousing)]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpDelete("housing/{housingId:int}/image/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteHousingImage([Required] int id, [Required] int housingId)
         {
+            // TODO - USer authorization service
+
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
@@ -321,9 +325,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The housing ID in the query parameter doesn't match the ID provided in the body."));
             }
 
-            var authData = new HousingAuthorizationData(housingId: housing.HousingId, existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+            var authData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId, newHousingBrokerId: updateHousingDto.BrokerId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditHousing);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditHousingResource);
 
             if (result.Succeeded)
             {

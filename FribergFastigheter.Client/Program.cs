@@ -4,6 +4,7 @@ using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -51,6 +52,15 @@ namespace FribergFastigheter.Client
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousing, policy => 
                     policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateHousingResource, policy =>
+                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousingResource, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
             });
 
             // Add API services with typed http clients
