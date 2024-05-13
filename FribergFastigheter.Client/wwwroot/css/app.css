@@ -164,6 +164,10 @@ input, select {
     height: 1.75rem;
 }
 
+input[type="file"] {
+    height: 1.9rem;
+}
+
 label {
     font-weight: bold;
 }
