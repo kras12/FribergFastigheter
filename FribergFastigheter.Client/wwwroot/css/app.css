@@ -136,6 +136,22 @@ body {
     outline: none;
 }
 
+.btn-check:checked+.btn
+{
+    background-color: var(--header-background-color);
+}
+
+.btn, .btn-primary, .btn-outline-primary
+{
+    border: var(--bs-btn-border-width) solid rgba(0, 0, 0, 0.2);
+}
+
+.btn.btn-outline-primary,
+.btn-check+.btn:hover 
+{
+    color: black;
+}
+
 .btn-primary {
     background-color: var(--header-background-color);
 }
@@ -143,6 +159,14 @@ body {
 /*==================================================*/
 /* Forms                                            */
 /*==================================================*/
+
+input, select {
+    height: 1.75rem;
+}
+
+label {
+    font-weight: bold;
+}
 
 .vertical-form
 {
@@ -169,9 +193,7 @@ select.form-control {
     appearance: revert;
 }
 
-label {
-    font-weight: bold;
-}
+
 
 /*==================================================*/
 /* Images                                           */
@@ -625,4 +647,8 @@ select.form-input-box {
 
 .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
+}
+
+.navbar-nav {
+    gap: 0.2rem;
 }

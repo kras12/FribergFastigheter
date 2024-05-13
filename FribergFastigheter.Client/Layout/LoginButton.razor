@@ -6,13 +6,58 @@
 *@
 <AuthorizeView>
     <Authorized>
-        <li class="nav-item">
-            <button class="nav-link btn btn-link" @onclick="Logout">Log out</button>
+        <div class="navbar-nav">
+            <button type="button" class="nav-link btn btn-link text-start w-100" @onclick="OnLogoutButtonClicked">Logga ut</button>
+            </div>
+            <li class="nav-item">
+            <a href="brokermember" class="nav-link"><i class='fas fa-user'></i></a>
         </li>
     </Authorized>
     <NotAuthorized>
         <li class="nav-item">
-            <a class="nav-link" href="/login">Log in</a>
+            <a type="button" class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#@_modalDialogId">Log in</a>
         </li>
+        <div class="modal fade" id="@_modalDialogId" tabindex="-1" aria-labelledby="@(_modalDialogId)-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="@(_modalDialogId)-label">Logga in</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+                    </div>
+                    <div class="modal-body">
+                        <EditForm Context="EditFormContext" Model="FormInput" OnValidSubmit="OnValidSubmit">
+                            <DataAnnotationsValidator></DataAnnotationsValidator>
+                            <div class="d-flex flex-column gap-3 align-items-center">
+                                <div class="d-flex flex-column w-75">
+                                    <label for="email">Email</label>
+                                    <InputText name="email" @bind-Value="FormInput.UserName"></InputText>
+                                    <ValidationMessage For="@(() => FormInput.UserName)" />
+                                </div>
+                                <div class="d-flex flex-column w-75">
+                                    <label for="password">Password</label>
+                                    <InputText type="password" name="password" @bind-Value="FormInput.Password"></InputText>
+                                    <ValidationMessage For="@(() => FormInput.Password)" />
+                                </div>
+                                <div class="d-flex flex-row justify-content-center gap-3">
+                                    <button type="submit" class="btn btn-success">Logga in</button>
+                                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Avbryt</button>
+                                </div>
+                            </div>
+                        </EditForm>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
+
+<script>
+    function HideBrokerLoginModal(id) { 
+        console.log(document.getElementById(id));
+        let modal = bootstrap.Modal.getInstance(document.getElementById(id))
+        console.log(modal);
+        modal.hide();
+    }
+</script>

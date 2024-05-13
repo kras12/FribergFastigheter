@@ -1,4 +1,6 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
 
 namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {

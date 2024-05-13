@@ -1,4 +1,7 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Login;
 using Microsoft.AspNetCore.Components;
 
 

@@ -1,0 +1,53 @@
+﻿<AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
+    <div class="card full-width">
+    <div class="card-header d-flex flex-row justify-content-center">Skapa mäklare</div>
+    <div class="card-body">
+            <EditForm Context="FormContext" Model="CreateBrokerInput" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="d-flex flex-column gap-3">
+                <label>Obligatoriska uppgifter</label>
+                <div class="d-flex flex-column">
+                    <label>Förnamn*</label>
+                    <InputText @bind-Value="CreateBrokerInput.FirstName"></InputText>
+                    <ValidationMessage For="@(() => CreateBrokerInput.FirstName)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Efternamn*</label>
+                    <InputText @bind-Value="CreateBrokerInput.LastName"></InputText>
+                    <ValidationMessage For="@(() => CreateBrokerInput.LastName)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Epost*</label>
+                    <InputText @bind-Value="CreateBrokerInput.Email"></InputText>
+                    <ValidationMessage For="@(() => CreateBrokerInput.Email)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Telefonnummer*</label>
+                    <InputText @bind-Value="CreateBrokerInput.PhoneNumber"></InputText>
+                    <ValidationMessage For="@(() => CreateBrokerInput.PhoneNumber)" />
+                </div>
+                    <label>Frivilliga uppgifter</label>
+                <div class="d-flex flex-column">
+                    <label>Beskrivning</label>
+                    <InputTextArea @bind-Value="CreateBrokerInput.Description"></InputTextArea>
+                    <ValidationMessage For="@(() => CreateBrokerInput.Description)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Lösenord</label>
+                    <InputText type="password" @bind-Value="CreateBrokerInput.Password"></InputText>
+                    <ValidationMessage For="@(() => CreateBrokerInput.Password)" />
+                </div>
+                <div class="d-flex flex-column">
+                    <label>Profilbild</label>
+                    <InputFile OnChange="OnFileUploadChanged"></InputFile>
+                </div>
+                <div class="d-flex flex-row justify-content-center gap-3">
+                    <button class="btn btn-success">Skapa</button>
+                    <button class="btn btn-danger" @onclick="@(() => CloseCreateForm())">Avbryt</button>
+                </div>
+            </div>
+        </EditForm>
+    
+    </div>        
+</div>
+</AuthorizeView>

@@ -1,0 +1,124 @@
+﻿@using FribergFastigheter.Client.Components.Links
+@using FribergFastigheter.Client.HelperClasses
+@using FribergFastigheter.Shared.Constants
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+@{
+    string linkUrl = !string.IsNullOrEmpty(Housing.Url) ? Housing.Url : "";
+    string linkClass = !string.IsNullOrEmpty(Housing.Url) ? "" : "inactive-link";
+    string elementId = ElementId != null ? ElementId : Guid.NewGuid().ToString();
+}
+<DynamicLink Url="@linkUrl" ShowLink="@(!_isInEditMode)">
+    <div id="@elementId" class="card">
+        <div class="card-header housing-result-header d-flex flex-row justify-content-between">
+            <div>@Housing.Broker.FullName</div>
+            <div>@Housing.Category.CategoryName</div>
+            <div class="d-flex flex-row justify-content-end">
+                @if (Housing.Broker.BrokerFirm.Logotype != null)
+                {
+                    <img class="broker-firm-logotype" src="@Housing.Broker.BrokerFirm.Logotype.Url" />
+                }
+            </div>
+        </div>
+    @if (_isInEditMode)
+    {
+        <EditHousing Housing="Housing" OnHousingEdited="OnHousingEditedEventHandler" OnHousingEditCancelled="OnCancelEditingEventHandler"></EditHousing>
+    }
+    else
+    {
+            <div class="tiled-image-gallery tiled-image-gallery__image-size_medium">
+                @for (int i = 0; i < Housing.Images.Count && i < 3; i++)
+                {
+                    string className = "";
+
+                    if (i == 1)
+                    {
+                        className = "d-none d-md-none d-lg-block d-xl-block";
+                    }
+                    else if (i > 1)
+                    {
+                        className = "d-none d-xxl-block";
+                    }
+
+                    <img class="housing-image @(className)" src="@Housing.Images[i].Url" />
+                }
+            </div>
+            <div class="card-header full-width">
+                <div class="card-title fs-1 text-center">@(StringFormatHelper.FormatPrice(Housing.Price))</div>
+                <div class="card-subtitle fs-2 text-center text-muted mb-2">@Housing.Address</div>
+                <div class="card-subtitle fs-3 text-center text-muted mb-2">@Housing.Municipality.MunicipalityName</div>
+                <div class="d-flex flex-row justify-content-center gap-4 flex-wrap full-width fs-5">
+                    <span>Boyta: @StringFormatHelper.FormatMeterSquared(Housing.LivingArea)</span>
+                    @if (Housing.RoomCount != null)
+                    {
+                        <span>Antal rum: @Housing.RoomCount</span>
+                    }
+                    @if (Housing.AncillaryArea != null)
+                    {
+                        <span>Övrig yta: @StringFormatHelper.FormatMeterSquared(Housing.AncillaryArea.Value)</span>
+                    }
+                    @if (Housing.LandArea != null)
+                    {
+                        <span>Landyta: @StringFormatHelper.FormatMeterSquared(Housing.LandArea.Value)</span>
+                    }
+                    @if (Housing.BuildYear != null)
+                    {
+                        <span>Byggår: @Housing.BuildYear</span>
+                    }
+                    @if (Housing.MonthlyFee != null)
+                    {
+                        <span>Månadskostnad: @StringFormatHelper.FormatPrice(@Housing.MonthlyFee.Value)</span>
+                    }
+                    @if (Housing.YearlyRunningCost != null)
+                    {
+                        <span>Årlig kostnad: @StringFormatHelper.FormatPrice(@Housing.YearlyRunningCost.Value)</span>
+                    }
+                </div>
+            </div>
+            @if (EnableEditingControls)
+            {
+                <AuthorizeView Policy="@ApplicationPolicies.Broker">
+                    @{
+                        string radioName = Guid.NewGuid().ToString();
+                        string radioId = Guid.NewGuid().ToString();
+                    }
+                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="@radioName" id="@radioId-1" autocomplete="off" checked @onclick="(() => OverrideDescriptionTruncation(false))">
+                        <label class="btn btn-outline-primary" for="@radioId-1">Kort beskrivning</label>
+
+                        <input type="radio" class="btn-check" name="@radioName" id="@radioId-2" autocomplete="off" @onclick="(() => OverrideDescriptionTruncation(true))">
+                        <label class="btn btn-outline-primary" for="@radioId-2">Lång beskrivning</label>
+                    </div>
+                </AuthorizeView>
+            }
+            <div class="card-body">
+                <p class="card-text">
+                    @if (TruncateLongDescriptions && !_overrideDescriptionTruncation)
+                    {
+                        @StringFormatHelper.TruncateLongTexts(Housing.Description, 300)
+                    }
+                    else
+                    {
+                        var paragraphs = Housing.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+                        foreach (var paragraph in paragraphs)
+                        {
+                            <p class="card-text">@($"{paragraph}{Environment.NewLine}")</p>
+                        }
+                    }                    
+                </p>
+            </div>
+        <div class="card-footer d-flex flex-row justify-content-center gap-3">
+            @if (EnableEditingControls)
+            {
+                <AuthorizeView Policy="@ApplicationPolicies.CanEditHousing" Resource="Housing">
+                    <button type="button" class="btn btn-primary" @onclick="@(() => OnEditHousingButtonClickedEventHandler())">Redigera</button>
+                </AuthorizeView>
+                <AuthorizeView Policy="@ApplicationPolicies.CanDeleteHousing" Resource="Housing">
+                    <DeleteHousing Housing="Housing" OnHousingDeleted="OnHousingDeletedEventHandler"></DeleteHousing>
+                </AuthorizeView>
+            }
+        </div>
+    }
+</div>
+</DynamicLink>

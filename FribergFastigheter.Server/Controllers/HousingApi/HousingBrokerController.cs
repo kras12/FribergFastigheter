@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
+using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.Error;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FribergFastigheter.Server.Controllers.HousingApi
 {
-	[Route("housing-api")]
+    [Route("housing-api")]
 	[ApiController]
 	public class HousingBrokerController : ControllerBase
 	{

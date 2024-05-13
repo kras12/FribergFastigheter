@@ -66,14 +66,18 @@ namespace FribergFastigheter.Server.Data.Repositories
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors: -->
 		public async Task UpdateAsync(Housing housing)
-        {
-			applicationDbContext.Update(housing);
-			applicationDbContext.Brokers.Attach(housing.Broker);
-            applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
-            applicationDbContext.HousingCategories.Attach(housing.Category);
-            applicationDbContext.Municipalities.Attach(housing.Municipality);
+        {            
+            applicationDbContext.HousingCategories.Entry(housing.Category).State = EntityState.Unchanged;
+            applicationDbContext.Municipalities.Entry(housing.Municipality).State = EntityState.Unchanged;
+            housing.BrokerFirm.Brokers.ForEach(x => applicationDbContext.Brokers.Entry(x).State = EntityState.Unchanged);            
 
-			await applicationDbContext.SaveChangesAsync();
+            if (!applicationDbContext.Brokers.Any(x => x.BrokerId == housing.Broker.BrokerId))
+            {
+                applicationDbContext.Brokers.Entry(housing.Broker).State = EntityState.Unchanged;
+            }
+            
+            applicationDbContext.Housings.Entry(housing).State = EntityState.Modified;
+            await applicationDbContext.SaveChangesAsync();
         }
 
 		/// <!-- Author: Jimmie -->

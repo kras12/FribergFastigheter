@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Server.Data.Entities;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
 
 namespace FribergFastigheter.Server.AutoMapper
 {
-	/// <summary>
-	/// An auto mapper profile that contains mappings for converting entity classes to DTO classes.
-	/// </summary>
-	/// <!-- Author: Jimmie, Marcus -->
-	/// <!-- Co Authors: -->
-	public class EntityToDtoAutoMapperProfile : Profile
+    /// <summary>
+    /// An auto mapper profile that contains mappings for converting entity classes to DTO classes.
+    /// </summary>
+    /// <!-- Author: Jimmie, Marcus -->
+    /// <!-- Co Authors: -->
+    public class EntityToDtoAutoMapperProfile : Profile
 	{
         /// <summary>
         /// Constructor.
@@ -20,7 +23,6 @@ namespace FribergFastigheter.Server.AutoMapper
 			CreateMap<HousingCategory, HousingCategoryDto>();
 			CreateMap<Municipality, MunicipalityDto>();
 			CreateMap<Image, ImageDto>();
-            CreateMap<ApplicationUser, CreatedBrokerDto>();
 
             CreateMap<BrokerFirm, BrokerFirmDto>()
 				.ForMember(dest => dest.Logotype, opt => opt.PreCondition(x => x.Logotype != null));

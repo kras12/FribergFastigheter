@@ -1,0 +1,99 @@
+﻿@* 
+<!-- Author: Jimmie -->
+<!-- Co Authors: --> 
+*@
+<AuthorizeView Policy="@ApplicationPolicies.Broker">
+    <div class="card w-100">
+    <div class="card-header d-flex flex-row justify-content-center">Skapa bostadsobjekt</div>
+    <div class="card-body">
+            <EditForm Context="FormContext" Model="CreateHousingInput" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="d-flex flex-column gap-3 w-100 align-items-center">
+                @* Input fields *@
+                <div class="d-flex flex-column gap-3 col-md-6 col-xxl-5">
+                    <label>Obligatoriska uppgifter</label>
+                    <div class="d-flex flex-column">
+                        <label>Kategori*</label>
+                        <InputSelect @bind-Value="CreateHousingInput.SelectedCategoryId">
+                            @foreach (var category in CreateHousingInput.HousingCategories)
+                            {
+                                <option value="@category.HousingCategoryId">@category.CategoryName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => CreateHousingInput.SelectedCategoryId)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Kommun*</label>
+                        <InputSelect @bind-Value="CreateHousingInput.SelectedMunicipalityId">
+                            @foreach (var municipality in CreateHousingInput.Municipalities)
+                            {
+                                <option value="@municipality.MunicipalityId">@municipality.MunicipalityName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => CreateHousingInput.SelectedMunicipalityId)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Adress*</label>
+                        <InputText @bind-Value="CreateHousingInput.Address"></InputText>
+                        <ValidationMessage For="@(() => CreateHousingInput.Address)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Pris*</label>
+                        <InputNumber @bind-Value="CreateHousingInput.Price"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.Price)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Boyta*</label>
+                        <InputNumber @bind-Value="CreateHousingInput.LivingArea"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.LivingArea)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Beskrivning*</label>
+                        <InputTextArea @bind-Value="CreateHousingInput.Description" rows="5"></InputTextArea>
+                        <ValidationMessage For="@(() => CreateHousingInput.Description)" />
+                    </div>
+                    <label>Frivilliga uppgifter</label>
+                    <div class="d-flex flex-column">
+                        <label>Biyta</label>
+                        <InputNumber @bind-Value="CreateHousingInput.AncillaryArea"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.AncillaryArea)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Landyta</label>
+                        <InputNumber @bind-Value="CreateHousingInput.LandArea"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.LandArea)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Månadsavgift</label>
+                        <InputNumber @bind-Value="CreateHousingInput.MonthlyFee"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.MonthlyFee)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Årlig driftskostnad</label>
+                        <InputNumber @bind-Value="CreateHousingInput.YearlyRunningCost"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.YearlyRunningCost)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Antal rum</label>
+                        <InputNumber @bind-Value="CreateHousingInput.RoomCount"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.RoomCount)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Byggår</label>
+                        <InputNumber @bind-Value="CreateHousingInput.BuildYear"></InputNumber>
+                        <ValidationMessage For="@(() => CreateHousingInput.BuildYear)" />
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label>Bilder</label>
+                        <InputFile OnChange="OnFileUploadChanged" multiple></InputFile>
+                    </div>
+                    <div class="d-flex flex-row justify-content-center gap-3">
+                        <button class="btn btn-primary">Skapa</button>
+                        <button class="btn btn-warning" @onclick="@(() => OnCancelCreateHousingButtonClicked())">Avbryt</button>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </div>        
+</div>
+</AuthorizeView>

@@ -58,10 +58,19 @@ namespace FribergFastigheter.Server.Data.Repositories
             
             applicationDbContext.Brokers.Remove(fetchedBroker);
             await applicationDbContext.SaveChangesAsync();
-        }      
+        }
 
-        public async Task UpdateAsync(Broker broker) 
+        /// <summary>
+        /// Updates a broker and its user entity.
+        /// </summary>
+        /// <param name="broker"></param>
+        /// <returns></returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task UpdateAsync(Broker broker)
         {
+            // The broker firm collection may contain the broker which leads to double tracking of the same entity.
+            broker.BrokerFirm.Brokers.Clear();
             applicationDbContext.BrokerFirms.Attach(broker.BrokerFirm);
             applicationDbContext.Update(broker);
             await applicationDbContext.SaveChangesAsync();

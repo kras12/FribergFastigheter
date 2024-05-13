@@ -1,19 +1,41 @@
-﻿using FribergFastigheter.Client.Services;
+﻿using AutoMapper;
+using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Dto.Login;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.JSInterop;
+using static FribergFastigheter.Client.Components.ConfirmButton;
 
 namespace FribergFastigheter.Client.Layout
 {
     /// <summary>
-    /// A component that shows a login button or logout button depending on the authentication state of the user. 
-    /// Clicking on the login button redirects the user to the login page, while the logout functionality is handled by the component itself. 
+    /// A component that handles both login and logout functionality for brokers.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
     public partial class LoginButton : ComponentBase
     {
+        #region Fields
+
+        /// <summary>
+        /// The id of the modal dialg. 
+        /// </summary>
+        private readonly string _modalDialogId = Guid.NewGuid().ToString();
+
+        #endregion
+
         #region Properties
+
+        /// <summary>
+        /// The injected Auto Mapper service. 
+        /// </summary>
+        [Inject]
+#pragma warning disable CS8618 
+        private IMapper AutoMapper { get; set; }
+#pragma warning restore CS8618 
 
         /// <summary>
         /// The injected authentication state provider. 
@@ -21,6 +43,28 @@ namespace FribergFastigheter.Client.Layout
         [Inject]
 #pragma warning disable CS8618 
         private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+#pragma warning restore CS8618 
+
+        /// <summary>
+        /// The injected broker firm API service. 
+        /// </summary>
+        [Inject]
+#pragma warning disable CS8618 
+        private IBrokerFirmApiService BrokerFirmApiService { get; set; }
+#pragma warning restore CS8618 
+
+        /// <summary>
+        /// The data binding property for the form. 
+        /// </summary>
+        [SupplyParameterFromForm]
+        public LoginViewModel FormInput { get; set; } = new LoginViewModel();
+
+        /// <summary>
+        /// The injected JavaScript runtime. 
+        /// </summary>
+        [Inject]
+#pragma warning disable CS8618 
+        private IJSRuntime JSRuntime { get; set; }
 #pragma warning restore CS8618 
 
         /// <summary>
@@ -36,13 +80,25 @@ namespace FribergFastigheter.Client.Layout
         #region Methods
 
         /// <summary>
-        /// Logs out the user and redirects the user to the home page. 
+        /// Event handler for when the logout button was clicked. 
         /// </summary>
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        public async Task Logout()
+        private async Task OnLogoutButtonClicked()
         {
-            await ((ApiAuthenticationStateProvider)AuthenticationStateProvider).RemoveTokenAsync();
+            await ((BrokerFirmAuthenticationStateProvider)AuthenticationStateProvider).RemoveTokenAsync();
             NavigationManager.NavigateToLogout("/");
+        }
+
+        /// <summary>
+        /// Event handler for the form submit button. 
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        private async Task OnValidSubmit()
+        {
+            await JSRuntime.InvokeVoidAsync("HideBrokerLoginModal", _modalDialogId);
+            await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
+            FormInput = new LoginViewModel();
+            NavigationManager.NavigateTo("brokermember");
         }
 
         #endregion

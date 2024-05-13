@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Server.Data.Entities;
-using FribergFastigheter.Shared.Dto;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
@@ -11,17 +10,19 @@ using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using Microsoft.AspNetCore.Authorization;
 using FribergFastigheter.Shared.Constants;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Error;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FribergFastigheter.Server.Controllers.BrokerApi
 {
-	/// <summary>
-	/// An API controller for the broker firm image API.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	[Route("broker-firm-api")]
+    /// <summary>
+    /// An API controller for the broker firm image API.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    [Route("broker-firm-api")]
 	[ApiController]
 	public class BrokerFirmController : ControllerBase
 	{
@@ -70,7 +71,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <returns>An embedded collection of <see cref="BrokerFirmDto"/>.</returns>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
@@ -97,7 +98,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <returns>An embedded collection of <see cref="BrokerFirmStatisticsDto"/>.</returns>
 		/// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-		[Authorize]
+		[Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm/statistics")]
         [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
