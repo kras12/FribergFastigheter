@@ -1,25 +1,35 @@
 ﻿@page "/brokerfirm/{BrokerFirmId:int}"
 @using FribergFastigheter.Client.Components
 @using FribergFastigheter.Client.Components.Broker
+@using FribergFastigheter.Client.Components.BrokerFirm
+@using FribergFastigheter.Client.Components
+@using FribergFastigheter.Client.Components.Housing
 @*
-<!-- Author: Jimmie -->
+<!-- Author: Marcus -->
 <!-- Co Authors: --> 
 *@
-<div class="vertical-page-container gap-5">
-	@if (BrokerFirm != null)
-	{
-		<div>
-			@* @BrokerFirm.Name *@
-			@if (BrokerFirm.Logotype != null)
-			{
-				<img src="@BrokerFirm.Logotype.Url" />
-			}	
-		</div>
-		<div class="d-flex flex-column gap-4 full-width">
-			@foreach (var broker in BrokerFirm.Brokers)
-			{
-				<BrokerDetails Broker="broker"></BrokerDetails>
-			}  
-		</div>
-	}
+<div class="vertical-page-container">
+@if(BrokerFirm != null)
+{
+    <BrokerFirmDetails BrokerFirm="BrokerFirm" />
+    
+        <div class="btn-group flex-wrap" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="btn-radio-broker-list" id="btn-radio-broker-list" autocomplete="off" checked @onclick="@(() => OpenBrokerList())">
+            <label class="btn btn-outline-primary flex-grow-0" for="btn-radio-broker-list">Alla Mäklare</label>
+            <input type="radio" class="btn-check" name="btn-radio-housing-list" id="btn-radio-housing-list" autocomplete="off" @onclick="@(() => OpenHousingList())">
+            <label class="btn btn-outline-primary flex-grow-0" for="btn-radio-housing-list">Alla Bostäder</label>
+        </div>
+   
+
+    @if(IsBrokerListorHousingListActive == true )
+    {
+            <BrokerList Brokers="Brokers" />
+    }
+    else if (IsBrokerListorHousingListActive == false)
+    {
+        <HousingList Housings="Housings" />
+    }
+   
+     
+}
 </div>

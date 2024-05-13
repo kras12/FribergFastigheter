@@ -11,6 +11,7 @@
 
         </div>
     </div>
+    <AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
     <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
     
     @if (IsNewBrokerFormActive == true)
@@ -21,7 +22,7 @@
     {
         <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
     }
-
+    </AuthorizeView>
     <div class="broker-list">
         @if (Brokers.Count > 0)
         {
@@ -44,10 +45,12 @@
                         <h5>
                             Email: @broker.Email
                         </h5>
+                        <AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
                         <div class="d-flex flex-row gap-3">
                             <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
                             <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
                         </div>
+                        </AuthorizeView>
                     </div>
                 </div>
             }
