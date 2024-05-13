@@ -2,8 +2,12 @@
 using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components.Housing
@@ -49,6 +53,12 @@ namespace FribergFastigheter.Client.Components.Housing
         private IMapper AutoMapper { get; set; }
 
         /// <summary>
+        /// The injected authorization service. 
+        /// </summary>
+        [Inject]
+        private IAuthorizationService AuthorizationService { get; set; }
+
+        /// <summary>
         /// The injected housing API service.
         /// </summary>
 
@@ -58,7 +68,15 @@ namespace FribergFastigheter.Client.Components.Housing
 #pragma warning restore CS8618 
         #endregion
 
-        #region OtherProperties        
+        #region ParameterProperties
+
+        /// <summary>
+        /// The cascaded authentication state task.
+        /// </summary>
+        [CascadingParameter]
+#pragma warning disable CS8618 
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+#pragma warning restore CS8618 
 
         /// <summary>
         /// The model bound to the form.
@@ -86,15 +104,15 @@ namespace FribergFastigheter.Client.Components.Housing
         [Parameter]
         public EventCallback<HousingViewModel> OnHousingEdited { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Methods
+        #region Methods
 
-		/// <summary>
-		/// Creates a new edit housing model to be found to the edit form.
-		/// </summary>
-		/// <exception cref="ArgumentNullException"></exception>
-		private void CreateEditHousingModel()
+        /// <summary>
+        /// Creates a new edit housing model to be found to the edit form.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        private void CreateEditHousingModel()
 		{
 			if (Housing == null)
 			{
@@ -213,6 +231,12 @@ namespace FribergFastigheter.Client.Components.Housing
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
+
+            if (Housing == null)
+            {
+                throw new ArgumentNullException($"The paramater '{Housing}' can't be null.", nameof(Housing));
+            }
+
 			CreateEditHousingModel();
         }
 
@@ -224,13 +248,25 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <!-- Co Authors: -->
 		private async Task OnValidSubmit()
         {
-            await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
-            AutoMapper.Map(EditHousingInput!, Housing);
-			Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
-			Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
-            await BrokerFirmApiService.DeleteImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
-            Housing.Images.AddRange(await UploadImages());
-            await OnHousingEdited.InvokeAsync(Housing);
+            var user = (await AuthenticationStateTask).User;
+            var authorizationData = new HousingAuthorizationData(housingId: Housing.HousingId, existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
+                existingHousingBrokerId: Housing.Broker.BrokerId, newHousingBrokerId: EditHousingInput!.BrokerId);
+            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditHousingResource);
+
+            if (result.Succeeded)
+            {
+                await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
+                AutoMapper.Map(EditHousingInput!, Housing);
+                Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
+                Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
+                await BrokerFirmApiService.DeleteImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+                Housing.Images.AddRange(await UploadImages());
+                await OnHousingEdited.InvokeAsync(Housing);
+            }          
+            else
+            {
+                // TODO - Show message
+            }
         }
 
         /// <summary>

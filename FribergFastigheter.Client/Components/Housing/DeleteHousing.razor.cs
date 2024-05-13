@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Constants;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using static FribergFastigheter.Client.Components.ConfirmButton;
 
@@ -15,31 +18,45 @@ namespace FribergFastigheter.Client.Components.Housing
     /// <!-- Co Authors: -->
     public partial class DeleteHousing : ComponentBase
     {
-        #region Properties
+        #region InjectedServiceProperties
+#pragma warning disable CS8618
 
         /// <summary>
-        /// The injected auto mapper service. 
+        /// The injected authorization service. 
         /// </summary>
         [Inject]
-#pragma warning disable CS8618 
-        private IMapper AutoMapper { get; set; }
-#pragma warning restore CS8618 
+        private IAuthorizationService AuthorizationService { get; set; }
 
-#pragma warning disable CS8618
         /// <summary>
         /// The injected broker firm API service. 
         /// </summary>
         [Inject]
         private IBrokerFirmApiService BrokerFirmApiService { get; set; }
-#pragma warning restore CS8618 
 
-#pragma warning disable CS8618 
+        /// <summary>
+        /// Injected JavaScript runtime.
+        /// </summary>
+        [Inject]
+        public IJSRuntime JsRuntime { get; set; }
+
+#pragma warning restore CS8618
+        #endregion
+
+        #region ParameterProperties
+#pragma warning disable CS8618
+
+        /// <summary>
+        /// The cascaded authentication state task.
+        /// </summary>
+        [CascadingParameter]
+
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
         /// <summary>
         /// The housing object that can be deleted. 
         /// </summary>
         [Parameter]
         public HousingViewModel Housing { get; set; }
-#pragma warning restore CS8618 
 
         /// <summary>
         /// Event triggers when the housing object have been deleted.
@@ -47,14 +64,7 @@ namespace FribergFastigheter.Client.Components.Housing
         [Parameter]
         public EventCallback<HousingViewModel> OnHousingDeleted { get; set; }
 
-#pragma warning disable CS8618
-        /// <summary>
-        /// Injected JavaScript runtime.
-        /// </summary>
-        [Inject]
-        public IJSRuntime JsRuntime { get; set; }
 #pragma warning restore CS8618
-
         #endregion
 
         #region Methods
@@ -68,8 +78,21 @@ namespace FribergFastigheter.Client.Components.Housing
         {
             if (result == DialogResults.UserConfirmed)
             {
-                await BrokerFirmApiService.DeleteHousing(Housing.HousingId);
-                await OnHousingDeleted.InvokeAsync(Housing);       
+                var user = (await AuthenticationStateTask).User;
+                var brokerFirmId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+                var brokerId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+                var authorizationData = new HousingAuthorizationData(existingHousingBrokerFirmId: brokerFirmId, existingHousingBrokerId: brokerId);
+                var authorizeResult = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanDeleteHousingResource);
+
+                if (authorizeResult.Succeeded)
+                {
+                    await BrokerFirmApiService.DeleteHousing(Housing.HousingId);
+                    await OnHousingDeleted.InvokeAsync(Housing);
+                }
+                else
+                {
+                    // TODO - show message
+                }
             }
         }
 
