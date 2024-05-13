@@ -208,7 +208,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
-        [Authorize(policy: ApplicationPolicies.CanDeleteHousing)]
+        [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpDelete("housing/{housingId:int}/image/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
