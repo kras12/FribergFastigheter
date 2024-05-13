@@ -93,7 +93,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var authData = new HousingAuthorizationData(newHousingBrokerId: newHousingDto.BrokerId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousing);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousingResource);
 
             if (result.Succeeded)
             {
@@ -184,7 +184,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             var authData = new HousingAuthorizationData(housingId: housing.HousingId, existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousing);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousingResource);
 
             if (result.Succeeded)
             {
@@ -323,7 +323,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             var authData = new HousingAuthorizationData(housingId: housing.HousingId, existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId, newHousingBrokerId: updateHousingDto.BrokerId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditHousing);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditHousingResource);
 
             if (result.Succeeded)
             {

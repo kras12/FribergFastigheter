@@ -146,13 +146,13 @@ namespace FribergFastigheter
                 options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy =>
                     policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
 
-                options.AddPolicy(ApplicationPolicies.CanCreateHousing, policy =>
+                options.AddPolicy(ApplicationPolicies.CanCreateHousingResource, policy =>
                     policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
 
-                options.AddPolicy(ApplicationPolicies.CanDeleteHousing, policy =>
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
 
-                options.AddPolicy(ApplicationPolicies.CanEditHousing, policy =>
+                options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
             });
 
