@@ -52,7 +52,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public Task DeleteHousing(int housingId)
+        public Task DeleteAsync(int housingId)
 		{
             return DeleteAsync(new Housing() { HousingId = housingId });
 		}
@@ -79,17 +79,6 @@ namespace FribergFastigheter.Server.Data.Repositories
             applicationDbContext.Housings.Entry(housing).State = EntityState.Modified;
             await applicationDbContext.SaveChangesAsync();
         }
-
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<Broker> GetBroker(int housingId)
-		{
-			return await applicationDbContext.Housings
-				 .Where(x => x.HousingId == housingId)
-				 .AsNoTracking()
-                 .Select(x => x.Broker)
-				 .FirstAsync();
-		}
 
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
@@ -145,8 +134,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
             #endregion
 
-            var query = applicationDbContext.Housings
-                .Where(x => !x.IsDeleted)
+            var query = applicationDbContext.Housings                
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -230,9 +218,7 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Include(x => x.Municipality);
 
             return query;
-        }
-
-        
+        }        
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
@@ -242,13 +228,6 @@ namespace FribergFastigheter.Server.Data.Repositories
             return GetHousingsInternalAsync(brokerId: brokerId, brokerFirmId: brokerFirmId, municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
                 minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea).CountAsync();
         }
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId)
-        {
-            return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id && x.BrokerFirm.BrokerFirmId == BrokerFirmId);
-		}
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
@@ -276,33 +255,10 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<Image?> GetImagebyId(int housingId, int imageId)
-		{
-			return (await GetImages(housingId, new List<int>() { imageId })).SingleOrDefault();
-        }
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
         public Task<bool> HousingExists(int housingId)
 		{
 			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == housingId);
 		}
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<bool> OwnsImage(int housingId, int imageId)
-		{
-            return applicationDbContext.Housings.Where(x => x.HousingId == housingId).AnyAsync(x => x.Images.Any(x => x.ImageId == imageId));
-		}
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<bool> OwnsImages(int housingId, List<int> imageIds)
-        {
-            return await applicationDbContext.Housings
-                .Where(x => x.HousingId == housingId)
-                .AnyAsync(x => x.Images.Count(x => imageIds.Contains(x.ImageId)) == imageIds.Count);
-        }
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
@@ -345,7 +301,6 @@ namespace FribergFastigheter.Server.Data.Repositories
 		{
 			return DeleteImages(housingId, new List<int> { imageId });       
 		}
-
 		
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
