@@ -96,7 +96,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             if (result.Succeeded)
             {
                 var newHousingEntity = _autoMapper.Map<Housing>(newHousingDto);
-                newHousingEntity.BrokerFirm = new BrokerFirm() { BrokerFirmId = brokerFirmId };
                 await _housingRepository.AddAsync(newHousingEntity);
                 var finalHousingDto = _autoMapper.Map<HousingDto>(await _housingRepository.GetHousingByIdAsync(newHousingEntity.HousingId));
                 _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, finalHousingDto);
@@ -137,7 +136,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var authData = new CreateHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+            var authData = new CreateHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.Broker.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousingImageResource);
 
@@ -183,7 +182,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No matching housing object were found."));
             }
 
-            var authData = new DeleteHousingAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+            var authData = new DeleteHousingAuthorizationData(existingHousingBrokerFirmId: housing.Broker.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousingResource);
 
@@ -233,7 +232,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var authData = new DeleteHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+            var authData = new DeleteHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.Broker.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousingImageResource);
 
@@ -276,7 +275,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The housing ID in the query parameter doesn't match the ID provided in the body."));
             }
 
-            var authData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+            var authData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: housing.Broker.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId, newHousingBrokerId: updateHousingDto.BrokerId);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditHousingResource);
 
@@ -312,7 +311,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return NotFound();
             }
-            else if (housing.BrokerFirm.BrokerFirmId != int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value))
+            else if (housing.Broker.BrokerFirm.BrokerFirmId != int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value))
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
             }
@@ -386,7 +385,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "No image with that ID was found that belongs to the referenced housing object."));
             }
-            else if (housing.BrokerFirm.BrokerFirmId != brokerFirmId)
+            else if (housing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
             }
@@ -427,7 +426,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object was not found."));
             }
-            else if (housing.BrokerFirm.BrokerFirmId != brokerFirmId)
+            else if (housing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
             }
@@ -463,7 +462,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object was not found."));
             }
-            else if (housing.BrokerFirm.BrokerFirmId != brokerFirmId)
+            else if (housing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
             }

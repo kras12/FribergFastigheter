@@ -43,7 +43,6 @@ namespace FribergFastigheter.Server.Data.Repositories
             foreach (var housing in housings)
             {
                 applicationDbContext.Brokers.Attach(housing.Broker);
-                applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
                 applicationDbContext.HousingCategories.Attach(housing.Category);
                 applicationDbContext.Municipalities.Attach(housing.Municipality);
                 await applicationDbContext.Housings.AddAsync(housing);
@@ -69,7 +68,6 @@ namespace FribergFastigheter.Server.Data.Repositories
         {            
             applicationDbContext.HousingCategories.Entry(housing.Category).State = EntityState.Unchanged;
             applicationDbContext.Municipalities.Entry(housing.Municipality).State = EntityState.Unchanged;
-            housing.BrokerFirm.Brokers.ForEach(x => applicationDbContext.Brokers.Entry(x).State = EntityState.Unchanged);            
 
             if (!applicationDbContext.Brokers.Any(x => x.BrokerId == housing.Broker.BrokerId))
             {
@@ -134,7 +132,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
             #endregion
 
-            var query = applicationDbContext.Housings                
+            var query = applicationDbContext.Housings
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -165,7 +163,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
             if (brokerFirmId != null)
             {
-                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+                query = query.Where(x => x.Broker.BrokerFirm.BrokerFirmId == brokerFirmId);
             }
 
             if (minPrice != null)
@@ -205,17 +203,20 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Take(3));
             }
 
-            // Letting EF Core use auto include in this instance will be 8-9 time slower.
-            query = query
-                .IgnoreAutoIncludes()
-                .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
-                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
-                .Include(x => x.Broker).ThenInclude(x => x.User)
-                .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
-                .Include(x => x.BrokerFirm).ThenInclude(x => x.Brokers).ThenInclude(x => x.ProfileImage)
-                .Include(x => x.Images)
-                .Include(x => x.Category)
-                .Include(x => x.Municipality);
+            // Letting EF Core use auto include was 8-9 time slower with the old database design.
+            // Now the difference is much smaller. As the performance is more acceptable now we can just let EF Core handle this. 
+            // EF Core would need tracking enabled to handle the new circular references resulting from the manual include route and this new database design anyway, 
+            // so the performance gain could be small and the risk for future bugs would increase. 
+            // 
+            //query = query
+            //    .IgnoreAutoIncludes()
+            //    .Include(x => x.Images)
+            //    .Include(x => x.Category)
+            //    .Include(x => x.Municipality)
+            //    .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
+            //    .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
+            //    .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Brokers)
+            //    .Include(x => x.Broker).ThenInclude(x => x.User);
 
             return query;
         }        

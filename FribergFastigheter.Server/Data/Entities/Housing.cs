@@ -30,12 +30,6 @@ namespace FribergFastigheter.Server.Data.Entities
 		public Broker Broker { get; set; }
 
         /// <summary>
-        /// The broker firm of the housing object.
-        /// </summary>
-		[Required]
-        public BrokerFirm BrokerFirm { get; set; }
-
-        /// <summary>
         /// The build year of the housing object.
         /// </summary>
         public int? BuildYear { get; set; }
