@@ -14,6 +14,7 @@ using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Dto.Error;
 using FribergFastigheter.Server.Services.AuthorizationHandlers;
 using FribergFastigheter.Shared.Enums;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

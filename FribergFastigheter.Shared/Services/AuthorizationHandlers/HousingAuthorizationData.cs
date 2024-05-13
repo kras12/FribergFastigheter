@@ -1,4 +1,4 @@
-﻿namespace FribergFastigheter.Server.Services.AuthorizationHandlers
+﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
 {
     /// <summary>
     /// Data storage class designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization.
@@ -16,7 +16,7 @@
         /// <param name="existingHousingBrokerFirmId">The broker firm ID.</param>
         /// <param name="existingHousingBrokerId">The old broker ID.</param>
         /// <param name="newHousingBrokerId">The new broker ID.</param>
-        public HousingAuthorizationData(int? housingId = null, int? existingHousingBrokerFirmId = null, 
+        public HousingAuthorizationData(int? housingId = null, int? existingHousingBrokerFirmId = null,
             int? existingHousingBrokerId = null, int? newHousingBrokerId = null)
         {
             HousingId = housingId;

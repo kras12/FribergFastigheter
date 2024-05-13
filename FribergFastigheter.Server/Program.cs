@@ -19,7 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using FribergFastigheter.Server.Services.AuthorizationHandlers;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 
 namespace FribergFastigheter
 {

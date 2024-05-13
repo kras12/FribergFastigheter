@@ -3,7 +3,7 @@ using FribergFastigheter.Shared.Enums;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
-namespace FribergFastigheter.Server.Services.AuthorizationHandlers
+namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
 {
     /// <summary>
     /// Authorization handler with built in requirement to handle authorization for create, delete and edit of housing objects. 
@@ -131,7 +131,7 @@ namespace FribergFastigheter.Server.Services.AuthorizationHandlers
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingAccessDenied.ToString()));
                         return Task.CompletedTask;
-                    }             
+                    }
                     // Change of broker
                     else if (authorizationData.NewHousingBrokerId != authorizationData.ExistingHousingBrokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
