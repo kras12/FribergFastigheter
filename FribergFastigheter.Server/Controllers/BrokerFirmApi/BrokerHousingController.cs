@@ -12,7 +12,6 @@ using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Dto.Error;
-using FribergFastigheter.Server.Services.AuthorizationHandlers;
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 
