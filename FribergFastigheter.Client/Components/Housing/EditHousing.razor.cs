@@ -259,29 +259,24 @@ namespace FribergFastigheter.Client.Components.Housing
                 AutoMapper.Map(EditHousingInput!, Housing);
                 Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
                 Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
-                await BrokerFirmApiService.DeleteImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
-                Housing.Images.AddRange(await UploadImages());
+
+                if (_imagesToDelete.Count > 0)
+                {
+                    await BrokerFirmApiService.DeleteHousingImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+                }
+
+                if (_uploadedFiles.Count > 0)
+                {
+                    var uploadedImages = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
+                    Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(uploadedImages));
+                }
+
                 await OnHousingEdited.InvokeAsync(Housing);
             }          
             else
             {
                 // TODO - Show message
             }
-        }
-
-        /// <summary>
-        /// Uploads images for a housing object if the user have selected any images. 
-        /// </summary>
-        /// <returns>A collection of <see cref="ImageViewModel"/> objects for the uploaded images.</returns>
-        private async Task<List<ImageViewModel>> UploadImages()
-        {
-            if (_uploadedFiles.Count > 0)
-            {
-                var result = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
-                return result != null ? AutoMapper.Map<List<ImageViewModel>>(result) : new();
-            }
-
-            return new();
         }
 
         #endregion
