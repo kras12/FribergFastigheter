@@ -95,18 +95,18 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
             int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null,
-            double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
+            double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, bool includeDeleted = false)
         {
             return GetHousingsInternalAsync(brokerId: brokerId, brokerFirmId: brokerFirmId, municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
                 limitHousings: limitHousings, limitImagesPerHousing: limitImagesPerHousing, minPrice: minPrice, maxPrice: maxPrice,
-                    minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows).ToListAsync();
+                    minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows, includeDeleted: includeDeleted).ToListAsync();
         }
 
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
         public async Task<Housing?> GetHousingByIdAsync(int housingId, int? brokerFirmId = null)
         {
-           return await GetHousingsInternalAsync(housingId: housingId, brokerFirmId: brokerFirmId)
+           return await GetHousingsInternalAsync(housingId: housingId, brokerFirmId: brokerFirmId, includeDeleted: true)
 				.FirstOrDefaultAsync();
 		}
 
@@ -114,7 +114,7 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         private IQueryable<Housing> GetHousingsInternalAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
             int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null,
-            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, int? housingId = null)
+            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, int? housingId = null, bool includeDeleted = false)
         {
             #region Checks
 
@@ -149,6 +149,11 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Where(x => !x.IsDeleted)
                 .AsNoTracking()
                 .AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(x => !x.IsDeleted);
+            }
 
             if (housingId != null)
             {
