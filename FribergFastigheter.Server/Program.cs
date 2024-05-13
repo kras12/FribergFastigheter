@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using System.Text;
 
 namespace FribergFastigheter
 {
@@ -124,13 +125,15 @@ namespace FribergFastigheter
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
                     ValidateIssuer = true,
                     ValidIssuer = builder.Configuration["JWT:Issuer"],
                     ValidateAudience = true,
                     ValidAudience = builder.Configuration["JWT:Audience"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
+                        Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
                     RoleClaimType = ApplicationUserClaims.UserRole
                 };
             });
