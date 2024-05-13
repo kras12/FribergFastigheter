@@ -61,11 +61,14 @@ namespace FribergFastigheter.Server.Services
         {
             var claims = new List<Claim>
             {
+                new Claim(JwtRegisteredClaimNames.Sub, broker.User.UserName!),
                 new Claim(JwtRegisteredClaimNames.Email, broker.User.Email!),
-                new Claim(JwtRegisteredClaimNames.GivenName, broker.User.UserName!),
+                new Claim(JwtRegisteredClaimNames.GivenName, broker.User.FirstName!),
+                new Claim(JwtRegisteredClaimNames.FamilyName, broker.User.LastName!),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ApplicationUserClaims.BrokerId, broker.BrokerId.ToString()),
                 new Claim(ApplicationUserClaims.BrokerFirmId, broker.BrokerFirm.BrokerFirmId.ToString()),
-                new Claim(ApplicationUserClaims.UserId, broker.User.Id.ToString())
+                new Claim(ApplicationUserClaims.UserId, broker.User.Id.ToString())                
             };
 
             var roles = await _userManager.GetRolesAsync(broker.User);
