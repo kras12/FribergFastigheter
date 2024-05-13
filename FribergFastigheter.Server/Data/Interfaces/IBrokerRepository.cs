@@ -15,13 +15,10 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task DeleteAsync(int brokerId);
         Task DeleteProfileImage(int brokerId);
         Task<bool> Exists(int id);
-        Task<List<Broker>> GetAllBrokersAsync();
-        Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId);
+        Task<List<Broker>> GetBrokersAsync(int? brokerFirmId = null, bool includeDeleted = false);
         Task<Broker?> GetBrokerByIdAsync(int id);
         public Task<Broker?> GetBrokerByUserIdAsync(string id);
         Task<Image?> GetProfileImage(int brokerId);
-        Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId);
-        Task<bool> OwnsImage(int brokerId, int imageId);
         Task UpdateAsync(Broker broker);
     }
 }

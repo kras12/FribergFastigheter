@@ -388,7 +388,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             
-            var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(brokerFirmId))
+            var brokers = (await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId))
                 .Select(x => _autoMapper.Map<BrokerDto>(x))
                 .ToList();
 

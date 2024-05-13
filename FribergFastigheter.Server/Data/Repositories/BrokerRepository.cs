@@ -91,22 +91,24 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AsNoTracking().FirstOrDefaultAsync(b => b.User.Id == id);
         }
 
-        public async Task<List<Broker>> GetAllBrokersAsync()
+        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<List<Broker>> GetBrokersAsync(int? brokerFirmId = null, bool includeDeleted = false)
         {
-            return await applicationDbContext.Brokers.AsNoTracking().ToListAsync();
-        }
+            var query = applicationDbContext.Brokers
+                .AsNoTracking();
 
-        public Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
-        {
-            return applicationDbContext.Brokers
-                .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
-				.AsNoTracking()
-				.ToListAsync();
-        }
+            if (!includeDeleted)
+            {
+                query = query.Where(x => !x.IsDeleted);
+            }
 
-        public Task<bool> IsOwnedByBrokerFirm(int brokerId, int BrokerFirmId)
-        {
-            return applicationDbContext.Brokers.AnyAsync(x => x.BrokerId == brokerId && x.BrokerFirm.BrokerFirmId == BrokerFirmId);
+            if (brokerFirmId != null)
+            {
+                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+            }
+
+            return await query.ToListAsync();
         }
 
         /// <!-- Author: Jimmie, Marcus -->
@@ -125,13 +127,6 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AsNoTracking()
                 .Select(x => x.ProfileImage)
                 .SingleOrDefaultAsync();
-        }
-
-        /// <!-- Author: Jimmie, Marcus -->
-        /// <!-- Co Authors: -->
-        public Task<bool> OwnsImage(int brokerId, int imageId)
-        {
-            return applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId).AnyAsync(x => x.ProfileImage != null && x.ProfileImage.ImageId == imageId);
         }
 
         /// <!-- Author: Jimmie, Marcus -->
