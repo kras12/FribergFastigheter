@@ -114,7 +114,11 @@ namespace FribergFastigheter.Client.Components.Housing
         {
             await base.OnInitializedAsync();
             var state = await AuthenticationStateTask;
-            _loggedInBrokerId = int.Parse(state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            
+            if (state.User.Claims.Any(x => x.Type == ApplicationUserClaims.BrokerId))
+            {
+                _loggedInBrokerId = int.Parse(state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            }            
         }
 
         /// <inheritdoc/>

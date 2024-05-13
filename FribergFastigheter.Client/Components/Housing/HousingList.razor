@@ -5,50 +5,58 @@
 <!-- Co Authors: --> 
 *@
 
-<div hidden="@(!_isCreatingHousing)" class="vertical-page-section">
-    <CreateHousing OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
-</div>
-<div hidden="@_isCreatingHousing" class="vertical-page-section">
-    @if (EnableEditingControls)
+<div class="vertical-page-section">
+    @if (_isCreatingHousing)
     {
         <AuthorizeView Policy="@ApplicationPolicies.CanCreateHousing">
-	        <div class="d-flex flex-row justify-content-center">
-		        <button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
-	        </div>
+            <CreateHousing OnHousingCreated="OnHousingCreated" OnHousingCreationCancelled="OnHousingCreationCancelled"></CreateHousing>
         </AuthorizeView>
-
-        @if (_filteredhousings.Count > 0)
-        {
-            var brokers = GetBrokers();        
-
-            @if (brokers.Count > 0)
-            {
-                var loggedInBroker = brokers.Find(x => x.BrokerId == _loggedInBrokerId);
-                brokers.Remove(loggedInBroker!);
-                brokers.Insert(0, loggedInBroker!);
-
-                <div class="btn-group flex-wrap" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="btn-radio-housing-list" id="btn-toggle-housing-list" autocomplete="off" checked @onclick="@(() => RemoveHousingFilter())">
-                    <label class="btn btn-outline-primary flex-grow-0" for="btn-toggle-housing-list">Alla bostäder</label>
-
-                @foreach (var broker in brokers)
-                {
-                        string elementId = Guid.NewGuid().ToString();
-                        string brokerName = broker.BrokerId == _loggedInBrokerId ? "Mina bostäder" : broker.FullName;
-
-                        <input type="radio" class="btn-check" name="btn-radio-housing-list" id="@elementId" autocomplete="off" @onclick="@(() => FilterByBroker(broker))">
-                        <label class="btn btn-outline-primary flex-grow-0" for="@elementId">@brokerName</label>
-                    }
-                </div>
-            }        
-        }
     }
-    <h1>@(_filteredhousings.Count) träffar</h1>
-    <div class="d-flex flex-column gap-4 full-width">
-        @foreach (var housing in _filteredhousings)
+    else
+    {
+        @if (EnableEditingControls)
         {
-            <HousingListItem ElementId="@($"HousingListItem-{housing.HousingId}")" Housing="housing" OnTransformed="OnListItemTransformed"
-                TruncateLongDescriptions="TruncateLongDescriptions" OnHousingDeleted="OnHousingDeletedEventHandler" EnableEditingControls=@EnableEditingControls></HousingListItem>
+            <AuthorizeView Policy="@ApplicationPolicies.Broker">
+                <AuthorizeView Context="CreateHousingButtonContext" Policy="@ApplicationPolicies.CanCreateHousing">
+                    <div class="d-flex flex-row justify-content-center">
+                        <button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
+                    </div>
+                </AuthorizeView>
+
+                @if (_filteredhousings.Count > 0)
+                {
+                    var brokers = GetBrokers();
+
+                    @if (brokers.Count > 0)
+                    {
+                        var loggedInBroker = brokers.Find(x => x.BrokerId == _loggedInBrokerId);
+                        brokers.Remove(loggedInBroker!);
+                        brokers.Insert(0, loggedInBroker!);
+
+                        <div class="btn-group flex-wrap" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" name="btn-radio-housing-list" id="btn-toggle-housing-list" autocomplete="off" checked @onclick="@(() => RemoveHousingFilter())">
+                            <label class="btn btn-outline-primary flex-grow-0" for="btn-toggle-housing-list">Alla bostäder</label>
+
+                            @foreach (var broker in brokers)
+                            {
+                                string elementId = Guid.NewGuid().ToString();
+                                string brokerName = broker.BrokerId == _loggedInBrokerId ? "Mina bostäder" : broker.FullName;
+
+                                <input type="radio" class="btn-check" name="btn-radio-housing-list" id="@elementId" autocomplete="off" @onclick="@(() => FilterByBroker(broker))">
+                                <label class="btn btn-outline-primary flex-grow-0" for="@elementId">@brokerName</label>
+                            }
+                        </div>
+                    }
+                }
+            </AuthorizeView>
         }
-    </div>
+        <h1>@(_filteredhousings.Count) träffar</h1>
+        <div class="d-flex flex-column gap-4 full-width">
+            @foreach (var housing in _filteredhousings)
+            {
+                <HousingListItem ElementId="@($"HousingListItem-{housing.HousingId}")" Housing="housing" OnTransformed="OnListItemTransformed"
+                                 TruncateLongDescriptions="TruncateLongDescriptions" OnHousingDeleted="OnHousingDeletedEventHandler" EnableEditingControls=@EnableEditingControls></HousingListItem>
+            }
+        </div>
+    }
 </div>
