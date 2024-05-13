@@ -20,7 +20,9 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
         public enum ActionTypes
         {
             CreateHousing,
+            CreateHousingImage,
             DeleteHousing,
+            DeleteHousingImage,
             EditHousing
         }
 
@@ -95,6 +97,35 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
                         return Task.CompletedTask;
                     }
 
+                case ActionTypes.CreateHousingImage:
+
+                    var newHousingImageAuthData = context.Resource as ICreateHousingImageAuthorizationData ??
+                        throw new ArgumentException($"This authorization check requires a resource of type '{typeof(ICreateHousingImageAuthorizationData)}'.");
+
+                    // Housing belongs to another firm
+                    if (newHousingImageAuthData!.ExistingHousingBrokerFirmId != brokerFirmId)
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
+                    // Housing belongs to another broker
+                    else if (newHousingImageAuthData.ExistingHousingBrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingEditAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
+                    // Suitable user role
+                    else if (!context.User.IsInRole(ApplicationUserRoles.BrokerAdmin) && !context.User.IsInRole(ApplicationUserRoles.Broker))
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingEditAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
+                    else
+                    {
+                        context.Succeed(requirement);
+                        return Task.CompletedTask;
+                    }
+
                 case ActionTypes.DeleteHousing:
 
                     var deleteHousingAuthData = context.Resource as IDeleteHousingAuthorizationData ??
@@ -116,6 +147,35 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
                     else if (!context.User.IsInRole(ApplicationUserRoles.BrokerAdmin) && !context.User.IsInRole(ApplicationUserRoles.Broker))
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingDeleteAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
+                    else
+                    {
+                        context.Succeed(requirement);
+                        return Task.CompletedTask;
+                    }
+
+                case ActionTypes.DeleteHousingImage:
+
+                    var deleteHousingImageAuthData = context.Resource as IDeleteHousingImageAuthorizationData ??
+                        throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IDeleteHousingImageAuthorizationData)}'.");
+
+                    // Housing belongs to another firm
+                    if (deleteHousingImageAuthData!.ExistingHousingBrokerFirmId != brokerFirmId)
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
+                    // Housing belongs to another broker
+                    else if (deleteHousingImageAuthData.ExistingHousingBrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingEditAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
+                    // Suitable user role
+                    else if (!context.User.IsInRole(ApplicationUserRoles.BrokerAdmin) && !context.User.IsInRole(ApplicationUserRoles.Broker))
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingEditAccessDenied.ToString()));
                         return Task.CompletedTask;
                     }
                     else

@@ -149,8 +149,14 @@ namespace FribergFastigheter
                 options.AddPolicy(ApplicationPolicies.CanCreateHousingResource, policy =>
                     policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
 
+                options.AddPolicy(ApplicationPolicies.CanCreateHousingImageResource, policy =>
+                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousingImage)));
+
                 options.AddPolicy(ApplicationPolicies.CanDeleteHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousingImageResource, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousingImage)));
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));

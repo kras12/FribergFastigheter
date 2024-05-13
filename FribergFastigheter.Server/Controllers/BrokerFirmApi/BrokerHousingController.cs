@@ -3,9 +3,7 @@ using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.Json;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using FribergFastigheter.Shared.Constants;
@@ -125,11 +123,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateHousingImages([Required] int housingId, [FromForm] IFormFileCollection files)
         {
-            // TODO - USer authorization service
-
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+            if (files.Count == 0)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "No files were submitted."));
+            }
 
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
 
@@ -137,19 +134,15 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object was not found."));
             }
-            else if (housing.BrokerFirm.BrokerFirmId != brokerFirmId)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
-            }
-            else if (brokerId != housing.Broker.BrokerId && userRole != ApplicationUserRoles.BrokerAdmin)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify images for housing objects that they don't manage."));
-            }
-            else if (files.Count == 0)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "No files were submitted."));
-            }
 
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var authData = new CreateHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+                existingHousingBrokerId: housing.Broker.BrokerId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousingImageResource);
+
+            if (result.Succeeded)
+            {
             List<Image> imageEntities = new();
 
             foreach (var file in files)
@@ -162,6 +155,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, imageDtos);
 
             return Ok(imageDtos);
+        }
+            else
+            {
+                var reason = result.Failure.FailureReasons.First(x => Enum.TryParse<HousingAuthorizationFailureReasons>(x.Message, false, out _));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, reason.Message));
+            }
         }
 
         /// <summary>
@@ -267,9 +266,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeleteImages([Required] int housingId, [Required][FromBody] DeleteImagesDto deleteImagesDto)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var userRole = User.FindFirst(ApplicationUserClaims.UserRole)!.Value;
+            if (housingId != deleteImagesDto.HousingId)
+            {
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Mismatch between the housing ID in the url and the one in the payload."));
+            }
 
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
 
@@ -281,23 +281,25 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "All images doesn't belong to the referenced housing object."));
             }
-            else if (housing.BrokerFirm.BrokerFirmId != brokerFirmId)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced housing object doesn't belong to the broker firm."));
-            }
-            else if (brokerId != housing.Broker.BrokerId && userRole != ApplicationUserRoles.BrokerAdmin)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify images for housing objects that they don't manage."));
-            }
-            else if (housingId != deleteImagesDto.HousingId)
-            {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Mismatch between the housing ID in the url and the one in the payload."));
-            }
 
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var authData = new DeleteHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.BrokerFirm.BrokerFirmId,
+                existingHousingBrokerId: housing.Broker.BrokerId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteHousingImageResource);
+
+            if (result.Succeeded)
+            {
             _imageService.DeleteImagesFromDisk((await _housingRepository.GetImages(deleteImagesDto.HousingId, deleteImagesDto.ImageIds)).Select(x => x.FileName).ToList());
             await _housingRepository.DeleteImages(deleteImagesDto.HousingId, deleteImagesDto.ImageIds);
 
             return Ok();
+        }
+            else
+            {
+                var reason = result.Failure.FailureReasons.First(x => Enum.TryParse<HousingAuthorizationFailureReasons>(x.Message, false, out _));
+                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, reason.Message));
+            }
         }
 
         /// <summary>
