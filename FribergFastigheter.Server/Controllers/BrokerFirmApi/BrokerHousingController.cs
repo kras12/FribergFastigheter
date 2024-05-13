@@ -191,7 +191,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 _imageService.DeleteImagesFromDisk((await _housingRepository.GetImages(id)).Select(x => x.FileName).ToList());
                 await _housingRepository.DeleteImages(id);
-                await _housingRepository.DeleteHousing(id);
+                housing.IsDeleted = true;
+                await _housingRepository.UpdateAsync(housing);
 
                 return Ok();
             }

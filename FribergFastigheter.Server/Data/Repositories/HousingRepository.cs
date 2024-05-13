@@ -146,6 +146,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             #endregion
 
             var query = applicationDbContext.Housings
+                .Where(x => !x.IsDeleted)
                 .AsNoTracking()
                 .AsQueryable();
 

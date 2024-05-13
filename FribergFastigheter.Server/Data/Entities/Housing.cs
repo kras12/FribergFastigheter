@@ -63,6 +63,11 @@ namespace FribergFastigheter.Server.Data.Entities
 		public List<Image> Images { get; set; } = new();
 
 		/// <summary>
+		/// True if the housing object has been marked as deleted.
+		/// </summary>
+		public bool IsDeleted { get; set; }
+
+		/// <summary>
 		/// The land area (m2) of the housing object.
 		/// </summary>
 		public double? LandArea { get; set; }
