@@ -69,10 +69,11 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public async Task UpdateAsync(Broker broker)
         {
-            // The broker firm collection may contain the broker which leads to double tracking of the same entity.
-            broker.BrokerFirm.Brokers.Clear();
-            applicationDbContext.BrokerFirms.Attach(broker.BrokerFirm);
-            applicationDbContext.Update(broker);
+            applicationDbContext.BrokerFirms.Entry(broker.BrokerFirm).State = EntityState.Unchanged;
+            applicationDbContext.Brokers.Entry(broker).State = EntityState.Modified;
+            applicationDbContext.Users.Entry(broker.User).State = EntityState.Modified;
+            broker.User.NormalizedEmail = broker.User.Email!.ToUpper();
+            broker.User.NormalizedUserName = broker.User.UserName!.ToUpper();
             await applicationDbContext.SaveChangesAsync();
         }
 
