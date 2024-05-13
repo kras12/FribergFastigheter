@@ -98,11 +98,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string HousingImageApiEndPoint = $"{ApiBase}/housing/{IdPlaceHolder}/images";
 
-        // <summary>
-        /// The housing image API endpoint address.
-        /// </summary>
-        private const string HousingImageByIdApiEndPoint = $"{ApiBase}/housing/{housingIdSecondaryPlaceHolder}/image/{IdPlaceHolder}";
-
         /// <summary>
 		/// The relative municipality list API endpoint address.
 		/// </summary>
@@ -449,17 +444,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Deletes an image for a housing object.
         /// </summary>
-        /// <param name="imageId">The ID of the image object to delete.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
+        /// <param name="imageId">The ID of the image object to delete.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task DeleteHousingImage(int imageId, [Required] int housingId)
+        public Task DeleteHousingImage(int housingId, int imageId)
         {
-            string requestUrl = $"{HousingImageByIdApiEndPoint.Replace(housingIdSecondaryPlaceHolder, housingId.ToString()).Replace(IdPlaceHolder, imageId.ToString())}";
-            await SetAuthorizationHeader();
-            var response = await _httpClient.DeleteAsync(requestUrl);
-            response.EnsureSuccessStatusCode();
+            return DeleteHousingImages(housingId, new List<int>() { housingId });
         }
 
         /// <summary>
@@ -470,8 +462,17 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task DeleteImages(int housingId, List<int> imageIds)
+        public async Task DeleteHousingImages(int housingId, List<int> imageIds)
         {
+            #region Checks
+
+            if (imageIds.Count == 0)
+            {
+                throw new ArgumentException($"Parameter collection '{nameof(imageIds)}' can't be empty.");
+            }
+
+            #endregion
+
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete,
                 $"{HousingImageApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}")
             {
