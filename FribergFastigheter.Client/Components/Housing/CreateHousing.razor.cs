@@ -167,7 +167,7 @@ namespace FribergFastigheter.Client.Components.Housing
         {
             var user = (await AuthenticationStateTask).User;
             var brokerId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var authorizationData = new HousingAuthorizationData(newHousingBrokerId: brokerId);
+            var authorizationData = new CreateHousingAuthorizationData(newHousingBrokerId: brokerId);
             var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanCreateHousingResource);
 
             if (result.Succeeded)

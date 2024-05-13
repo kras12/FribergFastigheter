@@ -249,7 +249,7 @@ namespace FribergFastigheter.Client.Components.Housing
 		private async Task OnValidSubmit()
         {
             var user = (await AuthenticationStateTask).User;
-            var authorizationData = new HousingAuthorizationData(housingId: Housing.HousingId, existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
+            var authorizationData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: Housing.Broker.BrokerId, newHousingBrokerId: EditHousingInput!.BrokerId);
             var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditHousingResource);
 

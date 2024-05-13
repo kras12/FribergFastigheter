@@ -81,7 +81,7 @@ namespace FribergFastigheter.Client.Components.Housing
                 var user = (await AuthenticationStateTask).User;
                 var brokerFirmId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
                 var brokerId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-                var authorizationData = new HousingAuthorizationData(existingHousingBrokerFirmId: brokerFirmId, existingHousingBrokerId: brokerId);
+                var authorizationData = new DeleteHousingAuthorizationData(existingHousingBrokerFirmId: brokerFirmId, existingHousingBrokerId: brokerId);
                 var authorizeResult = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanDeleteHousingResource);
 
                 if (authorizeResult.Succeeded)
