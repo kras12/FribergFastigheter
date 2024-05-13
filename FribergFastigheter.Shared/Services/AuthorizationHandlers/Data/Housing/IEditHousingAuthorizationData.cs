@@ -1,4 +1,4 @@
-﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
+﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Data.Housing
 {
     /// <summary>
     /// Interface designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for editing housing objects.

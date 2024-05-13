@@ -1,5 +1,6 @@
 ﻿using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Enums;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Data.Housing;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
