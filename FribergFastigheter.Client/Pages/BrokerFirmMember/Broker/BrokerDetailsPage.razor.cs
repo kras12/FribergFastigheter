@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.Housing;
 using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker

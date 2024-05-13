@@ -1,17 +1,21 @@
 ﻿@page "/brokermember/broker/{id:int}"
+@layout BrokerBackOfficeLayout
 @using FribergFastigheter.Client.Components
+@using FribergFastigheter.Client.Components.Broker
+@using FribergFastigheter.Client.Components.Housing
+@using FribergFastigheter.Client.Layout.BrokerFirmMember
 @using Microsoft.AspNetCore.Authorization
 @*
 <!-- Author: Marcus -->
 <!-- Co Authors: -->
 *@
-@attribute [Authorize]
+@attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 @if(Broker != null)
 {
-    <FribergFastigheter.Client.Components.BrokerDetails Broker="Broker" /> 
+    <BrokerDetails Broker="Broker" /> 
 }
 @if(Housings != null)
 {
-    <FribergFastigheter.Client.Components.HousingList Housings="Housings" />
+    <HousingList Housings="Housings" />
 }
 

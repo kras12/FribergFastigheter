@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using Microsoft.AspNetCore.Components;
 

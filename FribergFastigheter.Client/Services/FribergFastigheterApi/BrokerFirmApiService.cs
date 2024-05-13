@@ -1,19 +1,14 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
+using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Statistics;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using System.Threading.Tasks;
 
 namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 {
@@ -24,17 +19,26 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public class BrokerFirmApiService : ApiServiceBase, IBrokerFirmApiService
     {
+        #region AdminApiConstants
+
+        /// <summary>
+        /// The broker API endpoint address.
+        /// </summary>
+        private const string AdminBrokerByIdApiEndPoint = $"{ApiBase}/admin/broker/{IdPlaceHolder}";
+
+        /// <summary>
+        /// The register broker API endpoint address.
+        /// </summary>
+        private const string AdminBrokerCreationApiEndpoint = $"{ApiBase}/admin/brokers/create";
+
+        #endregion
+
         #region BrokerApiConstants
 
         /// <summary>
         /// The broker API endpoint address.
         /// </summary>
         private const string BrokerByIdApiEndPoint = $"{ApiBase}/broker/{IdPlaceHolder}";
-
-        /// <summary>
-        /// The register broker API endpoint address.
-        /// </summary>
-        private const string BrokerCreationApiEndpoint = $"{ApiBase}/brokers/register";
 
         /// <summary>
         /// The broker login API endpoint address.
@@ -158,7 +162,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         private async Task SetAuthorizationHeader()
         {
-            var token = await ((ApiAuthenticationStateProvider)_authenticationStateProvider).GetTokenAsync();
+            var token = await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).GetTokenAsync();
 
             if (token != null)
             {
@@ -168,7 +172,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #endregion
 
-        #region BrokerMethods
+        #region AdminMethods
 
         /// <summary>
         /// Creates a new broker under the broker firm.
@@ -177,14 +181,33 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public async Task<CreatedBrokerDto> CreateBroker([Required] RegisterBrokerDto broker)
+        public async Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker)
         {
             await SetAuthorizationHeader();
-            var response = await _httpClient.PostAsJsonAsync($"{BrokerCreationApiEndpoint}", broker);
+            var response = await _httpClient.PostAsJsonAsync($"{AdminBrokerCreationApiEndpoint}", broker);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<CreatedBrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            var result = await response.Content.ReadFromJsonAsync<BrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return EnsureNotNull(result, "Failed to create or serialize the resulting broker object.");
         }
+
+        /// <summary>
+        /// Performs an admin edit of a broker.
+        /// </summary>
+        /// <param name="id">The ID of the broker to update.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: -->
+        public async Task AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker)
+        {
+            await SetAuthorizationHeader();
+            var response = await _httpClient.PutAsJsonAsync($"{AdminBrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
+            response.EnsureSuccessStatusCode();
+        }
+
+        #endregion
+
+        #region BrokerMethods        
 
         /// <summary>
         /// Deletes a broker.
@@ -197,6 +220,21 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.DeleteAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
+            response.EnsureSuccessStatusCode();
+        }
+
+        /// <summary>
+        /// Performs a regular edit on the logged in broker. 
+        /// </summary>
+        /// <param name="id">The ID of the broker to update.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: Marcus -->
+        public async Task EditBroker([Required] int brokerId, [Required] EditBrokerDto broker)
+        {
+            await SetAuthorizationHeader();
+            var response = await _httpClient.PutAsJsonAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
             response.EnsureSuccessStatusCode();
         }
 
@@ -243,23 +281,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             EnsureNotNull(result, "Failed to serialize the response.");
-            await ((ApiAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Token);
-        }
-
-        /// <summary>
-        /// Updates a broker.
-        /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie  -->
-        /// <!-- Co Authors: Marcus -->
-        public async Task UpdateBroker([Required] int brokerId, [Required] EditBrokerDto broker)
-        {
-            await SetAuthorizationHeader();
-            var response = await _httpClient.PutAsJsonAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
-            response.EnsureSuccessStatusCode();
-        }
+            await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Token);
+        }        
 
         #endregion
 

@@ -1,0 +1,14 @@
+﻿@* 
+<!-- Author: Jimmie -->
+<!-- Co Authors: -->
+ *@
+@if (ShowLink && !string.IsNullOrEmpty(Url))
+{
+	<a href="@Url">
+		@ChildContent
+	</a>
+}
+else
+{
+	@ChildContent
+}

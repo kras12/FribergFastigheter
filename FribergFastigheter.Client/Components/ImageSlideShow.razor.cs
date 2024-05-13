@@ -1,4 +1,4 @@
-﻿using FribergFastigheter.Client.Models;
+﻿using FribergFastigheter.Client.Models.Image;
 using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Components

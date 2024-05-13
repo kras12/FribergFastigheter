@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Components;
 using FribergFastigheter.Client.Models;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
 
 namespace FribergFastigheter.Client.AutoMapper
 {
-	/// <summary>
-	/// An auto mapper profile that contains mappings for converting DTO classes to other DTO classes.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public class DtoToDtoAutoMapperProfile : Profile
+    /// <summary>
+    /// An auto mapper profile that contains mappings for converting DTO classes to other DTO classes.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public class DtoToDtoAutoMapperProfile : Profile
 	{
 		/// <summary>
 		/// Constructor.

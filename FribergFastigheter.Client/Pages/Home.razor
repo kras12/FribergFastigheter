@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using FribergFastigheter.Client.Components
+@using FribergFastigheter.Client.Components.Housing
 @* 
 <!-- Author: Jimmie -->
 <!-- Co Authors: --> 
@@ -11,79 +12,79 @@
         <div class="card-header w-100">
             <h1>Sök bostäder</h1>
         </div>
-        <EditForm Model="HousingSearchFormInput" OnValidSubmit="@(() => SearchHousings())">
+        <EditForm Context="FormContext" Model="HousingSearchService.HousingSearchFormInput" OnValidSubmit="@(() => SearchHousings())">
             <DataAnnotationsValidator />
             <div class="d-flex flex-column gap-3">
                 <div class="d-flex flex-column">   
                     <label>Kategori</label>
-                    <InputSelect @bind-Value="HousingSearchFormInput.SelectedCategoryId">
-                        @foreach (var category in HousingSearchFormInput.HousingCategories)
+                    <InputSelect @bind-Value="HousingSearchService.HousingSearchFormInput.SelectedCategoryId">
+                        @foreach (var category in HousingSearchService.HousingSearchFormInput.HousingCategories)
                         {
                             <option value="@category.HousingCategoryId">@category.CategoryName</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="@(() => HousingSearchFormInput.SelectedCategoryId)" />
+                    <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.SelectedCategoryId)" />
                 </div>
                 <div class="d-flex flex-column">   
                     <label>Kommun</label>
-                    <InputSelect @bind-Value="HousingSearchFormInput.SelectedMunicipalityId">
-                        @foreach (var municipality in HousingSearchFormInput.Municipalities)
+                    <InputSelect @bind-Value="HousingSearchService.HousingSearchFormInput.SelectedMunicipalityId">
+                        @foreach (var municipality in HousingSearchService.HousingSearchFormInput.Municipalities)
                         {
                             <option value="@municipality.MunicipalityId">@municipality.MunicipalityName</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="@(() => HousingSearchFormInput.SelectedMunicipalityId)" />
+                    <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.SelectedMunicipalityId)" />
                 </div>
                 <div class="d-flex flex-row gap-2">
                     <div class="d-flex flex-column">   
                         <label>Min pris</label>
-                        <InputNumber @bind-Value="HousingSearchFormInput.MinPrice"></InputNumber>
-                        <ValidationMessage For="@(() => HousingSearchFormInput.MinPrice)" />
+                        <InputNumber @bind-Value="HousingSearchService.HousingSearchFormInput.MinPrice"></InputNumber>
+                        <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.MinPrice)" />
                     </div>
                     <div class="d-flex flex-column">   
                         <label>Max pris</label>
-                        <InputNumber @bind-Value="HousingSearchFormInput.MaxPrice"></InputNumber>
-                        <ValidationMessage For="@(() => HousingSearchFormInput.MaxPrice)" />
+                        <InputNumber @bind-Value="HousingSearchService.HousingSearchFormInput.MaxPrice"></InputNumber>
+                        <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.MaxPrice)" />
                     </div>
                 </div>
                 <div class="d-flex flex-row gap-2">
                     <div class="d-flex flex-column">   
                         <label>Min yta</label>
-                        <InputNumber @bind-Value="HousingSearchFormInput.MinLivingArea"></InputNumber>
-                        <ValidationMessage For="@(() => HousingSearchFormInput.MinLivingArea)" />
+                        <InputNumber @bind-Value="HousingSearchService.HousingSearchFormInput.MinLivingArea"></InputNumber>
+                        <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.MinLivingArea)" />
                     </div>
                     <div class="d-flex flex-column">   
                         <label>Max yta</label>
-                        <InputNumber @bind-Value="HousingSearchFormInput.MaxLivingArea"></InputNumber>
-                        <ValidationMessage For="@(() => HousingSearchFormInput.MaxLivingArea)" />
+                        <InputNumber @bind-Value="HousingSearchService.HousingSearchFormInput.MaxLivingArea"></InputNumber>
+                        <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.MaxLivingArea)" />
                     </div>
                 </div>
                 <div class="d-flex flex-column">   
                     <label>Resultat per sida</label>
-                    <InputSelect @bind-Value="HousingSearchFormInput.NumberOfResultsPerPage">
+                    <InputSelect @bind-Value="HousingSearchService.HousingSearchFormInput.NumberOfResultsPerPage">
                         <option value="25">25</option>
                         <option value="50">50</option>
                         <option value="75">75</option>
                         <option value="100">100</option>
                     </InputSelect>
-                    <ValidationMessage For="@(() => HousingSearchFormInput.NumberOfResultsPerPage)" />
+                    <ValidationMessage For="@(() => HousingSearchService.HousingSearchFormInput.NumberOfResultsPerPage)" />
                 </div>
                 <div class="d-flex flex-row justify-content-center">
-                    <button>Sök</button>    
+                    <button class="btn btn-primary">Sök</button>    
                 </div>                
             </div>
         </EditForm>       
     </div
-    @if (HousingSearchResult != null)
+    @if (HousingSearchService.HousingSearchResult != null)
     {
-        <HousingList Housings="HousingSearchResult.Housings" TruncateLongDescriptions="true" />
+        <HousingList Housings="HousingSearchService.HousingSearchResult.Housings" TruncateLongDescriptions="true" />
         
-        @if (HousingSearchResult.Pagination != null)
+        @if (HousingSearchService.HousingSearchResult.Pagination != null)
         {
             <div class="d-flex flex-row gap-2 align-items-center">
-                @for (int i = 1; i <= HousingSearchResult.Pagination.NumberOfRequestablePages; i++)
+                @for (int i = 1; i <= HousingSearchService.HousingSearchResult.Pagination.NumberOfRequestablePages; i++)
                 {
-                    @if (HousingSearchResult.Pagination.CurrentPage == i)
+                    @if (HousingSearchService.HousingSearchResult.Pagination.CurrentPage == i)
                     {
                         <span class="pagination-number active fw-bold fs-5" >@i</span>
                     }
@@ -98,7 +99,7 @@
             </div>
         }    
     }
-    else if (_haveSearchedHousings)
+    else if (HousingSearchService.HaveSearchedHousings)
     {
         <p class="text-center">Inga bostäder hittades.</p>
     }

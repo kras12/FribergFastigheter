@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Client.Models;
+using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Pages
 {
-	/// <summary>
-	/// The broker firm details page. 
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public partial class BrokerFirmPage : ComponentBase
+    /// <summary>
+    /// The broker firm details page. 
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public partial class BrokerFirmPage : ComponentBase
 	{
 		#region InjectedServiceProperties
 #pragma warning disable CS8618

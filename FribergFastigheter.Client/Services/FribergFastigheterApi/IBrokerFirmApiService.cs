@@ -1,4 +1,8 @@
-﻿using FribergFastigheter.Shared.Dto;
+﻿using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
+using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Statistics;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
@@ -18,6 +22,20 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public interface IBrokerFirmApiService
     {
+        #region AdminMethods
+
+        /// <summary>
+        /// Performs an admin edit of a broker.
+        /// </summary>
+        /// <param name="id">The ID of the broker to update.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: -->
+        public Task AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker);
+
+        #endregion
+
         #region BrokerMethods
 
         /// <summary>
@@ -27,7 +45,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public Task<CreatedBrokerDto> CreateBroker([Required] RegisterBrokerDto broker);
+        public Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker);
 
         /// <summary>
         /// Deletes a broker.
@@ -37,6 +55,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
         public Task DeleteBroker([Required] int id);
+
+        /// <summary>
+        /// Performs a regular edit on the logged in broker. 
+        /// </summary>
+        /// <param name="id">The ID of the broker to update.</param>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: Marcus -->
+        public Task EditBroker([Required] int brokerId, [Required] EditBrokerDto broker);
 
         /// <summary>
         /// Fetches data for a broker. 
@@ -63,16 +91,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
         public Task Login(LoginDto loginData);
-
-        /// <summary>
-        /// Updates a broker.
-        /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Jimmie  -->
-        /// <!-- Co Authors: Marcus -->
-        public Task UpdateBroker([Required] int brokerId, [Required] EditBrokerDto broker);
 
         #endregion
 

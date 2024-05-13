@@ -1,0 +1,60 @@
+﻿<div class="vertical-page-container">
+
+    <div class="d-flex flex-row full-width justify-content-between" id="@formId">
+        <div></div>
+        <div><h2>Mäklare</h2></div>
+        <div>
+            @if (BrokerFirm != null && BrokerFirm.Logotype != null)
+            {
+                <img src="@BrokerFirm.Logotype.Url" />
+            }
+
+        </div>
+    </div>
+    <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
+    
+    @if (IsNewBrokerFormActive == true)
+    {
+        <CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
+    }
+    @if (IsEditBrokerFormActive == true)
+    {
+        <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
+    }
+
+    <div class="broker-list">
+        @if (Brokers.Count > 0)
+        {
+            @foreach (var broker in Brokers)
+            {
+                <div class="broker-card" id="@($"BrokerListItem-{broker.BrokerId}")">
+                    <a href="/brokermember/broker/@broker.BrokerId">
+                        <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
+                    </a>
+                    <div class="broker-info">
+                        <a href="/brokermember/broker/@broker.BrokerId">
+                            <h4>@broker.FirstName @broker.LastName</h4>
+                        </a>
+                        <h5>
+                            Mäklarbyrå: @broker.BrokerFirm.Name
+                        </h5>
+                        <h5>
+                            Telefonnummer: @broker.PhoneNumber
+                        </h5>
+                        <h5>
+                            Email: @broker.Email
+                        </h5>
+                        <div class="d-flex flex-row gap-3">
+                            <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
+                            <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>Kan inte hitta några mäklare.</p>
+        }
+    </div>
+</div>

@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Server.Data.Entities;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
+using FribergFastigheter.Shared.Dto.Housing;
+using FribergFastigheter.Shared.Dto.Image;
 namespace FribergFastigheter.Server.AutoMapper
 {
-	/// <summary>
-	/// An auto mapper profile that contains mappings for converting DTO classes to entity classes.
-	/// </summary>
-	/// <!-- Author: Jimmie -->
-	/// <!-- Co Authors: -->
-	public class DtoToEntityAutoMapperProfile : Profile
+    /// <summary>
+    /// An auto mapper profile that contains mappings for converting DTO classes to entity classes.
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    public class DtoToEntityAutoMapperProfile : Profile
 	{
 		/// <summary>
 		/// Constructor.
@@ -39,8 +42,15 @@ namespace FribergFastigheter.Server.AutoMapper
 			CreateMap<RegisterBrokerDto, Broker>()
 				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
 
+			CreateMap<AdminEditBrokerDto, Broker>()
+				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore())
+				.ForPath(dest => dest.User.FirstName, opt => opt.MapFrom(x => x.FirstName))
+				.ForPath(dest => dest.User.LastName, opt => opt.MapFrom(x => x.LastName))
+				.ForPath(dest => dest.User.Email, opt => opt.MapFrom(x => x.Email))
+				.ForPath(dest => dest.User.PhoneNumber, opt => opt.MapFrom(x => x.PhoneNumber));
+
 			CreateMap<EditBrokerDto, Broker>()
-				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());		
-		}
+				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
+        }
 	}
 }

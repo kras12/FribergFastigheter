@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using FribergFastigheter.Client.AuthorizationHandlers;
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
@@ -21,7 +22,8 @@ namespace FribergFastigheter.Client
 
 			builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddAutoMapper(typeof(ViewModelToDtoAutoMapperProfile), typeof(DtoToViewModelAutoMapperProfile));
-            builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider, BrokerFirmAuthenticationStateProvider>();
+            builder.Services.AddScoped<HousingSearchService, HousingSearchService>();
             builder.Services.AddBlazoredLocalStorage();
 
             builder.Services.AddOidcAuthentication(options =>
@@ -31,9 +33,24 @@ namespace FribergFastigheter.Client
 				builder.Configuration.Bind("Local", options.ProviderOptions);
 			});
 
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
             builder.Services.AddAuthorizationCore(options =>
             {
-                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+                options.AddPolicy(ApplicationPolicies.Broker, policy => 
+                    policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.Broker, ApplicationUserRoles.BrokerAdmin));
+
+                options.AddPolicy(ApplicationPolicies.BrokerAdmin, policy => 
+                    policy.RequireClaim(ApplicationUserClaims.UserRole, ApplicationUserRoles.BrokerAdmin));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateHousing, policy => 
+                    policy.Requirements.Add(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.CreateHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousing, policy => 
+                    policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditHousing, policy => 
+                    policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
             });
 
             // Add API services with typed http clients
