@@ -34,7 +34,7 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing
         /// <summary>
         /// The action type associated with this instance. 
         /// </summary>
-        private readonly ActionTypes _editType;
+        private readonly ActionTypes _actionType;
 
         #endregion
 
@@ -43,10 +43,10 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="editType">The action type associated with this instance.</param>
-        public ManageHousingAuthorizationHandler(ActionTypes editType)
+        /// <param name="actionType">The action type associated with this instance.</param>
+        public ManageHousingAuthorizationHandler(ActionTypes actionType)
         {
-            _editType = editType;
+            _actionType = actionType;
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing
             var brokerFirmId = int.Parse(context.User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(context.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
 
-            switch (_editType)
+            switch (_actionType)
             {
                 case ActionTypes.CreateHousing:
 
