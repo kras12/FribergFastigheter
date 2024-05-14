@@ -147,12 +147,11 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         {
             var result = new HousingSearchResultDto();
 
-            result.Housings = (await _housingRepository.GetHousingsAsync(brokerId: brokerId, municipalityId: municipalityId, housingCategoryId: housingCategoryId,
+            var housings = await _housingRepository.GetHousingsAsync(brokerId: brokerId, municipalityId: municipalityId, housingCategoryId: housingCategoryId,
                     limitHousings: limitHousings, limitImagesPerHousing: limitImagesPerHousing,
-                    minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows))
-                .Select(x => _mapper.Map<HousingDto>(x))
-                .ToList();
+                    minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows);
 
+            result.Housings = _mapper.Map<List<HousingDto>>(housings);
             _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result.Housings);
 
             if (limitHousings != null && result.Housings.Count > 0)

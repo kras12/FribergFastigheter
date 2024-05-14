@@ -108,10 +108,6 @@ namespace FribergFastigheterApi.Data.DatabaseContexts
 				.AutoInclude();
 
             modelBuilder.Entity<Housing>()
-                .Navigation(x => x.BrokerFirm)
-                .AutoInclude();
-
-            modelBuilder.Entity<Housing>()
                 .Navigation(x => x.Images)
                 .AutoInclude();
 

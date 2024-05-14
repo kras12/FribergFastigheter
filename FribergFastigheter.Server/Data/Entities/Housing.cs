@@ -30,12 +30,6 @@ namespace FribergFastigheter.Server.Data.Entities
 		public Broker Broker { get; set; }
 
         /// <summary>
-        /// The broker firm of the housing object.
-        /// </summary>
-		[Required]
-        public BrokerFirm BrokerFirm { get; set; }
-
-        /// <summary>
         /// The build year of the housing object.
         /// </summary>
         public int? BuildYear { get; set; }
@@ -61,6 +55,11 @@ namespace FribergFastigheter.Server.Data.Entities
 		/// The images associated with the housing object.
 		/// </summary>
 		public List<Image> Images { get; set; } = new();
+
+		/// <summary>
+		/// True if the housing object has been marked as deleted.
+		/// </summary>
+		public bool IsDeleted { get; set; }
 
 		/// <summary>
 		/// The land area (m2) of the housing object.

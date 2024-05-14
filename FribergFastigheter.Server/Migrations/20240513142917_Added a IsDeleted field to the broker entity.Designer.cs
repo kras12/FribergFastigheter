@@ -4,6 +4,7 @@ using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FribergFastigheter.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240513142917_Added a IsDeleted field to the broker entity")]
+    partial class AddedaIsDeletedfieldtothebrokerentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,6 +175,9 @@ namespace FribergFastigheter.Server.Migrations
                     b.Property<double?>("AncillaryArea")
                         .HasColumnType("float");
 
+                    b.Property<int>("BrokerFirmId")
+                        .HasColumnType("int");
+
                     b.Property<int>("BrokerId")
                         .HasColumnType("int");
 
@@ -213,6 +219,8 @@ namespace FribergFastigheter.Server.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("HousingId");
+
+                    b.HasIndex("BrokerFirmId");
 
                     b.HasIndex("BrokerId");
 
@@ -1936,6 +1944,12 @@ namespace FribergFastigheter.Server.Migrations
 
             modelBuilder.Entity("FribergFastigheter.Server.Data.Entities.Housing", b =>
                 {
+                    b.HasOne("FribergFastigheter.Server.Data.Entities.BrokerFirm", "BrokerFirm")
+                        .WithMany()
+                        .HasForeignKey("BrokerFirmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FribergFastigheter.Server.Data.Entities.Broker", "Broker")
                         .WithMany()
                         .HasForeignKey("BrokerId")
@@ -1955,6 +1969,8 @@ namespace FribergFastigheter.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Broker");
+
+                    b.Navigation("BrokerFirm");
 
                     b.Navigation("Category");
 

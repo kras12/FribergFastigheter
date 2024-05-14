@@ -25,6 +25,16 @@
         public const string CanCreateHousing = "CanCreateHousing";
 
         /// <summary>
+        /// The can create housing image policy.
+        /// </summary>
+        public const string CanCreateHousingImage = "CanCreateHousingImage";
+
+        /// <summary>
+        /// The can create housing image resource policy.
+        /// </summary>
+        public const string CanCreateHousingImageResource = "CanCreateHousingImageResource";
+
+        /// <summary>
         /// The can create housing resource policy.
         /// </summary>
         public const string CanCreateHousingResource = "CanCreateHousingResource";
@@ -33,6 +43,16 @@
         /// The can delete housing policy.
         /// </summary>
         public const string CanDeleteHousing = "CanDeleteHousing";
+
+        /// <summary>
+        /// The can delete housing image policy.
+        /// </summary>
+        public const string CanDeleteHousingImage = "CanDeleteHousingImage";
+
+        /// <summary>
+        /// The can delete housing image resource policy.
+        /// </summary>
+        public const string CanDeleteHousingImageResource = "CanDeleteHousingImageResource";
 
         /// <summary>
         /// The can delete housing resource policy.

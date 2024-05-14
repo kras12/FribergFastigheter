@@ -3,6 +3,7 @@ using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
+
 namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Housing
 {
     /// <summary>

@@ -1,10 +1,12 @@
 using Blazored.LocalStorage;
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
-using FribergFastigheter.Client.Services.AuthorizationHandlers;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker;
+using FribergFastigheter.Client.Services.AuthorizationHandlers.Housing;
+using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -48,6 +50,9 @@ namespace FribergFastigheter.Client
                 options.AddPolicy(ApplicationPolicies.CanCreateHousing, policy => 
                     policy.Requirements.Add(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.CreateHousing)));
 
+                options.AddPolicy(ApplicationPolicies.CanCreateHousingImageResource, policy =>
+                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousingImage)));
+
                 options.AddPolicy(ApplicationPolicies.CanDeleteHousing, policy => 
                     policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.DeleteHousing)));
 
@@ -59,6 +64,9 @@ namespace FribergFastigheter.Client
 
                 options.AddPolicy(ApplicationPolicies.CanDeleteHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousingImageResource, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousingImage)));
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));

@@ -43,7 +43,6 @@ namespace FribergFastigheter.Server.Data.Repositories
             foreach (var housing in housings)
             {
                 applicationDbContext.Brokers.Attach(housing.Broker);
-                applicationDbContext.BrokerFirms.Attach(housing.BrokerFirm);
                 applicationDbContext.HousingCategories.Attach(housing.Category);
                 applicationDbContext.Municipalities.Attach(housing.Municipality);
                 await applicationDbContext.Housings.AddAsync(housing);
@@ -52,7 +51,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public Task DeleteHousing(int housingId)
+        public Task DeleteAsync(int housingId)
 		{
             return DeleteAsync(new Housing() { HousingId = housingId });
 		}
@@ -69,7 +68,6 @@ namespace FribergFastigheter.Server.Data.Repositories
         {            
             applicationDbContext.HousingCategories.Entry(housing.Category).State = EntityState.Unchanged;
             applicationDbContext.Municipalities.Entry(housing.Municipality).State = EntityState.Unchanged;
-            housing.BrokerFirm.Brokers.ForEach(x => applicationDbContext.Brokers.Entry(x).State = EntityState.Unchanged);            
 
             if (!applicationDbContext.Brokers.Any(x => x.BrokerId == housing.Broker.BrokerId))
             {
@@ -80,33 +78,22 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-		/// <!-- Author: Jimmie -->
-		/// <!-- Co Authors: -->
-		public async Task<Broker> GetBroker(int housingId)
-		{
-			return await applicationDbContext.Housings
-				 .Where(x => x.HousingId == housingId)
-				 .AsNoTracking()
-                 .Select(x => x.Broker)
-				 .FirstAsync();
-		}
-
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
         public Task<List<Housing>> GetHousingsAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
             int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null, decimal? maxPrice = null,
-            double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
+            double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, bool includeDeleted = false)
         {
             return GetHousingsInternalAsync(brokerId: brokerId, brokerFirmId: brokerFirmId, municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
                 limitHousings: limitHousings, limitImagesPerHousing: limitImagesPerHousing, minPrice: minPrice, maxPrice: maxPrice,
-                    minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows).ToListAsync();
+                    minLivingArea: minLivingArea, maxLivingArea: maxLivingArea, offsetRows: offsetRows, includeDeleted: includeDeleted).ToListAsync();
         }
 
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
         public async Task<Housing?> GetHousingByIdAsync(int housingId, int? brokerFirmId = null)
         {
-           return await GetHousingsInternalAsync(housingId: housingId, brokerFirmId: brokerFirmId)
+           return await GetHousingsInternalAsync(housingId: housingId, brokerFirmId: brokerFirmId, includeDeleted: true)
 				.FirstOrDefaultAsync();
 		}
 
@@ -114,7 +101,7 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         private IQueryable<Housing> GetHousingsInternalAsync(int? brokerId = null, int? brokerFirmId = null, int? municipalityId = null,
             int? housingCategoryId = null, int? limitHousings = null, int? limitImagesPerHousing = null, decimal? minPrice = null,
-            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, int? housingId = null)
+            decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null, int? housingId = null, bool includeDeleted = false)
         {
             #region Checks
 
@@ -149,6 +136,11 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AsNoTracking()
                 .AsQueryable();
 
+            if (!includeDeleted)
+            {
+                query = query.Where(x => !x.IsDeleted);
+            }
+
             if (housingId != null)
             {
                 query = query.Where(x => x.HousingId == housingId);
@@ -171,7 +163,7 @@ namespace FribergFastigheter.Server.Data.Repositories
 
             if (brokerFirmId != null)
             {
-                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+                query = query.Where(x => x.Broker.BrokerFirm.BrokerFirmId == brokerFirmId);
             }
 
             if (minPrice != null)
@@ -211,22 +203,23 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .Take(3));
             }
 
-            // Letting EF Core use auto include in this instance will be 8-9 time slower.
-            query = query
-                .IgnoreAutoIncludes()
-                .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
-                .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
-                .Include(x => x.Broker).ThenInclude(x => x.User)
-                .Include(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
-                .Include(x => x.BrokerFirm).ThenInclude(x => x.Brokers).ThenInclude(x => x.ProfileImage)
-                .Include(x => x.Images)
-                .Include(x => x.Category)
-                .Include(x => x.Municipality);
+            // Letting EF Core use auto include was 8-9 time slower with the old database design.
+            // Now the difference is much smaller. As the performance is more acceptable now we can just let EF Core handle this. 
+            // EF Core would need tracking enabled to handle the new circular references resulting from the manual include route and this new database design anyway, 
+            // so the performance gain could be small and the risk for future bugs would increase. 
+            // 
+            //query = query
+            //    .IgnoreAutoIncludes()
+            //    .Include(x => x.Images)
+            //    .Include(x => x.Category)
+            //    .Include(x => x.Municipality)
+            //    .Include(x => x.Broker).ThenInclude(x => x.ProfileImage)
+            //    .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Logotype)
+            //    .Include(x => x.Broker).ThenInclude(x => x.BrokerFirm).ThenInclude(x => x.Brokers)
+            //    .Include(x => x.Broker).ThenInclude(x => x.User);
 
             return query;
-        }
-
-        
+        }        
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
@@ -236,13 +229,6 @@ namespace FribergFastigheter.Server.Data.Repositories
             return GetHousingsInternalAsync(brokerId: brokerId, brokerFirmId: brokerFirmId, municipalityId: municipalityId, housingCategoryId: housingCategoryId, 
                 minPrice: minPrice, maxPrice: maxPrice, minLivingArea: minLivingArea, maxLivingArea: maxLivingArea).CountAsync();
         }
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<bool> IsOwnedByBrokerFirm(int id, int BrokerFirmId)
-        {
-            return applicationDbContext.Housings.AnyAsync(x => x.HousingId == id && x.BrokerFirm.BrokerFirmId == BrokerFirmId);
-		}
 
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
@@ -270,33 +256,10 @@ namespace FribergFastigheter.Server.Data.Repositories
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<Image?> GetImagebyId(int housingId, int imageId)
-		{
-			return (await GetImages(housingId, new List<int>() { imageId })).SingleOrDefault();
-        }
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
         public Task<bool> HousingExists(int housingId)
 		{
 			return applicationDbContext.Housings.AnyAsync(x => x.HousingId == housingId);
 		}
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public Task<bool> OwnsImage(int housingId, int imageId)
-		{
-            return applicationDbContext.Housings.Where(x => x.HousingId == housingId).AnyAsync(x => x.Images.Any(x => x.ImageId == imageId));
-		}
-
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<bool> OwnsImages(int housingId, List<int> imageIds)
-        {
-            return await applicationDbContext.Housings
-                .Where(x => x.HousingId == housingId)
-                .AnyAsync(x => x.Images.Count(x => imageIds.Contains(x.ImageId)) == imageIds.Count);
-        }
 
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
@@ -339,7 +302,6 @@ namespace FribergFastigheter.Server.Data.Repositories
 		{
 			return DeleteImages(housingId, new List<int> { imageId });       
 		}
-
 		
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
