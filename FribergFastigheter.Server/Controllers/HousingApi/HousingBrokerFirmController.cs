@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
-using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
-using System.Net;
-using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Server.Dto;
+using FribergFastigheter.Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -70,13 +68,13 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 
 			if (brokerFirm == null)
 			{
-				return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{id}' was not found.")));
+				return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{id}' was not found."));
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
             _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
-			return Ok(result);
+			return Ok(new MvcApiValueResponseDto<BrokerFirmDto>(result));
 		}
 
 		#endregion

@@ -2,10 +2,8 @@
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
-using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Server.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -84,7 +82,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
             else
             {
-                return NotFound();
+                return NotFound(new MvcApiErrorResponseDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, "The image doesn't exists"));
             }
         }
 

@@ -2,7 +2,6 @@
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
-using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +14,7 @@ using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data;
-using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Server.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -119,14 +118,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (id != editBrokerDto.BrokerId)
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object.")));
+                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object."));
             }
 
             var broker = await _brokerRepository.GetBrokerByIdAsync(id);
 
             if (broker == null)
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced broker doesn't exists.")));
+                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced broker doesn't exists."));
             }
 
             var authData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId,
@@ -137,11 +136,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 _autoMapper.Map(editBrokerDto, broker);
                 await _brokerRepository.UpdateAsync(broker);
-                return Ok();
+                return Ok(new MvcApiValueResponseDto<BrokerDto>(_autoMapper.Map<BrokerDto>(broker)));
             }
             else
             {
-                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, result));
+                return Unauthorized(new MvcApiErrorResponseDto(result));
             }   
         }
 
@@ -201,26 +200,26 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                                 user: applicationUser);
                             await _brokerRepository.AddAsync(broker);
 
-                            return Ok(_autoMapper.Map<BrokerDto>(broker));
+                            return Ok(new MvcApiValueResponseDto<BrokerDto>(_autoMapper.Map<BrokerDto>(broker)));
                         }
                         else
                         {
-                            return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, roleResult));
+                            return BadRequest(new MvcApiErrorResponseDto(roleResult));
                         }
                     }
                     else
                     {
-                        return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, createUserResult));
+                        return BadRequest(new MvcApiErrorResponseDto(createUserResult));
                     }
                 }
                 else
                 {
-                    return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, result));
+                    return Unauthorized(new MvcApiErrorResponseDto(result));
                 } 
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ApiErrorResponseDto(HttpStatusCode.InternalServerError, new ApiErrorDto(ApiErrorMessageTypes.GeneralError, "An unexpected error occurred.")));
+                return StatusCode(StatusCodes.Status500InternalServerError, new MvcApiErrorResponseDto(ApiErrorMessageTypes.GeneralError, "An unexpected error occurred."));
             }
         }
 
@@ -242,11 +241,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
+                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
             else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
             {
-                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers.")));
+                return Unauthorized(new MvcApiErrorResponseDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers."));
             };
 
             Image imageEntity = new(await _imageService.SaveImageToDiskAsync(file));
@@ -254,7 +253,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var imageDto = _autoMapper.Map<ImageDto>(imageEntity);
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, imageDto);
 
-            return Ok(imageDto);
+            return Ok(new MvcApiValueResponseDto<ImageDto>(imageDto));
         }
 
         /// <summary>
@@ -285,11 +284,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
                 broker.IsDeleted = true;
                 await _brokerRepository.UpdateAsync(broker);
-                return Ok();
+                return Ok(new MvcApiEmptyResponseDto());
             }
             else
             {
-                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, result));
+                return Unauthorized(new MvcApiErrorResponseDto(result));
             }
 
             
@@ -313,11 +312,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
+                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object."));
             }
             else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
             {
-                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers.")));
+                return Unauthorized(new MvcApiErrorResponseDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers."));
             }
 
             var image = await _brokerRepository.GetProfileImage(id);
@@ -326,11 +325,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 await _brokerRepository.DeleteProfileImage(id);
                 _imageService.DeleteImageFromDisk(image.FileName);
-                return Ok();
+                return Ok(new MvcApiEmptyResponseDto());
             }
 
             // Should never get here
-            return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, "No image with that ID was found.")));
+            return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "No image with that ID was found."));
         }
 
         /// <summary>
@@ -348,14 +347,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             
             if (id != editBrokerDto.BrokerId)
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object.")));
+                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object."));
             }
 
             var broker = await _brokerRepository.GetBrokerByIdAsync(id);
 
             if (broker == null)
             {
-                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced broker doesn't exists.")));
+                return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced broker doesn't exists."));
             }           
 
             var authData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId,
@@ -366,11 +365,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 _autoMapper.Map(editBrokerDto, broker!);
                 await _brokerRepository.UpdateAsync(broker!);
-                return Ok();
+                return Ok(new MvcApiValueResponseDto<BrokerDto>(_autoMapper.Map<BrokerDto>(broker)));
             }
             else
             {
-                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, result));
+                return Unauthorized(new MvcApiErrorResponseDto(result));
             }
         }
 
@@ -391,17 +390,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (broker == null)
             {
-                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker with ID '{id}' was not found.")));
+                return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker with ID '{id}' was not found."));
             }
             else if (broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm.")));
+                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm."));
             }
 
             var result = _autoMapper.Map<BrokerDto>(broker);
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
-            return Ok(result);
+            return Ok(new MvcApiValueResponseDto<BrokerDto>(result));
         }
 
         /// <summary>
@@ -422,7 +421,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 .ToList();
 
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokers);
-            return Ok(brokers);
+            return Ok(new MvcApiValueResponseDto<List<BrokerDto>>(brokers));
         }
 
         /// <summary>
@@ -451,11 +450,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
                         if (broker != null)
                         {
-                            return Ok(new LoginResponseDto()
+                            return Ok(new MvcApiValueResponseDto<LoginResponseDto>(
+                                new LoginResponseDto()
                             {
                                 UserName = user!.UserName!,
                                 Token = await _tokenService.CreateToken(broker)
-                            });
+                                }));
                         }
                     }
                 }
@@ -464,7 +464,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ApiErrorResponseDto(HttpStatusCode.InternalServerError, new ApiErrorDto(ApiErrorMessageTypes.GeneralError, "An unexpected error occurred.")));
+                return StatusCode(StatusCodes.Status500InternalServerError, new MvcApiErrorResponseDto(ApiErrorMessageTypes.GeneralError, "An unexpected error occurred."));
             }            
         }
 

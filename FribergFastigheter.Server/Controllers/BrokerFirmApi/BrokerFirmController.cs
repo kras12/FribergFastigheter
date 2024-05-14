@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
-using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
 using FribergFastigheter.Shared.Dto.Statistics;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using Microsoft.AspNetCore.Authorization;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
-using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Server.Dto;
+using FribergFastigheter.Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -82,13 +79,13 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 
 			if (brokerFirm == null)
 			{
-                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found.")));
+                return NotFound(new MvcApiErrorResponseDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
             _imageservice.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
-			return Ok(result);
+            return Ok(new MvcApiValueResponseDto<BrokerFirmDto>(result));
 		}
 
         /// <summary>
@@ -109,10 +106,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 
             if (result == null)
             {
-                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found.")));
+                return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
             }
 			
-            return Ok(result);
+            return Ok(new MvcApiValueResponseDto<BrokerFirmStatisticsDto>(result));
         }
 
 		#endregion

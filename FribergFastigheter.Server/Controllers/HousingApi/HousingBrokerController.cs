@@ -2,13 +2,10 @@
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.ComponentModel.DataAnnotations;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using FribergFastigheter.Shared.Dto.Broker;
-using FribergFastigheter.Shared.Constants;
-using Microsoft.AspNetCore.Authorization;
-using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Server.Dto;
+using FribergFastigheter.Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -72,13 +69,13 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 
 			if (broker == null)
 			{
-				return NotFound(new ApiErrorResponseDto(System.Net.HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker with ID '{id}' was not found.")));
+				return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker with ID '{id}' was not found."));
 			}
 
 			var result = _mapper.Map<BrokerDto>(broker);
             _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
-			return Ok(result);
+			return Ok(new MvcApiValueResponseDto<BrokerDto>(result));
 		}
 
 		/// <summary>
@@ -94,7 +91,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 			var brokers = _mapper.Map<List<BrokerDto>>(await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId));
 			_imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokers);
 
-			return Ok(brokers);
+			return Ok(new MvcApiValueResponseDto<List<BrokerDto>>(brokers));
 		}
 
 		#endregion

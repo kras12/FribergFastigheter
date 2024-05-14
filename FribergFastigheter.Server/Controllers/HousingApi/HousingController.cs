@@ -1,16 +1,11 @@
 ﻿using AutoMapper;
-using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
-using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
-using FribergFastigheter.Server.Data.Repositories;
-using FribergFastigheter.Shared.Constants;
-using Microsoft.AspNetCore.Authorization;
 using FribergFastigheter.Shared.Enums;
-using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Server.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -76,7 +71,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
         {
-            return Ok(_mapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories()));
+            return Ok(new MvcApiValueResponseDto<List<HousingCategoryDto>>(_mapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories())));
         }
 
         /// <summary>
@@ -95,13 +90,13 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 
             if (housing == null)
             {
-                return NotFound(new ApiErrorResponseDto(System.Net.HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, $"The housing object with ID '{id}' was not found.")));
+                return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The housing object with ID '{id}' was not found."));
             }
 
             var result = _mapper.Map<HousingDto>(housing);
             _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
-            return Ok(result);
+            return Ok(new MvcApiValueResponseDto<HousingDto>(result));
         }
 
 		/// <summary>
@@ -120,7 +115,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 				limitImagesPerHousing: limitImagesPerHousing));
 			_imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
-			return Ok(result);
+            return Ok(new MvcApiValueResponseDto<List<HousingDto>>(result));
 		}
 
 		/// <summary>
@@ -166,7 +161,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
                 result.Pagination.CurrentPage = offsetRows != null ? offsetRows.Value / limitHousings.Value + 1 : 1;
             }
 
-            return Ok(result);
+            return Ok(new MvcApiValueResponseDto<HousingSearchResultDto>(result));
         }
 
         /// <summary>
@@ -179,7 +174,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         [ProducesResponseType<MunicipalityDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MunicipalityDto>>> GetMunicipalities()
         {
-            return Ok(_mapper.Map<List<MunicipalityDto>>(await _housingRepository.GetMunicipalities()));
+            return Ok(new MvcApiValueResponseDto<List<MunicipalityDto>>(_mapper.Map<List<MunicipalityDto>>(await _housingRepository.GetMunicipalities())));
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Shared.Dto.Api;
+﻿using FribergFastigheter.Server.Dto;
+using FribergFastigheter.Shared.Dto.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +10,7 @@ namespace FribergFastigheter.Server.Filters
     /// Reformats validation problems details from bad requests into an <see cref="ApiErrorResponseDto"/> object.
     /// </summary>
     /// <!-- Author: Jimmie -->
-    /// <!-- Co Authors: Marcus-->
+    /// <!-- Co Authors: -->
     public class ReformatValidationProblemAttribute : ActionFilterAttribute
     {
         #region Methods
@@ -23,10 +24,8 @@ namespace FribergFastigheter.Server.Filters
             {
                 if (result.Value is ValidationProblemDetails details)
                 {
-                    var errorMessages = details.Errors.Select(x => new ApiErrorDto(x.Key, errorMessages: x.Value.ToList())).ToList();
-
-                    context.Result = new BadRequestObjectResult(new ApiErrorResponseDto(System.Net.HttpStatusCode.BadRequest,
-                        errors: errorMessages));
+                    var errorMessages = details.Errors.SelectMany(x => x.Value.Select(y => new KeyValuePair<string, string>(x.Key, y))).ToList();
+                    context.Result = new BadRequestObjectResult(new MvcApiErrorResponseDto(errors: errorMessages));
                 }
             }
         }
