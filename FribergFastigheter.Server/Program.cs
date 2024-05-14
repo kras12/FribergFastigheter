@@ -19,8 +19,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 using System.Text;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 
 namespace FribergFastigheter
 {

@@ -1,10 +1,10 @@
 ﻿using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Enums;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers.Data.Housing;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
-namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
+namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing
 {
     /// <summary>
     /// Authorization handler with built in requirement to handle authorization for create, delete and edit of housing objects. 
@@ -77,7 +77,7 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
             {
                 case ActionTypes.CreateHousing:
 
-                    var newHousingAuthData = context.Resource as ICreateHousingAuthorizationData ?? 
+                    var newHousingAuthData = context.Resource as ICreateHousingAuthorizationData ??
                         throw new ArgumentException($"This authorization check requires a resource of type '{typeof(ICreateHousingAuthorizationData)}'.");
 
                     // Change of broker

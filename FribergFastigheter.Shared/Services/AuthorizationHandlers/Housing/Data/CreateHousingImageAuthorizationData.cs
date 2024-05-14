@@ -1,4 +1,4 @@
-﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Data.Housing
+﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
 {
     /// <summary>
     /// Data storage class designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for creating housing image objects.
