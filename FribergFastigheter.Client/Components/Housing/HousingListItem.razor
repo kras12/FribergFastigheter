@@ -22,7 +22,9 @@
         </div>
     @if (_isInEditMode)
     {
-        <EditHousing Housing="Housing" OnHousingEdited="OnHousingEditedEventHandler" OnHousingEditCancelled="OnCancelEditingEventHandler"></EditHousing>
+        <AuthorizeView Policy="@ApplicationPolicies.CanEditHousing" Resource="Housing">
+            <EditHousing Housing="Housing" OnHousingEdited="OnHousingEditedEventHandler" OnHousingEditCancelled="OnCancelEditingEventHandler"></EditHousing>
+        </AuthorizeView>
     }
     else
     {
