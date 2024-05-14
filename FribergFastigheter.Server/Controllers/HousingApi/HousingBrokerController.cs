@@ -66,7 +66,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		[HttpGet("broker/{id:int}")]
 		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
 		[ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById(int id)
+		public async Task<ActionResult<BrokerDto>> GetById(int id)
 		{
 			var broker = await _brokerRepository.GetBrokerByIdAsync(id);
 
