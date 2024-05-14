@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Dto.BrokerFirm;
 using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Pages
@@ -8,7 +11,7 @@ namespace FribergFastigheter.Client.Pages
     /// <summary>
     /// The broker firm details page. 
     /// </summary>
-    /// <!-- Author: Jimmie -->
+    /// <!-- Author: Marcus -->
     /// <!-- Co Authors: -->
     public partial class BrokerFirmPage : ComponentBase
 	{
@@ -33,6 +36,16 @@ namespace FribergFastigheter.Client.Pages
 		#region Properties
 
 		/// <summary>
+		/// List of broker working for the brokerfirm.
+		/// </summary>
+		public List<BrokerViewModel> Brokers { get; set; }
+
+		/// <summary>
+		/// List of housings the brokerfirm have.
+		/// </summary>
+		public List<HousingViewModel> Housings { get; set; }
+
+		/// <summary>
 		/// The broker firm.
 		/// </summary>
 		public BrokerFirmViewModel? BrokerFirm { get; set; } = null;
@@ -42,6 +55,17 @@ namespace FribergFastigheter.Client.Pages
 		/// </summary>
 		[Parameter]
 		public int BrokerFirmId { get; set; }
+
+		public bool IsBrokerListorHousingListActive { get; set; } = true;
+
+		#endregion
+
+		#region Constructors
+
+		public BrokerFirmPage()
+		{
+
+		}
 
 		#endregion
 
@@ -54,10 +78,26 @@ namespace FribergFastigheter.Client.Pages
 		/// operation is completed. 
 		/// </summary>
 		/// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
-		protected async override Task OnInitializedAsync()
+		protected override async Task OnInitializedAsync()
 		{
-			await base.OnInitializedAsync();
-            BrokerFirm = AutoMapper.Map<BrokerFirmViewModel>(await HousingApiService.GetBrokerFirmById(BrokerFirmId));		
+			BrokerFirmDto brokerFirm = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
+			BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);
+			BrokerFirm = brokerFirmResult;
+
+			List<BrokerViewModel> result = (await HousingApiService.GetBrokers(BrokerFirmId))
+				.Select(x => AutoMapper.Map<BrokerViewModel>(x)).ToList();
+			Brokers = result;
+			Housings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousings(BrokerFirmId, 3));
+		}
+
+		public void OpenBrokerList()
+		{
+			IsBrokerListorHousingListActive = true;
+		}
+
+		public void OpenHousingList()
+		{
+			IsBrokerListorHousingListActive = false;
 		}
 
 		#endregion

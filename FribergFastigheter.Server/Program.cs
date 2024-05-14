@@ -19,8 +19,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using System.Text;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker;
 
 namespace FribergFastigheter
 {
@@ -139,7 +139,7 @@ namespace FribergFastigheter
             });
 
             // Authorization
-            /// <!-- Author: Jimmie -->
+            /// <!-- Author: Jimmie, Marcus -->
             /// <!-- Co Authors: -->
             builder.Services.AddAuthorizationCore(options =>
             {
@@ -163,6 +163,15 @@ namespace FribergFastigheter
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateBroker, policy =>
+                policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.CreateBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
+                policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.EditBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
+                policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.DeleteBroker)));
             });
 
 

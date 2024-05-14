@@ -1,6 +1,5 @@
 
 ﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
-
 {
     /// <summary>
     /// Interface designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for creating housing image objects.

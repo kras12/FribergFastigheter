@@ -6,6 +6,10 @@ using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Error;
+using FribergFastigheter.Server.Controllers.BrokerFirmApi;
+using FribergFastigheter.Server.Data.Repositories;
+using FribergFastigheter.Shared.Constants;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,11 +39,22 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// The injected Auto Mapper.
         /// </summary>
         private readonly IMapper _mapper;
-        #endregion
 
-        #region Constructors
+		/// <summary>
+		/// The injected brokerfirm repository.
+		/// </summary>
+		private readonly IBrokerFirmRepository _brokerFirmRepository;
 
-        public HousingController(IHousingRepository housingRepo, IMapper mapper, IImageService imageService)
+		/// <summary>
+		/// The injected broker repository.
+		/// </summary>
+		private readonly IBrokerRepository _brokerRepository;
+
+		#endregion
+
+		#region Constructors
+
+		public HousingController(IHousingRepository housingRepo, IMapper mapper, IImageService imageService)
         {
             _housingRepository = housingRepo;
             _mapper = mapper;
@@ -88,23 +103,43 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
             return Ok(result);
         }
 
-        /// <summary>
-        /// An API endpoint for searching housing objects. 
-        /// </summary>
-        /// <param name="brokerId">An optional broker filter.</param>
-        /// <param name="municipalityId">An optional municipality filter.</param>
-        /// <param name="housingCategoryId">An optional housing category filter.</param>
-        /// <param name="limitHousings">An optional max limit for number of retrieved housings.</param>
-        /// <param name="limitImagesPerHousing">An optional max limit for number of retrieved images per housing.</param>
-        /// <param name="minPrice">An optional min price filter.</param>
-        /// <param name="maxPrice">An optional max price filter.</param>
-        /// <param name="minLivingArea">An optional min living area filter.</param>
-        /// <param name="maxLivingArea">An optional max living area filter.</param>
-        /// <param name="offsetRows">An optional number of rows to skip.</param>
-        /// <returns>A <see cref="HousingSearchResultDto"/> object containing the results.</returns>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
-        [HttpGet("housings")]
+		/// <summary>
+		/// An API endpoint for retrieving housing objects being handled by a brokerfirm.
+		/// </summary>
+		/// <param name="brokerId">Filters the housing objects after a broker.</param>
+		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
+		/// <!-- Author: Jimmie, Marcus -->
+		/// <!-- Co Authors: -->
+		[HttpGet("housingsbybrokerfirmid")]
+		[ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<List<HousingDto>>> GetHousings(int brokerFirmId, int? brokerId = null, int? limitImagesPerHousing = null)
+		{
+
+			List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsAsync(brokerFirmId: brokerFirmId,/* brokerId: brokerId,*/
+				limitImagesPerHousing: limitImagesPerHousing));
+			_imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// An API endpoint for searching housing objects. 
+		/// </summary>
+		/// <param name="brokerId">An optional broker filter.</param>
+		/// <param name="municipalityId">An optional municipality filter.</param>
+		/// <param name="housingCategoryId">An optional housing category filter.</param>
+		/// <param name="limitHousings">An optional max limit for number of retrieved housings.</param>
+		/// <param name="limitImagesPerHousing">An optional max limit for number of retrieved images per housing.</param>
+		/// <param name="minPrice">An optional min price filter.</param>
+		/// <param name="maxPrice">An optional max price filter.</param>
+		/// <param name="minLivingArea">An optional min living area filter.</param>
+		/// <param name="maxLivingArea">An optional max living area filter.</param>
+		/// <param name="offsetRows">An optional number of rows to skip.</param>
+		/// <returns>A <see cref="HousingSearchResultDto"/> object containing the results.</returns>
+		/// <!-- Author: Marcus -->
+		/// <!-- Co Authors: Jimmie -->
+		[HttpGet("housings")]
         [ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<HousingSearchResultDto>> SearchHousings(int? brokerId = null, int? municipalityId = null, int? housingCategoryId = null,
             int? limitHousings = null, int? limitImagesPerHousing = null,

@@ -2,8 +2,12 @@
 using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Broker;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components.Broker
@@ -29,6 +33,12 @@ namespace FribergFastigheter.Client.Components.Broker
         #region InjectedServiceProperties
 
         /// <summary>
+        /// The injected authorization service. 
+        /// </summary>
+        [Inject]
+        private IAuthorizationService AuthorizationService { get; set; }
+
+        /// <summary>
         /// The injected Auto Mapper service. 
         /// </summary>
         [Inject]
@@ -44,6 +54,9 @@ namespace FribergFastigheter.Client.Components.Broker
         #endregion
 
         #region Properties
+
+        [CascadingParameter]
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
         [Parameter]
         public BrokerViewModel Broker { get; set; }
@@ -84,18 +97,31 @@ namespace FribergFastigheter.Client.Components.Broker
 
         private async Task OnValidSubmit()
         {
-            await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(BrokerInput));
-            AutoMapper.Map(BrokerInput!, Broker);            
+            var user = (await AuthenticationStateTask).User;
+            var authorizationData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: Broker.BrokerFirm.BrokerFirmId,
+                existingBrokerBrokerId: Broker.BrokerId);
+            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditBroker);
 
-            if (_deleteProfileImage)
+            if (result.Succeeded)
             {
-                await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
-            }            
-            if(_uploadedProfileImage != null)
-            {
-                Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(BrokerInput));
+                AutoMapper.Map(BrokerInput!, Broker);
+
+                if (_deleteProfileImage)
+                {
+                    await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+                }
+                if (_uploadedProfileImage != null)
+                {
+                    Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                }
+                await OnBrokerEdited.InvokeAsync(Broker);
             }
-            await OnBrokerEdited.InvokeAsync(Broker);   
+            else
+            {
+                // TODO - Show message
+            }
+
         }
  
         private async Task CloseEditForm()
