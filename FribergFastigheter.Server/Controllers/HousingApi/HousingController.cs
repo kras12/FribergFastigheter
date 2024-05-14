@@ -68,7 +68,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         [HttpGet("housing/categories")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiValueResponseDto<List<HousingCategoryDto>>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
         {
             return Ok(new MvcApiValueResponseDto<List<HousingCategoryDto>>(_mapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories())));
@@ -82,8 +82,8 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: Marcus -->
 		[HttpGet("housing/{id:int}")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiValueResponseDto<HousingDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HousingDto>> GetHousingById(int id)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(id);
@@ -107,7 +107,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Author: Jimmie, Marcus -->
 		/// <!-- Co Authors: -->
 		[HttpGet("housingsbybrokerfirmid")]
-		[ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType<List<MvcApiValueResponseDto<List<HousingDto>>>>(StatusCodes.Status200OK)]
 		public async Task<ActionResult<List<HousingDto>>> GetHousings(int brokerFirmId, int? brokerId = null, int? limitImagesPerHousing = null)
 		{
 
@@ -135,7 +135,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Author: Marcus -->
 		/// <!-- Co Authors: Jimmie -->
 		[HttpGet("housings")]
-        [ProducesResponseType<HousingSearchResultDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiValueResponseDto<HousingSearchResultDto>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<HousingSearchResultDto>> SearchHousings(int? brokerId = null, int? municipalityId = null, int? housingCategoryId = null,
             int? limitHousings = null, int? limitImagesPerHousing = null,
             decimal? minPrice = null, decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null)
@@ -171,7 +171,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         [HttpGet("municipalities")]
-        [ProducesResponseType<MunicipalityDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiValueResponseDto<List<MunicipalityDto>>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MunicipalityDto>>> GetMunicipalities()
         {
             return Ok(new MvcApiValueResponseDto<List<MunicipalityDto>>(_mapper.Map<List<MunicipalityDto>>(await _housingRepository.GetMunicipalities())));

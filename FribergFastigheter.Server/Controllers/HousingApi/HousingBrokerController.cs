@@ -61,8 +61,8 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: Marcus -->
 		[HttpGet("broker/{id:int}")]
-		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+		[ProducesResponseType<MvcApiValueResponseDto<BrokerDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<BrokerDto>> GetById(int id)
 		{
 			var broker = await _brokerRepository.GetBrokerByIdAsync(id);
@@ -85,7 +85,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors:  -->
 		[HttpGet("brokers")]
-		[ProducesResponseType<List<BrokerDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType<MvcApiValueResponseDto<List<BrokerDto>>>(StatusCodes.Status200OK)]
 		public async Task<ActionResult<List<BrokerDto>>> GetBrokers(int brokerFirmId)
 		{
 			var brokers = _mapper.Map<List<BrokerDto>>(await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId));

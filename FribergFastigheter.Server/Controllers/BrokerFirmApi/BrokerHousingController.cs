@@ -93,8 +93,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpPost("housings")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status201Created)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiValueResponseDto<HousingDto>>(StatusCodes.Status201Created)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> CreateHousing([FromBody] CreateHousingDto newHousingDto)
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -176,8 +176,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize]
         [HttpDelete("housing/{id:int}")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiEmptyResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteHousing(int id)
         {
             int brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -215,8 +216,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpDelete("housing/{housingId:int}/images")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiEmptyResponseDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> DeleteImages([Required] int housingId, [Required][FromBody] DeleteImagesDto deleteImagesDto)
         {
             if (housingId != deleteImagesDto.HousingId)
@@ -264,8 +266,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpPut("housing/{id:int}")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiValueResponseDto<HousingDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> EditHousing([Required] int id, [FromBody] EditHousingDto updateHousingDto)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(id);
@@ -340,7 +344,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/categories")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiValueResponseDto<List<HousingCategoryDto>>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<HousingCategoryDto>>> GetHousingCategories()
         {
             return Ok(new MvcApiValueResponseDto<List<HousingCategoryDto>>(_autoMapper.Map<List<HousingCategoryDto>>(await _housingRepository.GetHousingCategories())));
@@ -364,9 +368,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 var broker = await _brokerRepository.GetBrokerByIdAsync(brokerId.Value);
 
                 if (broker == null)
-            {
+                {
                     return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The broker doesn't exists."));
-            }
+                }
 
                 var authData = new BrokerFirmAssociationAuthorizationData(broker.BrokerFirm.BrokerFirmId);
                 var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
@@ -374,7 +378,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 if (!result.Succeeded)
                 {
                     return Unauthorized(new MvcApiErrorResponseDto(result));
-        }
+                }
             }
 
             int brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -410,25 +414,25 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (result.Succeeded)
             {
-            var image = housing.Images.Single(x => x.ImageId == id);
+                var image = housing.Images.Single(x => x.ImageId == id);
 
-            if (image == null)
-            {
-                    return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The image was not found."));
-            }
-
-            if (image != null)
-            {
-                var fileResult = await _imageService.PrepareImageFileDownloadAsync(image.FileName);
-
-                if (fileResult != null)
+                if (image == null)
                 {
-                    return fileResult;
+                    return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The image was not found."));
                 }
-            }
+
+                if (image != null)
+                {
+                    var fileResult = await _imageService.PrepareImageFileDownloadAsync(image.FileName);
+
+                    if (fileResult != null)
+                    {
+                        return fileResult;
+                    }
+                }
 
                 return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The image doesn't exists."));
-        }
+            }
             else
             {
                 return Unauthorized(new MvcApiErrorResponseDto(result));
@@ -448,7 +452,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<List<MvcApiValueResponseDto<List<ImageDto>>>>(StatusCodes.Status200OK)]
         [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetHousingImages([Required] int housingId)
-        {
+        {            
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
 
             if (housing == null)
@@ -461,16 +465,16 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (result.Succeeded)
             {
-            var images = _autoMapper.Map<List<ImageDto>>(housing.Images);
+                var images = _autoMapper.Map<List<ImageDto>>(housing.Images);
 
-            if (images.Count > 0)
-            {
-                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, images);
+                if (images.Count > 0)
+                {
+                    _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, images);
 
-            }
+                }
 
                 return Ok(new MvcApiValueResponseDto<List<ImageDto>>(images));
-        }
+            }
             else
             {
                 return Unauthorized(new MvcApiErrorResponseDto(result));
@@ -493,7 +497,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         public async Task<IActionResult> GetHousingImagesAsArchive([Required] int housingId)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
-
+            
             if (housing == null)
             {
                 return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced housing object was not found."));
@@ -504,14 +508,14 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (result.Succeeded)
             {
-            var images = await _housingRepository.GetImages(housingId);
+                var images = await _housingRepository.GetImages(housingId);
 
-            if (images.Count > 0)
-            {
+                if (images.Count > 0)
+                {
                     var fileStreamResult = await _imageService.PrepareImageFilesZipDownloadAsync(housing.Images.Select(x => x.FileName).ToList());
 
-                if (result != null)
-                {
+                    if (result != null)
+                    {
                         return fileStreamResult;
                     }
                     else
@@ -523,7 +527,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 {
                     return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "No images were found."));
                 }
-                }
+            }
             else
             {
                 return Unauthorized(new MvcApiErrorResponseDto(result));
@@ -556,7 +560,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 var authorizationResult = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
 
                 if (!authorizationResult.Succeeded)
-            {
+                {
                     return Unauthorized(new MvcApiErrorResponseDto(authorizationResult));
                 }
             }
@@ -578,7 +582,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("municipalities")]
-        [ProducesResponseType<MunicipalityDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiValueResponseDto<List<MunicipalityDto>>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MunicipalityDto>>> GetMunicipalities()
         {
             return Ok(new MvcApiValueResponseDto<List<MunicipalityDto>>(_autoMapper.Map<List<MunicipalityDto>>(await _housingRepository.GetMunicipalities())));

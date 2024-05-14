@@ -70,8 +70,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm")]
-		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+		[ProducesResponseType<MvcApiValueResponseDto<BrokerFirmDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById()
 		{
 			var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -97,8 +97,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         /// <!-- Co Authors: -->
 		[Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm/statistics")]
-        [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiValueResponseDto<BrokerFirmStatisticsDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics()
 		{
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -108,7 +108,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
             {
                 return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
             }
-			
+
             return Ok(new MvcApiValueResponseDto<BrokerFirmStatisticsDto>(result));
         }
 

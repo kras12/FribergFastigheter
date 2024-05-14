@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using FribergFastigheter.Server.Data.Entities;
-using FribergFastigheter.Server.Data.Interfaces;
-using FribergFastigheter.Server.Services;
+﻿using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using FribergFastigheter.Server.Dto;
 
@@ -71,7 +68,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [HttpGet("image/{fileName}")]
         [ProducesResponseType<FileContentResult>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetImageFile(string fileName)
         {
             var fileResult = await _imageService.PrepareImageFileDownloadAsync(fileName);
