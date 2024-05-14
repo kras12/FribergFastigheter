@@ -19,14 +19,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #region BrokerConstants
 
         /// <summary>
-        /// The relative broker API endpoint address.
+        /// The relative broker by ID API endpoint address.
         /// </summary>
         private const string BrokerByIdApiEndpoint = $"{ApiBase}/broker/{IdPlaceHolder}";
 
 		/// <summary>
-		/// The broker API endpoint address.
+		/// The brokers API endpoint address.
 		/// </summary>
-		private const string BrokersByBrokerFirmIdApiEndPoint = $"{ApiBase}/brokers/{IdPlaceHolder}";
+		private const string BrokersByBrokerFirmIdApiEndPoint = $"{ApiBase}/brokers";
 
 		#endregion
 
@@ -118,7 +118,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <!-- Co Authors: Marcus -->
 		public async Task<List<BrokerDto>> GetBrokers(int brokerFirmId)
 		{
-			var result = await _httpClient.GetFromJsonAsync<List<BrokerDto>?>(BrokersByBrokerFirmIdApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
+            var result = await _httpClient.GetFromJsonAsync<List<BrokerDto>?>($"{BrokersByBrokerFirmIdApiEndPoint}{BuildQueryString("brokerFirmId", brokerFirmId.ToString())}");
 			return EnsureNotNull(result, "Failed to fetch or serialize brokers.");
 		}
 

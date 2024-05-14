@@ -87,16 +87,13 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors:  -->
-		[HttpGet("brokers/{id:int}")]
-		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers(int id)
+		[HttpGet("brokers")]
+		[ProducesResponseType<List<BrokerDto>>(StatusCodes.Status200OK)]
+		public async Task<ActionResult<List<BrokerDto>>> GetBrokers(int brokerFirmId)
 		{
-
-			var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(id))
-				.Select(x => _mapper.Map<BrokerDto>(x))
-				.ToList();
-
+			var brokers = _mapper.Map<List<BrokerDto>>(await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId));
 			_imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokers);
+
 			return Ok(brokers);
 		}
 
