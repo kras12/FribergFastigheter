@@ -1,6 +1,6 @@
 ﻿using FribergFastigheter.Shared.Enums;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using System.Net;
 
 namespace FribergFastigheter.Shared.Dto.Error
@@ -62,7 +62,7 @@ namespace FribergFastigheter.Shared.Dto.Error
         {
             StatusCode = (int)statusCode;
             StatusCodeDescription = statusCode.ToString();
-            Errors.Add(new ApiErrorDto(ApiErrorMessageTypes.IdentityError, errorMessages: identityResult.Errors.ToList()));
+            Errors.AddRange(identityResult.Errors.Select(x => new ApiErrorDto(x.Code, x.Description)).ToList());
         }
 
         #endregion
