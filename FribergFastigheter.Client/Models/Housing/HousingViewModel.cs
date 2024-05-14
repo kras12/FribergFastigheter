@@ -1,6 +1,6 @@
-﻿using FribergFastigheter.Client.AuthorizationHandlers;
-using FribergFastigheter.Client.Models.Broker;
+﻿using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Image;
+using FribergFastigheter.Client.Services.AuthorizationHandlers;
 using FribergFastigheter.Shared.Dto;
 
 namespace FribergFastigheter.Client.Models.Housing

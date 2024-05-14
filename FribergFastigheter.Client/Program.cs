@@ -1,7 +1,7 @@
 using Blazored.LocalStorage;
-using FribergFastigheter.Client.AuthorizationHandlers;
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
+using FribergFastigheter.Client.Services.AuthorizationHandlers;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers;

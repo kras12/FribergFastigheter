@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
-namespace FribergFastigheter.Client.AuthorizationHandlers
+namespace FribergFastigheter.Client.Services.AuthorizationHandlers
 {
     /// <summary>
     /// Authorization handler with built in requirement to handle preliminary authorization for create, delete and edit of housing objects. 
@@ -99,7 +99,7 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
                 default:
                     break;
             }
-            
+
             context.Fail();
             return Task.CompletedTask;
         }
