@@ -43,6 +43,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         private readonly IBrokerFirmRepository _brokerFirmRepository;
 
         /// <summary>
+        /// The injected broker repository.
+        /// </summary>
+        private readonly IBrokerRepository _brokerRepository;
+
+        /// <summary>
         /// The injected housing repository.
         /// </summary>
         private readonly IHousingRepository _housingRepository;
@@ -51,6 +56,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// The injected imageService properties.
         /// </summary>
         private readonly IImageService _imageService;
+
         #endregion
 
         #region Constructors
@@ -63,13 +69,16 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <param name="imageService">The injected imageService properties.</param>
         /// <param name="brokerFirmRepository">The injected broker firm repository.</param>
         /// <param name="authorizationService">The injected authorization service. </param>
-        public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService, IBrokerFirmRepository brokerFirmRepository, IAuthorizationService authorizationService)
+        /// <param name="brokerRepository">The injected broker repository service.</param>
+        public BrokerHousingController(IHousingRepository housingRepository, IMapper mapper, IImageService imageService, 
+            IBrokerFirmRepository brokerFirmRepository, IAuthorizationService authorizationService, IBrokerRepository brokerRepository)
         {
             _housingRepository = housingRepository;
             _autoMapper = mapper;
             _imageService = imageService;
             _brokerFirmRepository = brokerFirmRepository;
             _authorizationService = authorizationService;
+            _brokerRepository = brokerRepository;
         }
 
         #endregion
@@ -116,8 +125,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpPost("housing/{housingId:int}/images")]
-        [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiValueResponseDto<List<ImageDto>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> CreateHousingImages([Required] int housingId, [FromForm] IFormFileCollection files)
         {
             if (files.Count == 0)
@@ -132,8 +143,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced housing object was not found."));
             }
 
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            var brokerId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var authData = new CreateHousingImageAuthorizationData(existingHousingBrokerFirmId: housing.Broker.BrokerFirm.BrokerFirmId,
                 existingHousingBrokerId: housing.Broker.BrokerId);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateHousingImageResource);
@@ -295,8 +304,9 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{id:int}")]
-        [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiValueResponseDto<HousingDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<HousingDto>>> GetHousingById(int id)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(id);
@@ -305,15 +315,21 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The housing object does not exists."));
             }
-            else if (housing.Broker.BrokerFirm.BrokerFirmId != int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value))
+
+            var authData = new BrokerFirmAssociationAuthorizationData(housing.Broker.BrokerFirm.BrokerFirmId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
+
+            if (result.Succeeded)
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced housing object doesn't belong to the broker firm.")));
+                var housingDto = _autoMapper.Map<HousingDto>(housing);
+                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, housingDto);
+
+                return Ok(new MvcApiValueResponseDto<HousingDto>(housingDto));
             }
-
-            var result = _autoMapper.Map<HousingDto>(housing);
-            _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
-
-            return Ok(result);
+            else
+            {
+                return Unauthorized(new MvcApiErrorResponseDto(result));
+            }
         }
 
         /// <summary>
@@ -339,18 +355,31 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housings/count")]
-        public async Task<ActionResult<int>> GetHousingCountByBrokerId([Required] int? brokerId = null)
+        [ProducesResponseType<MvcApiValueResponseDto<MvcApiValueResponseDto<object>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<int>> GetHousingCount([Required] int? brokerId = null)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            if (brokerId != null)
+            {
+                var broker = await _brokerRepository.GetBrokerByIdAsync(brokerId.Value);
 
-            if (brokerId != null && !await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId.Value))
+                if (broker == null)
             {
                     return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The broker doesn't exists."));
             }
 
-            int housingCount = await _housingRepository.GetHousingsCountAsync(brokerId: brokerId);
+                var authData = new BrokerFirmAssociationAuthorizationData(broker.BrokerFirm.BrokerFirmId);
+                var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
 
-            return Ok(housingCount);
+                if (!result.Succeeded)
+                {
+                    return Unauthorized(new MvcApiErrorResponseDto(result));
+        }
+            }
+
+            int brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+            int housingCount = await _housingRepository.GetHousingsCountAsync(brokerId: brokerId, brokerFirm: brokerFirmId);
+            return Ok(new MvcApiValueResponseDto<object>(housingCount));  
         }
 
         /// <summary>
@@ -364,22 +393,23 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{housingId:int}/image/{id:int}")]
         [ProducesResponseType<FileContentResult>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetHousingImageById(int id, [Required] int housingId)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
 
             if (housing == null)
             {
                 return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced housing object was not found."));
             }
-            else if (housing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
-            {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced housing object doesn't belong to the broker firm.")));
-            }
 
+            var authData = new BrokerFirmAssociationAuthorizationData(housing.Broker.BrokerFirm.BrokerFirmId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
+
+            if (result.Succeeded)
+            {
             var image = housing.Images.Single(x => x.ImageId == id);
 
             if (image == null)
@@ -399,6 +429,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
                 return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The image doesn't exists."));
         }
+            else
+            {
+                return Unauthorized(new MvcApiErrorResponseDto(result));
+            }            
+        }
 
         /// <summary>
         /// An API endpoint for retrieving all images for a housing object. 
@@ -410,22 +445,22 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{housingId:int}/images")]
-        [ProducesResponseType<List<ImageDto>>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<List<MvcApiValueResponseDto<List<ImageDto>>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetHousingImages([Required] int housingId)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
 
             if (housing == null)
             {
                 return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced housing object does not exists."));
             }
-            else if (housing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
-            {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced housing object doesn't belong to the broker firm.")));
-            }
 
+            var authData = new BrokerFirmAssociationAuthorizationData(housing.Broker.BrokerFirm.BrokerFirmId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
+
+            if (result.Succeeded)
+            {
             var images = _autoMapper.Map<List<ImageDto>>(housing.Images);
 
             if (images.Count > 0)
@@ -434,7 +469,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             }
 
-            return Ok(images);
+                return Ok(new MvcApiValueResponseDto<List<ImageDto>>(images));
+        }
+            else
+            {
+                return Unauthorized(new MvcApiErrorResponseDto(result));
+            }            
         }
 
         /// <summary>
@@ -447,34 +487,47 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housing/{housingId:int}/images/archive")]
         [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK, "application/zip")]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetHousingImagesAsArchive([Required] int housingId)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var housing = await _housingRepository.GetHousingByIdAsync(housingId);
 
             if (housing == null)
             {
                 return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced housing object was not found."));
             }
-            else if (housing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
-            {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced housing object doesn't belong to the broker firm.")));
-            }
 
+            var authData = new BrokerFirmAssociationAuthorizationData(housing.Broker.BrokerFirm.BrokerFirmId);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
+
+            if (result.Succeeded)
+            {
             var images = await _housingRepository.GetImages(housingId);
 
             if (images.Count > 0)
             {
-                var result = await _imageService.PrepareImageFilesZipDownloadAsync(housing.Images.Select(x => x.FileName).ToList());
+                    var fileStreamResult = await _imageService.PrepareImageFilesZipDownloadAsync(housing.Images.Select(x => x.FileName).ToList());
 
                 if (result != null)
                 {
-                    return result;
+                        return fileStreamResult;
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError, new MvcApiErrorResponseDto(ApiErrorMessageTypes.GeneralError, "An error occured while preparing the file."));
+                    }
                 }
+                else
+                {
+                    return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "No images were found."));
+                }
+                }
+            else
+            {
+                return Unauthorized(new MvcApiErrorResponseDto(result));
             }
-
-            return NotFound();
         }
 
         /// <summary>
@@ -486,22 +539,35 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("housings")]
-        [ProducesResponseType<List<HousingDto>>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<List<MvcApiValueResponseDto<List<HousingDto>>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<List<HousingDto>>> GetHousings(int? limitImagesPerHousing = null, int? brokerId = null)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-
-            if (brokerId != null && !await _brokerFirmRepository.HaveBroker(brokerFirmId, brokerId.Value))
+            if (brokerId != null)
             {
-                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the broker firm.")));
+                var broker = await _brokerRepository.GetBrokerByIdAsync(brokerId.Value);
+
+                if (broker == null)
+                {
+                    return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The broker doesn't exists."));
+                }
+
+                var authData = new BrokerFirmAssociationAuthorizationData(broker.BrokerFirm.BrokerFirmId);
+                var authorizationResult = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.BrokerFirmAssociation);
+
+                if (!authorizationResult.Succeeded)
+            {
+                    return Unauthorized(new MvcApiErrorResponseDto(authorizationResult));
+                }
             }
 
+            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             List<HousingDto> result = _autoMapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsAsync(brokerFirmId: brokerFirmId, brokerId: brokerId,
                 limitImagesPerHousing: limitImagesPerHousing));
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
             return Ok(new MvcApiValueResponseDto<List<HousingDto>>(result));
+
         }
 
         /// <summary>
