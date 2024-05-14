@@ -1,6 +1,6 @@
 ﻿using FribergFastigheter.Shared.Enums;
 
-namespace FribergFastigheter.Shared.Dto.Error
+namespace FribergFastigheter.Shared.Dto.Api
 {
     /// <summary>
     /// An error class designed to be used with the class <see cref="ApiErrorResponseDto"/>.

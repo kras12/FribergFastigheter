@@ -13,9 +13,9 @@ using System.Net;
 using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Image;
-using FribergFastigheter.Shared.Dto.Error;
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data;
+using FribergFastigheter.Shared.Dto.Api;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

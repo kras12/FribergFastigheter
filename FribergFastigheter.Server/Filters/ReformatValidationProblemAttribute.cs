@@ -1,4 +1,4 @@
-﻿using FribergFastigheter.Shared.Dto.Error;
+﻿using FribergFastigheter.Shared.Dto.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Diagnostics.CodeAnalysis;

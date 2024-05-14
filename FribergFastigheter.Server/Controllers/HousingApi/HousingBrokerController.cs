@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using FribergFastigheter.Shared.Dto.Broker;
-using FribergFastigheter.Shared.Dto.Error;
 using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
+using FribergFastigheter.Shared.Dto.Api;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -5,12 +5,12 @@ using FribergFastigheter.Server.Services;
 using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 using FribergFastigheter.Shared.Dto.Housing;
-using FribergFastigheter.Shared.Dto.Error;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using FribergFastigheter.Server.Data.Repositories;
 using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using FribergFastigheter.Shared.Enums;
+using FribergFastigheter.Shared.Dto.Api;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

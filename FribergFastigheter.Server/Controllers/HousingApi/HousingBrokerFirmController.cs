@@ -5,8 +5,8 @@ using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
-using FribergFastigheter.Shared.Dto.Error;
 using System.Net;
+using FribergFastigheter.Shared.Dto.Api;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

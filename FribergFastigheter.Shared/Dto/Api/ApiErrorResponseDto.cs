@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 
-namespace FribergFastigheter.Shared.Dto.Error
+namespace FribergFastigheter.Shared.Dto.Api
 {
     /// <summary>
     /// A DTO class that represents an error response.
