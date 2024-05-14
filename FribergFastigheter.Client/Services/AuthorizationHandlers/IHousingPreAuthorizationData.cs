@@ -1,4 +1,4 @@
-﻿namespace FribergFastigheter.Client.AuthorizationHandlers
+﻿namespace FribergFastigheter.Client.Services.AuthorizationHandlers
 {
     /// <summary>
     /// Interface designed to be used with the <see cref="ManageHousingPreAuthorizationHandler"/> to perform authorization.
