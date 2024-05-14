@@ -1,10 +1,11 @@
 using Blazored.LocalStorage;
-using FribergFastigheter.Client.AuthorizationHandlers;
 using FribergFastigheter.Client.AutoMapper;
 using FribergFastigheter.Client.Services;
+using FribergFastigheter.Client.Services.AuthorizationHandlers;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -61,6 +62,15 @@ namespace FribergFastigheter.Client
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateBroker, policy =>
+                    policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.CreateBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
+                    policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.EditBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
+                    policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.DeleteBroker)));
             });
 
             // Add API services with typed http clients
