@@ -19,7 +19,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using System.Text;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 
 namespace FribergFastigheter
 {
@@ -124,13 +125,15 @@ namespace FribergFastigheter
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
                     ValidateIssuer = true,
                     ValidIssuer = builder.Configuration["JWT:Issuer"],
                     ValidateAudience = true,
                     ValidAudience = builder.Configuration["JWT:Audience"],
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
+                        Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
                     RoleClaimType = ApplicationUserClaims.UserRole
                 };
             });
@@ -149,8 +152,14 @@ namespace FribergFastigheter
                 options.AddPolicy(ApplicationPolicies.CanCreateHousingResource, policy =>
                     policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
 
+                options.AddPolicy(ApplicationPolicies.CanCreateHousingImageResource, policy =>
+                    policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousingImage)));
+
                 options.AddPolicy(ApplicationPolicies.CanDeleteHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousing)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteHousingImageResource, policy =>
+                    policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.DeleteHousingImage)));
 
                 options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));

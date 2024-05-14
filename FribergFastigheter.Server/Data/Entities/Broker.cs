@@ -77,6 +77,11 @@ namespace FribergFastigheter.Server.Data.Entities
         public string Description { get; set; } = "";
 
 		/// <summary>
+		/// True if the broker is marked as deleted.
+		/// </summary>
+		public bool IsDeleted { get; set; }
+
+		/// <summary>
 		/// The broker profile image.
 		/// </summary>
 		public Image? ProfileImage { get; set; } = null;

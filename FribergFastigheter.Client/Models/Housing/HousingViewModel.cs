@@ -1,7 +1,6 @@
-﻿using FribergFastigheter.Client.AuthorizationHandlers;
-using FribergFastigheter.Client.Models.Broker;
+﻿using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Image;
-using FribergFastigheter.Shared.Dto;
+using FribergFastigheter.Client.Services.AuthorizationHandlers.Housing.Data;
 
 namespace FribergFastigheter.Client.Models.Housing
 {
@@ -10,7 +9,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingViewModel : HousingViewModelBase, IHousingPreAuthorizationData
+    public class HousingViewModel : HousingViewModelBase, IEditHousingPreAuthorizationData, IDeleteHousingPreAuthorizationData
     {
         #region Properties
 
@@ -46,12 +45,12 @@ namespace FribergFastigheter.Client.Models.Housing
 
         #endregion
 
-        #region IAuthEditHousing
+        #region IEditHousingPreAuthorizationData
 
         /// <summary>
         /// The broker firm ID
         /// </summary>
-        int IHousingPreAuthorizationData.ExistingHousingBrokerFirmId
+        int IEditHousingPreAuthorizationData.ExistingHousingBrokerFirmId
         {
             get
             {
@@ -62,7 +61,7 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The broker ID
         /// </summary>
-        int IHousingPreAuthorizationData.ExistingHousingBrokerId
+        int IEditHousingPreAuthorizationData.ExistingHousingBrokerId
         {
             get
             {
@@ -70,14 +69,29 @@ namespace FribergFastigheter.Client.Models.Housing
             }
         }
 
+        #endregion
+
+        #region IDeleteHousingPreAuthorizationData
+
         /// <summary>
-        /// The housing ID.
+        /// The broker firm ID
         /// </summary>
-        int IHousingPreAuthorizationData.HousingId
+        int IDeleteHousingPreAuthorizationData.ExistingHousingBrokerFirmId
         {
             get
             {
-                return HousingId;
+                return Broker.BrokerFirm.BrokerFirmId;
+            }
+        }
+
+        /// <summary>
+        /// The broker ID
+        /// </summary>
+        int IDeleteHousingPreAuthorizationData.ExistingHousingBrokerId
+        {
+            get
+            {
+                return Broker.BrokerId;
             }
         }
 

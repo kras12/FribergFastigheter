@@ -72,9 +72,9 @@ namespace FribergFastigheter.Server.Data.Repositories
             BrokerFirmStatisticsDto result = new();
             result.BrokerFirmId = brokerFirm.BrokerFirmId;
             result.BrokerFirmName = brokerFirm.Name;
-            result.HousingCount = await applicationDbContext.Housings.CountAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+            result.HousingCount = await applicationDbContext.Housings.CountAsync(x => x.Broker.BrokerFirm.BrokerFirmId == brokerFirmId);
             result.BrokerCount = await applicationDbContext.Brokers.CountAsync(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
-            result.HousingCountPerCategory = await applicationDbContext.Housings.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
+            result.HousingCountPerCategory = await applicationDbContext.Housings.Where(x => x.Broker.BrokerFirm.BrokerFirmId == brokerFirmId)
                 .GroupBy(                
                     key => key.Category,
                     (category, housing) => new StatisticItemDto()

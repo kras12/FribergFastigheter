@@ -260,7 +260,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can delete brokers."));
             }
 
-            await _brokerRepository.DeleteAsync(id);
+            var broker = await _brokerRepository.GetBrokerByIdAsync(id);
+
+            if (broker!.ProfileImage != null)
+            {
+                _imageService.DeleteImageFromDisk(broker.ProfileImage.FileName);
+                await _brokerRepository.DeleteProfileImage(id);                
+            }
+
+            broker.IsDeleted = true;
+            await _brokerRepository.UpdateAsync(broker);
+
             return Ok();
         }
 
@@ -378,7 +388,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             
-            var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(brokerFirmId))
+            var brokers = (await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId))
                 .Select(x => _autoMapper.Map<BrokerDto>(x))
                 .ToList();
 

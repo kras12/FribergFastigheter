@@ -194,12 +194,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Deletes an image for a housing object.
         /// </summary>
-        /// <param name="imageId">The ID of the image object to delete.</param>
         /// <param name="housingId">The ID of the housing object the image belongs to</param>
+        /// <param name="imageId">The ID of the image object to delete.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteHousingImage(int imageId, [Required] int housingId);
+        public Task DeleteHousingImage([Required] int housingId, int imageId);
 
         /// <summary>
         /// Deletes an image for a housing object.
@@ -209,7 +209,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteImages(int housingId, List<int> imageIds);
+        public Task DeleteHousingImages(int housingId, List<int> imageIds);
 
         /// <summary>
         /// Fetches all images for a housing object. 

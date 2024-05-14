@@ -217,6 +217,7 @@ namespace FribergFastigheter.Client.Components.Housing
         private void OnHousingDeletedEventHandler(HousingViewModel housing)
         {
             Housings.Remove(housing);
+            _filteredhousings.Remove(housing);
         }
 
 		/// <summary>

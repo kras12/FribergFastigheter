@@ -1,11 +1,11 @@
-﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers
+﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
 {
     /// <summary>
-    /// Data storage class designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for editing housing objects.
+    /// Data storage class designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for creating housing image objects.
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class EditHousingAuthorizationData : IEditHousingAuthorizationData
+    public class CreateHousingImageAuthorizationData : ICreateHousingImageAuthorizationData
     {
         #region Constructors
 
@@ -14,11 +14,9 @@
         /// </summary>
         /// <param name="existingHousingBrokerFirmId">The broker firm ID.</param>
         /// <param name="existingHousingBrokerId">The old broker ID.</param>
-        /// <param name="newHousingBrokerId">The new broker ID.</param>
-        public EditHousingAuthorizationData(int existingHousingBrokerFirmId,
-            int existingHousingBrokerId, int newHousingBrokerId)
+        public CreateHousingImageAuthorizationData(int existingHousingBrokerFirmId,
+            int existingHousingBrokerId)
         {
-            NewHousingBrokerId = newHousingBrokerId;
             ExistingHousingBrokerFirmId = existingHousingBrokerFirmId;
             ExistingHousingBrokerId = existingHousingBrokerId;
         }
@@ -36,11 +34,6 @@
         /// The old broker ID.
         /// </summary>
         public int ExistingHousingBrokerId { get; }
-
-        /// <summary>
-        /// The new broker ID.
-        /// </summary>
-        public int NewHousingBrokerId { get; }
 
         #endregion
     }

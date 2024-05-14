@@ -1,8 +1,9 @@
-﻿using FribergFastigheter.Shared.Constants;
+﻿using FribergFastigheter.Client.Services.AuthorizationHandlers.Housing.Data;
+using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 
-namespace FribergFastigheter.Client.AuthorizationHandlers
+namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Housing
 {
     /// <summary>
     /// Authorization handler with built in requirement to handle preliminary authorization for create, delete and edit of housing objects. 
@@ -66,14 +67,8 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
                 return Task.CompletedTask;
             }
 
-            if (_editType != ActionTypes.CreateHousing && context.Resource is not IHousingPreAuthorizationData)
-            {
-                throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IHousingPreAuthorizationData)}'.");
-            }
-
             var brokerFirmId = int.Parse(context.User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             var brokerId = int.Parse(context.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            var authorizationData = context.Resource as IHousingPreAuthorizationData;
 
 
             switch (_editType)
@@ -87,9 +82,31 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
                     break;
 
                 case ActionTypes.DeleteHousing:
+                    var deleteAuthorizationData = context.Resource as IDeleteHousingPreAuthorizationData;
+
+                    if (deleteAuthorizationData == null)
+                    {
+                        throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IDeleteHousingPreAuthorizationData)}'.");
+                    }
+
+                    if (deleteAuthorizationData.ExistingHousingBrokerFirmId == brokerFirmId
+                        && (deleteAuthorizationData.ExistingHousingBrokerId == brokerId || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin)))
+                    {
+                        context.Succeed(requirement);
+                        return Task.CompletedTask;
+                    }
+                    break;
+
                 case ActionTypes.EditHousing:
-                    if (authorizationData != null && authorizationData.ExistingHousingBrokerFirmId == brokerFirmId
-                        && (authorizationData.ExistingHousingBrokerId == brokerId || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin)))
+                    var editAuthorizationData = context.Resource as IEditHousingPreAuthorizationData;
+
+                    if (editAuthorizationData == null)
+                    {
+                        throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IEditHousingPreAuthorizationData)}'.");
+                    }
+
+                    if (editAuthorizationData != null && editAuthorizationData.ExistingHousingBrokerFirmId == brokerFirmId
+                        && (editAuthorizationData.ExistingHousingBrokerId == brokerId || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin)))
                     {
                         context.Succeed(requirement);
                         return Task.CompletedTask;
@@ -99,7 +116,7 @@ namespace FribergFastigheter.Client.AuthorizationHandlers
                 default:
                     break;
             }
-            
+
             context.Fail();
             return Task.CompletedTask;
         }

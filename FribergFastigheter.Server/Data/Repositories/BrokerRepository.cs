@@ -69,10 +69,11 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public async Task UpdateAsync(Broker broker)
         {
-            // The broker firm collection may contain the broker which leads to double tracking of the same entity.
-            broker.BrokerFirm.Brokers.Clear();
-            applicationDbContext.BrokerFirms.Attach(broker.BrokerFirm);
-            applicationDbContext.Update(broker);
+            applicationDbContext.BrokerFirms.Entry(broker.BrokerFirm).State = EntityState.Unchanged;
+            applicationDbContext.Brokers.Entry(broker).State = EntityState.Modified;
+            applicationDbContext.Users.Entry(broker.User).State = EntityState.Modified;
+            broker.User.NormalizedEmail = broker.User.Email!.ToUpper();
+            broker.User.NormalizedUserName = broker.User.UserName!.ToUpper();
             await applicationDbContext.SaveChangesAsync();
         }
 
@@ -90,22 +91,24 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AsNoTracking().FirstOrDefaultAsync(b => b.User.Id == id);
         }
 
-        public async Task<List<Broker>> GetAllBrokersAsync()
+        /// <!-- Author: Marcus, Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<List<Broker>> GetBrokersAsync(int? brokerFirmId = null, bool includeDeleted = false)
         {
-            return await applicationDbContext.Brokers.AsNoTracking().ToListAsync();
-        }
+            var query = applicationDbContext.Brokers
+                .AsNoTracking();
 
-        public Task<List<Broker>> GetAllBrokersByBrokerFirmIdAsync(int brokerFirmId)
-        {
-            return applicationDbContext.Brokers
-                .Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId)
-				.AsNoTracking()
-				.ToListAsync();
-        }
+            if (!includeDeleted)
+            {
+                query = query.Where(x => !x.IsDeleted);
+            }
 
-        public Task<bool> IsOwnedByBrokerFirm(int brokerId, int BrokerFirmId)
-        {
-            return applicationDbContext.Brokers.AnyAsync(x => x.BrokerId == brokerId && x.BrokerFirm.BrokerFirmId == BrokerFirmId);
+            if (brokerFirmId != null)
+            {
+                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+            }
+
+            return await query.ToListAsync();
         }
 
         /// <!-- Author: Jimmie, Marcus -->
@@ -124,13 +127,6 @@ namespace FribergFastigheter.Server.Data.Repositories
                 .AsNoTracking()
                 .Select(x => x.ProfileImage)
                 .SingleOrDefaultAsync();
-        }
-
-        /// <!-- Author: Jimmie, Marcus -->
-        /// <!-- Co Authors: -->
-        public Task<bool> OwnsImage(int brokerId, int imageId)
-        {
-            return applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId).AnyAsync(x => x.ProfileImage != null && x.ProfileImage.ImageId == imageId);
         }
 
         /// <!-- Author: Jimmie, Marcus -->

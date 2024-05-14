@@ -4,7 +4,7 @@ using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -123,6 +123,56 @@ namespace FribergFastigheter.Client.Components.Housing
             EditHousingInput.Municipalities = _municipalities;
             EditHousingInput.HousingCategories = _housingCategories;
 		}
+
+        /// <summary>
+        /// Sends an request to the API to delete chosen images (if any) from the housing object. 
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        private async Task DeleteImages()
+        {
+            var user = (await AuthenticationStateTask).User;
+
+            if (_imagesToDelete.Count > 0)
+            {
+                var deleteImageAuthorizationData = new DeleteHousingImageAuthorizationData(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.Broker.BrokerId);
+                var deleteImageAuthorizationResult = await AuthorizationService.AuthorizeAsync(user, deleteImageAuthorizationData, ApplicationPolicies.CanDeleteHousingImageResource);
+
+                if (deleteImageAuthorizationResult.Succeeded)
+                {
+                    await BrokerFirmApiService.DeleteHousingImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+                }
+                else
+                {
+                    throw new UnauthorizedAccessException();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends an request to the API to update the housing object. 
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        private async Task EditHousingData()
+        {
+            var user = (await AuthenticationStateTask).User;
+            var housingAuthorizationData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
+                existingHousingBrokerId: Housing.Broker.BrokerId, newHousingBrokerId: EditHousingInput!.BrokerId);
+            var housingAuthorizationResult = await AuthorizationService.AuthorizeAsync(user, housingAuthorizationData, ApplicationPolicies.CanEditHousingResource);
+
+            if (housingAuthorizationResult.Succeeded)
+            {
+                await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
+                AutoMapper.Map(EditHousingInput!, Housing);
+                Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
+                Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
+            }
+            else
+            {
+                throw new UnauthorizedAccessException();
+            }
+        }
 
         /// <summary>
         /// Fetches and loads all images for the housing object.
@@ -248,40 +298,59 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <!-- Co Authors: -->
 		private async Task OnValidSubmit()
         {
-            var user = (await AuthenticationStateTask).User;
-            var authorizationData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
-                existingHousingBrokerId: Housing.Broker.BrokerId, newHousingBrokerId: EditHousingInput!.BrokerId);
-            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditHousingResource);
+                try
+                {
+                    await EditHousingData();
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // TODO - Show message
+                }
 
-            if (result.Succeeded)
-            {
-                await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
-                AutoMapper.Map(EditHousingInput!, Housing);
-                Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
-                Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
-                await BrokerFirmApiService.DeleteImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
-                Housing.Images.AddRange(await UploadImages());
+                try
+                {
+                    await DeleteImages();
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // TODO - Show message
+                }
+
+                try
+                {
+                    await UploadImages();
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // TODO - Show message
+                }
+
                 await OnHousingEdited.InvokeAsync(Housing);
-            }          
-            else
-            {
-                // TODO - Show message
-            }
-        }
+        }             
 
         /// <summary>
-        /// Uploads images for a housing object if the user have selected any images. 
+        /// Sends an request to the API to upload chosen images (if any) to the housing object. 
         /// </summary>
-        /// <returns>A collection of <see cref="ImageViewModel"/> objects for the uploaded images.</returns>
-        private async Task<List<ImageViewModel>> UploadImages()
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        private async Task UploadImages()
         {
             if (_uploadedFiles.Count > 0)
             {
-                var result = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
-                return result != null ? AutoMapper.Map<List<ImageViewModel>>(result) : new();
-            }
+                var user = (await AuthenticationStateTask).User;
+                var imageAuthorizationData = new CreateHousingImageAuthorizationData(Housing.Broker.BrokerFirm.BrokerFirmId, Housing.Broker.BrokerId);
+                var imageAuthorizationResult = await AuthorizationService.AuthorizeAsync(user, imageAuthorizationData, ApplicationPolicies.CanCreateHousingImageResource);
 
-            return new();
+                if (imageAuthorizationResult.Succeeded)
+                {
+                    var uploadedImages = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
+                    Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(uploadedImages));
+                }
+                else
+                {
+                    throw new UnauthorizedAccessException();
+                }
+            }
         }
 
         #endregion

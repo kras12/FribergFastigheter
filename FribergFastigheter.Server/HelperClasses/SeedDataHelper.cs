@@ -281,7 +281,7 @@ namespace FribergFastigheter.HelperClasses
                 Housing newHousing = new();
                 ParseHousingData(newHousing, groupedData);
 
-                if (newHousing.Images.Count > 0 && newHousing.Category != null && newHousing.Broker != null && newHousing.BrokerFirm != null)
+                if (newHousing.Images.Count > 0 && newHousing.Category != null && newHousing.Broker != null)
                 {
                     _housings.Add(newHousing);
                 }
@@ -316,7 +316,6 @@ namespace FribergFastigheter.HelperClasses
                 && TryParseBroker(groupedData, out string? parsedBrokerFirstName, out string? parsedBrokerLastName,
                         out string? _, out string? _))
             {
-                housing.BrokerFirm = _brokerFirms[parsedBrokerFirmName];
                 housing.Broker = _brokerFirms[parsedBrokerFirmName].Brokers.Single(x => x.User.FirstName.Equals(parsedBrokerFirstName, StringComparison.CurrentCultureIgnoreCase)
                         && x.User.LastName.Equals(parsedBrokerLastName, StringComparison.CurrentCultureIgnoreCase));
             }
