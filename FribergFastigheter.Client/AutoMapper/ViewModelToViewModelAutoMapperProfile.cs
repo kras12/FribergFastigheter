@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Housing;
-using FribergFastigheter.Shared.Dto;
 
 namespace FribergFastigheter.Client.AutoMapper
 {

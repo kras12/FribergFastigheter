@@ -21,16 +21,21 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// The relative broker API endpoint address.
         /// </summary>
-        private const string BrokerByIdApiEndpoint = $"{ApiBase}/broker/{IdPlaceHolder}";               
+        private const string BrokerByIdApiEndpoint = $"{ApiBase}/broker/{IdPlaceHolder}";
 
-        #endregion
+		/// <summary>
+		/// The broker API endpoint address.
+		/// </summary>
+		private const string BrokersByBrokerFirmIdApiEndPoint = $"{ApiBase}/brokers/{IdPlaceHolder}";
 
-        #region BrokerFirmConstants
+		#endregion
 
-        /// <summary>
-        /// The relative broker firm API endpoint address.
-        /// </summary>
-        private const string BrokerFirmByIdApiEndpoint = $"{ApiBase}/broker-firm/{IdPlaceHolder}";
+		#region BrokerFirmConstants
+
+		/// <summary>
+		/// The relative broker firm API endpoint address.
+		/// </summary>
+		private const string BrokerFirmByIdApiEndpoint = $"{ApiBase}/broker-firm/{IdPlaceHolder}";
 
         #endregion
 
@@ -51,7 +56,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// </summary>
         private const string HousingApiEndoint = $"{ApiBase}/housings";
 
-        /// <summary>
+		/// <summary>
+		/// The relative housing search API endpoint address.
+		/// </summary>
+		private const string HousingsApiEndoint = $"{ApiBase}/housingsbybrokerfirmid";
+
+		/// <summary>
 		/// The relative municipality list API endpoint address.
 		/// </summary>
 		private const string MunicipalityListApiEndpoint = $"{ApiBase}/municipalities";
@@ -100,14 +110,26 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return EnsureNotNull(result, "Failed to fetch or serialize the broker.");
         }
 
-        /// <summary>
-        /// Fetches a broker firm by ID.
-        /// </summary>
-        /// <param name="id">The ID of the broker firm.</param>
-        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<BrokerFirmDto> GetBrokerFirmById(int id)
+		/// <summary>
+		/// Fetches data for a broker. 
+		/// </summary>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
+		/// <!-- Author: Jimmie  -->
+		/// <!-- Co Authors: Marcus -->
+		public async Task<List<BrokerDto>> GetBrokers(int brokerFirmId)
+		{
+			var result = await _httpClient.GetFromJsonAsync<List<BrokerDto>?>(BrokersByBrokerFirmIdApiEndPoint.Replace(IdPlaceHolder, brokerFirmId.ToString()));
+			return EnsureNotNull(result, "Failed to fetch or serialize brokers.");
+		}
+
+		/// <summary>
+		/// Fetches a broker firm by ID.
+		/// </summary>
+		/// <param name="id">The ID of the broker firm.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<BrokerFirmDto> GetBrokerFirmById(int id)
         {
             var result = await _httpClient.GetFromJsonAsync<BrokerFirmDto>(BrokerFirmByIdApiEndpoint.Replace(IdPlaceHolder, id.ToString()));
             return EnsureNotNull(result, "Failed to fetch or serialize the broker firm.");
@@ -148,13 +170,43 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             return EnsureNotNull(result, "Failed to fetch or serialize the housing object");
         }
 
-        /// <summary>
-        /// Fetches all housing categories.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors: -->
-        public async Task<List<HousingCategoryDto>> GetHousingCategories()
+		/// <summary>
+		/// Fetches all housing objects for a broker firm.
+		/// </summary>
+		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+		/// <param name="brokerId">Filters the housing objects after a broker.</param>
+		/// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+		/// <!-- Author: Jimmie  -->
+		/// <!-- Co Authors: Marcus -->
+		public async Task<List<HousingDto>> GetHousings(int brokerFirmId, int? limitImagesPerHousing = null, int? brokerId = null)
+		{
+			List<KeyValuePair<string, string>> queries = new();
+
+			if (brokerFirmId != null)
+			{
+				queries.Add(new KeyValuePair<string, string>("brokerFirmId", brokerFirmId.ToString()!));
+			}
+			if (limitImagesPerHousing != null)
+			{
+				queries.Add(new KeyValuePair<string, string>("limitImagesPerHousing", limitImagesPerHousing.Value.ToString()));
+			}
+
+			if (brokerId != null)
+			{
+				queries.Add(new KeyValuePair<string, string>("brokerId", brokerId.ToString()!));
+			}
+
+			var result = await _httpClient.GetFromJsonAsync<List<HousingDto>?>($"{HousingsApiEndoint}{BuildQueryString(queries)}");
+			return EnsureNotNull(result, "Failed to fetch or serialize the housing objects");
+		}
+
+		/// <summary>
+		/// Fetches all housing categories.
+		/// </summary>
+		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
+		/// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+		public async Task<List<HousingCategoryDto>> GetHousingCategories()
         {
             var result = await _httpClient.GetFromJsonAsync<List<HousingCategoryDto>>(HousingCategoryListApiEndpoint);
             return EnsureNotNull(result, "Failed to fetch or serialize the housing categories");

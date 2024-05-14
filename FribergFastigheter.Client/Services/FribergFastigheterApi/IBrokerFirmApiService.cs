@@ -25,6 +25,15 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         #region AdminMethods
 
         /// <summary>
+        /// Creates a new broker under the broker firm.
+        /// </summary>
+        /// <param name="broker">The serialized DTO object to send.</param>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: Jimmie -->
+        public Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker);
+
+        /// <summary>
         /// Performs an admin edit of a broker.
         /// </summary>
         /// <param name="id">The ID of the broker to update.</param>
@@ -36,16 +45,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #endregion
 
-        #region BrokerMethods
-
-        /// <summary>
-        /// Creates a new broker under the broker firm.
-        /// </summary>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/>.</returns>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
-        public Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker);
+        #region BrokerMethods        
 
         /// <summary>
         /// Deletes a broker.
