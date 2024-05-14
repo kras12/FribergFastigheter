@@ -13,7 +13,7 @@ using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Dto.Error;
 using FribergFastigheter.Shared.Enums;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

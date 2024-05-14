@@ -4,7 +4,7 @@ using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Housing;
-using FribergFastigheter.Shared.Services.AuthorizationHandlers;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
