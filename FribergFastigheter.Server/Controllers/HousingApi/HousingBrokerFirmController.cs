@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
 using FribergFastigheter.Shared.Dto.Error;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -62,14 +63,14 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Co Authors: Marcus -->
 		[HttpGet("broker-firm/{id:int}")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		[ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
 		{
 			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
 
 			if (brokerFirm == null)
 			{
-				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{id}' was not found."));
+				return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{id}' was not found.")));
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);

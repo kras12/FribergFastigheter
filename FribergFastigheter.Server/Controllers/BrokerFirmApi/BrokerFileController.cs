@@ -73,7 +73,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->
         [HttpGet("image/{fileName}")]
         [ProducesResponseType<FileContentResult>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetImageFile(string fileName)
         {
             var fileResult = await _imageService.PrepareImageFileDownloadAsync(fileName);

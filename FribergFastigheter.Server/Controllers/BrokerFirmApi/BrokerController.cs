@@ -14,6 +14,7 @@ using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.Login;
 using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Dto.Error;
+using FribergFastigheter.Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -111,18 +112,18 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (id != editBrokerDto.BrokerId)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object.")));
             }
             else if (userRole != ApplicationUserRoles.BrokerAdmin)
             {
-                return Unauthorized(new ErrorMessageDto(HttpStatusCode.Unauthorized, "This action requires the administrator role."));
+                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "This action requires the administrator role.")));
             }
 
             var broker = await _brokerRepository.GetBrokerByIdAsync(id);
 
             if (broker == null || broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
             }
 
             _autoMapper.Map(editBrokerDto, broker);
@@ -144,7 +145,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [Authorize(Policy = ApplicationPolicies.BrokerAdmin)]
         [HttpPost("admin/brokers/create")]
         [ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
 
         public async Task<IActionResult> CreateBroker([FromBody] RegisterBrokerDto registerBrokerDto)
         {
@@ -155,7 +156,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
                 if (userRole != ApplicationUserRoles.BrokerAdmin)
                 {
-                    return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify create brokers."));
+                    return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify create brokers.")));
                 }
 
                 var applicationUser = new ApplicationUser(
@@ -190,17 +191,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     }
                     else
                     {
-                        return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, $"Failed to add user role: {roleResult}"));
+                        return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.IdentityError, $"Failed to add user role: {roleResult}")));
                     }
                 }
                 else
                 {
-                    return BadRequest(new ErrorMessageDto(System.Net.HttpStatusCode.BadRequest, $"Failed to create user: {createUserResult}"));
+                    return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.IdentityError, $"Failed to create user: {createUserResult}")));
                 }
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorMessageDto(HttpStatusCode.InternalServerError, "An unexpected error occurred."));
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiErrorResponseDto(HttpStatusCode.InternalServerError, new ApiErrorDto(ApiErrorMessageTypes.GeneralError, "An unexpected error occurred.")));
             }
         }
 
@@ -213,7 +214,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpPost("broker/{id:int}/profile-image")]
         [ProducesResponseType<ImageDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateProfileImage([Required] int id, [FromForm] IFormFile file)
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -222,11 +223,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
             }
             else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
+                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers.")));
             };
 
             Image imageEntity = new(await _imageService.SaveImageToDiskAsync(file));
@@ -253,11 +254,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
             }
             else if (userRole != ApplicationUserRoles.BrokerAdmin)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can delete brokers."));
+                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can delete brokers.")));
             }
 
             var broker = await _brokerRepository.GetBrokerByIdAsync(id);
@@ -283,7 +284,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpDelete("broker/{id:int}/profile-image")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeleteProfileImage([Required] int id)
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -292,11 +293,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
             }
             else if (brokerId != id && userRole != ApplicationUserRoles.BrokerAdmin)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
+                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers.")));
             }
 
             var image = await _brokerRepository.GetProfileImage(id);
@@ -309,7 +310,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
 
             // Should never get here
-            return NotFound(new ErrorMessageDto(HttpStatusCode.BadRequest, "No image with that ID was found."));
+            return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, "No image with that ID was found.")));
         }
 
         /// <summary>
@@ -328,15 +329,15 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (id != editBrokerDto.BrokerId)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't match the supplied broker object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object.")));
             }
             else if (brokerId != id)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "Only administrators can modify other brokers."));
+                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "Only administrators can modify other brokers.")));
             }
             else if (!await _brokerFirmRepository.HaveBroker(brokerFirmId, id))
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm object."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm object.")));
             }            
 
             var broker = await _brokerRepository.GetBrokerByIdAsync(id);
@@ -362,11 +363,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             if (broker == null)
             {
-                return NotFound(new ErrorMessageDto(HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
+                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker with ID '{id}' was not found.")));
             }
             else if (broker.BrokerFirm.BrokerFirmId != brokerFirmId)
             {
-                return BadRequest(new ErrorMessageDto(HttpStatusCode.BadRequest, "The referenced broker doesn't belong to the referenced broker firm."));
+                return BadRequest(new ApiErrorResponseDto(HttpStatusCode.BadRequest, new ApiErrorDto(ApiErrorMessageTypes.ResourceOwnershipConflict, "The referenced broker doesn't belong to the referenced broker firm.")));
             }
 
             var result = _autoMapper.Map<BrokerDto>(broker);
@@ -405,7 +406,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Co Authors: -->       
         [HttpPost("brokers/login")]
         [ProducesResponseType<LoginResponseDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LoginBroker([FromBody] LoginDto loginDto)
         {
             try
@@ -431,11 +432,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     }
                 }
 
-                return Unauthorized(new ErrorMessageDto(System.Net.HttpStatusCode.Unauthorized, "User not found and/or password incorrect."));
+                return Unauthorized(new ApiErrorResponseDto(HttpStatusCode.Unauthorized, new ApiErrorDto(ApiErrorMessageTypes.AuthorizationError, "User not found and/or password incorrect.")));
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorMessageDto(HttpStatusCode.InternalServerError, "An unexpected error occurred."));
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiErrorResponseDto(HttpStatusCode.InternalServerError, new ApiErrorDto(ApiErrorMessageTypes.GeneralError, "An unexpected error occurred.")));
             }            
         }
 

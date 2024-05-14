@@ -74,7 +74,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm")]
 		[ProducesResponseType<BrokerFirmDto>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+		[ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById()
 		{
 			var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -82,7 +82,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 
 			if (brokerFirm == null)
 			{
-				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
+                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found.")));
 			}
 
 			var result = _mapper.Map<BrokerFirmDto>(brokerFirm);
@@ -101,7 +101,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		[Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("firm/statistics")]
         [ProducesResponseType<BrokerFirmStatisticsDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<BrokerFirmStatisticsDto>> GetStatistics()
 		{
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
@@ -109,7 +109,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 
             if (result == null)
             {
-                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker firm with ID '{brokerFirmId}' was not found."));
+                return NotFound(new ApiErrorResponseDto(HttpStatusCode.NotFound, new ApiErrorDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, $"The broker firm with ID '{brokerFirmId}' was not found.")));
             }
 			
             return Ok(result);

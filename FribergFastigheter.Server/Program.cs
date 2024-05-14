@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Text;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
+using FribergFastigheter.Server.Filters;
 
 namespace FribergFastigheter
 {
@@ -44,14 +45,15 @@ namespace FribergFastigheter
 			});
 #endif
 
-			// Add services to the container.
-			builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            
-            // Swagger
-            builder.Services.AddSwaggerGen();
+            /// Reformats validation problems details from bad requests into an ApiErrorResponseDto object.
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
+            builder.Services.AddControllers(options => options.Filters.Add(typeof(ReformatValidationProblemAttribute)));
 
+            // Swagger
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();            
+            builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "Friberg Fastigheter API", Version = "v1" });

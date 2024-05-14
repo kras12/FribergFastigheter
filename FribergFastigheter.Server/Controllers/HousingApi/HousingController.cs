@@ -6,6 +6,7 @@ using FribergFastigheterApi.Data.DatabaseContexts;
 using Microsoft.AspNetCore.Mvc;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Error;
+using FribergFastigheter.Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -72,14 +73,14 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Co Authors: Marcus -->
 		[HttpGet("housing/{id:int}")]
         [ProducesResponseType<HousingDto>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<ApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HousingDto>> GetHousingById(int id)
         {
             var housing = await _housingRepository.GetHousingByIdAsync(id);
 
             if (housing == null)
             {
-                return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The housing object with ID '{id}' was not found."));
+                return NotFound(new ApiErrorResponseDto(System.Net.HttpStatusCode.NotFound, new ApiErrorDto(ApiErrorMessageTypes.ResourceNotFound, $"The housing object with ID '{id}' was not found.")));
             }
 
             var result = _mapper.Map<HousingDto>(housing);
