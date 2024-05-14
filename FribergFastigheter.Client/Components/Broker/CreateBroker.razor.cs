@@ -2,9 +2,13 @@
 using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.Image;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace FribergFastigheter.Client.Components.Broker
@@ -35,6 +39,11 @@ namespace FribergFastigheter.Client.Components.Broker
         /// </summary>
         [Inject]
         private IMapper Mapper { get; set; }
+        /// <summary>
+        /// The injected authorization service. 
+        /// </summary>
+        [Inject]
+        private IAuthorizationService AuthorizationService { get; set; }
 
         #endregion
 
@@ -54,7 +63,13 @@ namespace FribergFastigheter.Client.Components.Broker
         [Parameter]
         public EventCallback<bool> CloseCreateNewBroker { get; set; }
 
-
+        /// <summary>
+        /// The authentication state task. 
+        /// </summary>
+        [CascadingParameter]
+#pragma warning disable CS8618
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+#pragma warning restore CS8618 
 
         #endregion
 
@@ -71,10 +86,23 @@ namespace FribergFastigheter.Client.Components.Broker
         /// <returns><see cref="Task"/>.</returns>
 		private async Task OnValidSubmit()
         {
-            var newBroker = await BrokerFirmApiService.AdminCreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
-            var newBrokerViewModel = Mapper.Map<BrokerViewModel>(newBroker);
-            newBrokerViewModel.ProfileImage = Mapper.Map<ImageViewModel>(await UploadProfileImage(newBroker!.BrokerId));
-            await OnBrokerCreated.InvokeAsync(newBrokerViewModel);
+            var user = (await AuthenticationStateTask).User;
+            var brokerId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            var authorizationData = new CreateBrokerAuthorizationData(brokerId);
+            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanCreateBroker);
+
+            if (result.Succeeded)
+            {
+                var newBroker = await BrokerFirmApiService.AdminCreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
+                var newBrokerViewModel = Mapper.Map<BrokerViewModel>(newBroker);
+                newBrokerViewModel.ProfileImage = Mapper.Map<ImageViewModel>(await UploadProfileImage(newBroker!.BrokerId));
+                await OnBrokerCreated.InvokeAsync(newBrokerViewModel);
+            }
+            else
+            {
+                // TODO - show message.
+            }
+
         }
 
         private async Task CloseCreateForm()

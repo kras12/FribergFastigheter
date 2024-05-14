@@ -2,7 +2,11 @@
 using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using static FribergFastigheter.Client.Components.ConfirmButton;
 
@@ -17,6 +21,12 @@ namespace FribergFastigheter.Client.Components.Broker
     public partial class DeleteBroker : ComponentBase
     {
         #region InjectedServiceProperties
+
+        /// <summary>
+        /// The injected authorization service. 
+        /// </summary>
+        [Inject]
+        private IAuthorizationService AuthorizationService { get; set; }
 
         /// <summary>
         /// The injected auto mapper service. 
@@ -39,6 +49,12 @@ namespace FribergFastigheter.Client.Components.Broker
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// The cascaded authentication state task.
+        /// </summary>
+        [CascadingParameter]
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
         /// <summary>
         /// The broker object that can be deleted. 
@@ -68,13 +84,25 @@ namespace FribergFastigheter.Client.Components.Broker
 
             if (result == DialogResults.UserConfirmed)
             {
-                ///TODO 
-                if (Broker.ProfileImage == null)
+                var user = (await AuthenticationStateTask).User;
+                var brokerFirmId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
+                var authorizationData = new DeleteBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId);
+                var authorizeResult = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanDeleteBroker);
+                
+                if (authorizeResult.Succeeded) 
                 {
-                    Broker.ProfileImage = new ImageViewModel();
+                    if (Broker.ProfileImage == null)
+                    {
+                        Broker.ProfileImage = new ImageViewModel();
+                    }
+                    await BrokerFirmApiService.DeleteBroker(Broker.BrokerId);
+                    await OnBrokerDeleted.InvokeAsync(Broker);
                 }
-                await BrokerFirmApiService.DeleteBroker(Broker.BrokerId);
-                await OnBrokerDeleted.InvokeAsync(Broker);
+                else
+                {
+                    // TODO - show message
+                }
+
             } 
         }
 
