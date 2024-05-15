@@ -21,6 +21,14 @@ namespace FribergFastigheter.Shared.Dto.Api
         #region Constructors
 
         /// <summary>
+        /// Constructor.
+        /// </summary>
+        public ApiResponseDto()
+        {
+            
+        }
+
+        /// <summary>
         /// Constructor for a successful response.
         /// </summary>
         /// <param name="value">The value to send in the response body.</param>
@@ -58,17 +66,32 @@ namespace FribergFastigheter.Shared.Dto.Api
         /// <summary>
         /// A collection of errors. 
         /// </summary>
-        public List<KeyValuePair<string, string>> Errors { get; protected set; } = new();
+        public List<KeyValuePair<string, string>> Errors { get; set; } = new();
 
         /// <summary>
         /// True if operation was successful.
         /// </summary>
-        public bool Success { get; protected set; }
+        public bool Success { get; set; }
 
         /// <summary>
         /// The value for a successful response.
         /// </summary>
-        public T? Value { get; protected set; }
+        public T? Value { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Formats the error collection as a string.
+        /// </summary>
+        /// <returns>A <see cref="string"/>.</returns>
+        public string GetErrorsAsString()
+        {
+            var stringBuilder = new StringBuilder();
+            Errors.ForEach(x => stringBuilder.AppendLine($"{x.Key}: {x.Value}"));
+            return stringBuilder.ToString();
+        }
 
         #endregion
     }

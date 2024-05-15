@@ -53,7 +53,17 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
 		protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _housings = AutoMapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(limitImagesPerHousing: 3));
+
+            var response = await BrokerFirmApiService.GetHousings(limitImagesPerHousing: 3);
+
+            if (response.Success)
+            {
+                _housings = AutoMapper.Map<List<HousingViewModel>>(response.Value);
+            }
+            else
+            {
+                // Todo - Handle
+            }
         }
 
 		#endregion

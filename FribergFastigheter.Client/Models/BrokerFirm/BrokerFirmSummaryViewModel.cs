@@ -8,7 +8,7 @@ namespace FribergFastigheter.Client.Models.BrokerFirm
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class BrokerFirmSummaryViewModel
+    public class BrokerFirmSummaryViewModel : ViewModelBase
     {
         #region Properties
 

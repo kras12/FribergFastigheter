@@ -11,7 +11,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingSearchResultViewModel
+    public class HousingSearchResultViewModel : ViewModelBase
     {
         #region Properties
 
