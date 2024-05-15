@@ -20,7 +20,7 @@ namespace FribergFastigheter.Server.Dto
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MvcApiEmptyResponseDto()
+        public MvcApiEmptyResponseDto() : base(value: null)
         {
             
         }
