@@ -120,9 +120,19 @@ namespace FribergFastigheter.Client.Components.Housing
         {
             return Task.Run(
                async () =>
-               { 
-                    CreateHousingInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(await BrokerFirmApiService.GetMunicipalities()));
-                    CreateHousingInput.SelectedMunicipalityId = CreateHousingInput.Municipalities.First().MunicipalityId;
+               {
+                   var response = await BrokerFirmApiService.GetMunicipalities();
+
+                   if (response.Success)
+                   {
+                       CreateHousingInput.Municipalities.AddRange(AutoMapper.Map<List<MunicipalityViewModel>>(response.Value!));
+                       CreateHousingInput.SelectedMunicipalityId = CreateHousingInput.Municipalities.First().MunicipalityId;
+                   }
+                   else
+                   {
+                       // Todo - Handle
+                   }
+                    
                });
         }
 

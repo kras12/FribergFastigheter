@@ -140,7 +140,12 @@ namespace FribergFastigheter.Client.Components.Housing
 
                 if (deleteImageAuthorizationResult.Succeeded)
                 {
-                    await BrokerFirmApiService.DeleteHousingImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+                    var response = await BrokerFirmApiService.DeleteHousingImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
+
+                    if (!response.Success)
+                    {
+                        // TODO - handle
+                    }
                 }
                 else
                 {
@@ -163,10 +168,18 @@ namespace FribergFastigheter.Client.Components.Housing
 
             if (housingAuthorizationResult.Succeeded)
             {
-                await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
-                AutoMapper.Map(EditHousingInput!, Housing);
-                Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
-                Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
+                var response = await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
+
+                if (response.Success)
+                {
+                    AutoMapper.Map(EditHousingInput!, Housing);
+                    Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
+                    Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
+                }
+                else
+                {
+                    // TODO - Handle
+                }
             }
             else
             {
@@ -183,7 +196,16 @@ namespace FribergFastigheter.Client.Components.Housing
             return Task.Run(
                async () =>
                {
-                   Housing.Images = AutoMapper.Map<List<ImageViewModel>>(await BrokerFirmApiService.GetHousingImages(Housing.HousingId));                  
+                   var response = await BrokerFirmApiService.GetHousingImages(Housing.HousingId);
+
+                   if (response.Success)
+                   {
+                       Housing.Images = AutoMapper.Map<List<ImageViewModel>>(response.Value!);
+                   }
+                   else
+                   {
+                       // TODO - handle
+                   }                   
                });
         }
 
@@ -223,7 +245,16 @@ namespace FribergFastigheter.Client.Components.Housing
             return Task.Run(
                async () =>
                {
-                    _municipalities = AutoMapper.Map<List<MunicipalityViewModel>>(await BrokerFirmApiService.GetMunicipalities());
+                   var response = await BrokerFirmApiService.GetMunicipalities();
+
+                   if (response.Success)
+                   {
+                       _municipalities = AutoMapper.Map<List<MunicipalityViewModel>>(response.Value!);
+                   }
+                   else
+                   {
+                       // Todo - Handle
+                   }
                });
         }
 
@@ -353,8 +384,26 @@ namespace FribergFastigheter.Client.Components.Housing
 
                 if (imageAuthorizationResult.Succeeded)
                 {
-                    var uploadedImages = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
-                    Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(uploadedImages));
+                    var response = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
+
+                    if (response.Success)
+                    {
+                        var innerResponse = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
+
+                        if (innerResponse.Success)
+                        {
+                            Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(innerResponse.Value!));
+                        }
+                        else
+                        {
+                            // Todo - Handle
+                        }
+
+                    }
+                    else
+                    {
+                        // Todo - Handle
+                    }
                 }
                 else
                 {
