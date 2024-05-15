@@ -100,7 +100,7 @@ namespace FribergFastigheter.Client.Components.Broker
             var user = (await AuthenticationStateTask).User;
             var authorizationData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: Broker.BrokerFirm.BrokerFirmId,
                 existingBrokerBrokerId: Broker.BrokerId);
-            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditBroker);
+            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditBrokerResource);
 
             if (result.Succeeded)
             {
