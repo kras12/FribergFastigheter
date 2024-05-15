@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using Blazored.SessionStorage;
 using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Pages.BrokerFirmMember;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto.Login;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
-using static FribergFastigheter.Client.Components.ConfirmButton;
 
 namespace FribergFastigheter.Client.Layout
 {
@@ -19,12 +19,21 @@ namespace FribergFastigheter.Client.Layout
     /// <!-- Co Authors: -->
     public partial class LoginButton : ComponentBase
     {
-		#region Fields
+        #region Constants
 
-		/// <summary>
-		/// A collection of validation errors returned from the API.
-		/// </summary>
-		private List<string> _apiValidationErrors = new List<string>();
+        /// <summary>
+        /// The key where the component looks for redirect url targets after logging in. 
+        /// </summary>
+        public const string RedirectUrlStorageKey = "RedirectUrlAfterLoginKey";
+
+        #endregion
+
+        #region Fields
+
+        /// <summary>
+        /// A collection of validation errors returned from the API.
+        /// </summary>
+        private List<string> _apiValidationErrors = new List<string>();
 
 		/// <summary>
 		/// The id of the modal dialg. 
@@ -81,6 +90,14 @@ namespace FribergFastigheter.Client.Layout
         private NavigationManager NavigationManager { get; set; }
 #pragma warning restore CS8618 
 
+        /// <summary>
+        /// The injected session storage service.
+        /// </summary>
+        [Inject]
+#pragma warning disable CS8618 
+        private ISessionStorageService SessionStorageService { get; set; }
+#pragma warning restore CS8618 
+
         #endregion
 
         #region Methods
@@ -108,7 +125,16 @@ namespace FribergFastigheter.Client.Layout
             if (response.Success)
             {
                 FormInput = new LoginViewModel();
-                NavigationManager.NavigateTo("brokermember");
+                string navigateToUrl = BrokerFirmHomePage.BrokerMemberPageUrl;
+
+                if (await SessionStorageService.ContainKeyAsync(RedirectUrlStorageKey))
+                {
+                    string redirectToUrl = await SessionStorageService.GetItemAsStringAsync(RedirectUrlStorageKey);
+                    await SessionStorageService.RemoveItemAsync(RedirectUrlStorageKey);
+                    navigateToUrl = redirectToUrl;
+                }
+
+                NavigationManager.NavigateTo(navigateToUrl);
             }
             else
             {
@@ -116,7 +142,7 @@ namespace FribergFastigheter.Client.Layout
 
                 // TODO - Find better solution
                 // The identity framework provides us with english messages, so we perform a quick translation.
-                for (int i = 0; i <  _apiValidationErrors.Count; i++)
+                for (int i = 0; i < _apiValidationErrors.Count; i++)
                 {
                     if (_apiValidationErrors[i].Equals("The UserName field is required.", StringComparison.CurrentCultureIgnoreCase))
                     {

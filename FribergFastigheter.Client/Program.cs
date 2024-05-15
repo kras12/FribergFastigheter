@@ -5,12 +5,11 @@ using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker;
 using FribergFastigheter.Client.Services.AuthorizationHandlers.Housing;
-using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.SessionStorage;
 
 namespace FribergFastigheter.Client
 {
@@ -29,6 +28,7 @@ namespace FribergFastigheter.Client
             builder.Services.AddScoped<AuthenticationStateProvider, BrokerFirmAuthenticationStateProvider>();
             builder.Services.AddScoped<HousingSearchService, HousingSearchService>();
             builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredSessionStorage();  
 
             builder.Services.AddOidcAuthentication(options =>
 			{
