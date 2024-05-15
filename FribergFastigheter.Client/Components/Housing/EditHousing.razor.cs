@@ -388,17 +388,7 @@ namespace FribergFastigheter.Client.Components.Housing
 
                     if (response.Success)
                     {
-                        var innerResponse = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
-
-                        if (innerResponse.Success)
-                        {
-                            Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(innerResponse.Value!));
-                        }
-                        else
-                        {
-                            // Todo - Handle
-                        }
-
+                        Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(response.Value!));
                     }
                     else
                     {
