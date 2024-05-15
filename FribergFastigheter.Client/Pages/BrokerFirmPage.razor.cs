@@ -84,9 +84,8 @@ namespace FribergFastigheter.Client.Pages
 			BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);
 			BrokerFirm = brokerFirmResult;
 
-			List<BrokerViewModel> result = (await HousingApiService.GetBrokers(BrokerFirmId))
-				.Select(x => AutoMapper.Map<BrokerViewModel>(x)).ToList();
-			Brokers = result;
+			Brokers = BrokerFirm.Brokers;
+
 			Housings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousings(BrokerFirmId, 3));
 		}
 
