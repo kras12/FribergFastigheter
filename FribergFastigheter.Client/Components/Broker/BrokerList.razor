@@ -12,16 +12,18 @@
         </div>
     </div>
     <AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
-    <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
-    
-    @if (IsNewBrokerFormActive == true)
-    {
-        <CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
-    }
-    @if (IsEditBrokerFormActive == true)
-    {
-        <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
-    }
+        <AuthorizeView Context="CreateBrokerButtonContext" Policy="@ApplicationPolicies.CanCreateBroker">
+            <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
+        </AuthorizeView>
+
+        @if (IsNewBrokerFormActive == true)
+        {
+            <CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
+        }
+        @if (IsEditBrokerFormActive == true)
+        {
+            <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
+        }
     </AuthorizeView>
     <div class="broker-list">
         @if (Brokers.Count > 0)
@@ -47,8 +49,12 @@
                         </h5>
                         <AuthorizeView Policy="@ApplicationPolicies.BrokerAdmin">
                         <div class="d-flex flex-row gap-3">
-                            <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
-                            <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
+                            <AuthorizeView Context="EditBrokerButtonContext" Policy="@ApplicationPolicies.CanEditBroker">
+                                <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
+                            </AuthorizeView>
+                            <AuthorizeView Context="DeleteBrokerButtonContext" Policy="@ApplicationPolicies.CanDeleteBroker">
+                                <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
+                            </AuthorizeView>
                         </div>
                         </AuthorizeView>
                     </div>

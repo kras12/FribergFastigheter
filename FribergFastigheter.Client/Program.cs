@@ -79,6 +79,15 @@ namespace FribergFastigheter.Client
 
                 options.AddPolicy(ApplicationPolicies.CanDeleteBrokerResource, policy =>
                     policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.DeleteBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.CreateBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.EditBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.DeleteBroker)));
             });
 
             // Add API services with typed http clients
