@@ -15,7 +15,7 @@
     </Authorized>
     <NotAuthorized>
         <li class="nav-item">
-            <a type="button" class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#@_modalDialogId">Log in</a>
+            <a type="button" class="nav-link btn btn-link" id="@(_modalDialogId)-toggle" data-bs-toggle="modal" data-bs-target="#@_modalDialogId">Log in</a>
         </li>
         <div class="modal fade" id="@_modalDialogId" tabindex="-1" aria-labelledby="@(_modalDialogId)-label" aria-hidden="true">
             <div class="modal-dialog">
@@ -66,9 +66,15 @@
 
 <script>
     function HideBrokerLoginModal(id) { 
-        console.log(document.getElementById(id));
         let modal = bootstrap.Modal.getInstance(document.getElementById(id))
-        console.log(modal);
+        //console.log(modal);
         modal.hide();
+    }
+
+    function ShowBrokerLoginModal(id) {
+        let modal = bootstrap.Modal.getInstance(document.getElementById(id))
+        let modalToggle = document.getElementById('id' + '-toggle')
+        //console.log(modal);
+        modal.show(modalToggle);
     }
 </script>

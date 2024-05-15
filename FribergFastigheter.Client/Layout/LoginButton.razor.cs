@@ -19,17 +19,17 @@ namespace FribergFastigheter.Client.Layout
     /// <!-- Co Authors: -->
     public partial class LoginButton : ComponentBase
     {
-        #region Fields
+		#region Fields
 
-        /// <summary>
+		/// <summary>
 		/// A collection of validation errors returned from the API.
 		/// </summary>
 		private List<string> _apiValidationErrors = new List<string>();
 
 		/// <summary>
-        /// The id of the modal dialg. 
-        /// </summary>
-        private readonly string _modalDialogId = Guid.NewGuid().ToString();
+		/// The id of the modal dialg. 
+		/// </summary>
+		private readonly string _modalDialogId = Guid.NewGuid().ToString();
 
         #endregion
 
@@ -127,6 +127,10 @@ namespace FribergFastigheter.Client.Layout
                         _apiValidationErrors[i] = ViewModelBase.PasswordValidationErrorMessage;
                     }
                 }
+
+                // The framework needs some time it seems
+                await Task.Delay(200);
+                await JSRuntime.InvokeVoidAsync("ShowBrokerLoginModal", _modalDialogId);
             }
         }
 
