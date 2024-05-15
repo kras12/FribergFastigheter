@@ -2,13 +2,10 @@
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.ComponentModel.DataAnnotations;
 using FribergFastigheter.Server.Controllers.BrokerFirmApi;
 using FribergFastigheter.Shared.Dto.Broker;
-using FribergFastigheter.Shared.Dto.Error;
-using FribergFastigheter.Shared.Constants;
-using Microsoft.AspNetCore.Authorization;
+using FribergFastigheter.Server.Dto;
+using FribergFastigheter.Shared.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -64,21 +61,21 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: Marcus -->
 		[HttpGet("broker/{id:int}")]
-		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-		[ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetById(int id)
+		[ProducesResponseType<MvcApiValueResponseDto<BrokerDto>>(StatusCodes.Status200OK)]
+		[ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<BrokerDto>> GetById(int id)
 		{
 			var broker = await _brokerRepository.GetBrokerByIdAsync(id);
 
 			if (broker == null)
 			{
-				return NotFound(new ErrorMessageDto(System.Net.HttpStatusCode.NotFound, $"The broker with ID '{id}' was not found."));
+				return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, $"The broker with ID '{id}' was not found."));
 			}
 
 			var result = _mapper.Map<BrokerDto>(broker);
             _imageService.PrepareDto(HttpContext, HousingFileController.ImageDownloadApiEndpoint, result);
 
-			return Ok(result);
+			return Ok(new MvcApiValueResponseDto<BrokerDto>(result));
 		}
 
 		/// <summary>
@@ -87,17 +84,14 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <returns>An embedded collection of <see cref="BrokerDto"/>.</returns>
 		/// <!-- Author: Marcus, Jimmie -->
 		/// <!-- Co Authors:  -->
-		[HttpGet("brokers/{id:int}")]
-		[ProducesResponseType<BrokerDto>(StatusCodes.Status200OK)]
-		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers(int id)
+		[HttpGet("brokers")]
+		[ProducesResponseType<MvcApiValueResponseDto<List<BrokerDto>>>(StatusCodes.Status200OK)]
+		public async Task<ActionResult<List<BrokerDto>>> GetBrokers(int brokerFirmId)
 		{
-
-			var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(id))
-				.Select(x => _mapper.Map<BrokerDto>(x))
-				.ToList();
-
+			var brokers = _mapper.Map<List<BrokerDto>>(await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId));
 			_imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokers);
-			return Ok(brokers);
+
+			return Ok(new MvcApiValueResponseDto<List<BrokerDto>>(brokers));
 		}
 
 		#endregion

@@ -86,8 +86,16 @@ namespace FribergFastigheter.Client.Components.Housing
 
                 if (authorizeResult.Succeeded)
                 {
-                    await BrokerFirmApiService.DeleteHousing(Housing.HousingId);
-                    await OnHousingDeleted.InvokeAsync(Housing);
+                    var response = await BrokerFirmApiService.DeleteHousing(Housing.HousingId);
+
+                    if (response.Success)
+                    {
+                        await OnHousingDeleted.InvokeAsync(Housing);
+                    }
+                    else
+                    {
+                        // TODO - show message
+                    }
                 }
                 else
                 {

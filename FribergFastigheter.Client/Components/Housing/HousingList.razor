@@ -30,7 +30,8 @@
                     @if (brokers.Count > 0)
                     {
                         var loggedInBroker = brokers.Find(x => x.BrokerId == _loggedInBrokerId);
-                        if(loggedInBroker != null)
+
+                        if (loggedInBroker != null)
                         {
                             brokers.Remove(loggedInBroker!);
                             brokers.Insert(0, loggedInBroker!);

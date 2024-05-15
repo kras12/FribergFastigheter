@@ -42,14 +42,31 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Firm
 
         protected override async Task OnInitializedAsync()
         {
-            BrokerFirmDto brokerFirm = await BrokerFirmApiService.GetBrokerFirm();
-            BrokerFirmViewModel brokerFirmResult = Mapper.Map<BrokerFirmViewModel>(brokerFirm);
-            BrokerFirm = brokerFirmResult;
+            var outerResponse = await BrokerFirmApiService.GetBrokerFirm();
 
-            List<BrokerViewModel> result = (await BrokerFirmApiService.GetBrokers())
-                .Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
-            Brokers = result;
-            Housings = Mapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(3));
+            if (outerResponse.Success)
+            {
+                BrokerFirmDto brokerFirm = outerResponse.Value!;
+                BrokerFirmViewModel brokerFirmResult = Mapper.Map<BrokerFirmViewModel>(brokerFirm);
+                BrokerFirm = brokerFirmResult;
+
+                var innerResponse = await BrokerFirmApiService.GetBrokers();
+
+                if (innerResponse.Success)
+                {
+                    List<BrokerViewModel> result = innerResponse.Value!.Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
+                    Brokers = result;
+                    Housings = Mapper.Map<List<HousingViewModel>>(await BrokerFirmApiService.GetHousings(3));
+                }
+                else
+                {
+                    // TOOD - Show message
+                }
+            }
+            else
+            {
+                // TOOD - Show message
+            }
         }
 
         public void OpenBrokerList()

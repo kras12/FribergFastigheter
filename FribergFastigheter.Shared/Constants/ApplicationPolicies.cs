@@ -20,6 +20,11 @@
         public const string BrokerAdmin = "BrokerAdmin";
 
         /// <summary>
+        /// The broker firm association policy.
+        /// </summary>
+        public const string BrokerFirmAssociation = "BrokerFirmAssociation";
+
+        /// <summary>
         /// The can create housing policy.
         /// </summary>
         public const string CanCreateHousing = "CanCreateHousing";

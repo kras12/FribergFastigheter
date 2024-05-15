@@ -95,8 +95,17 @@ namespace FribergFastigheter.Client.Components.Broker
                     {
                         Broker.ProfileImage = new ImageViewModel();
                     }
-                    await BrokerFirmApiService.DeleteBroker(Broker.BrokerId);
-                    await OnBrokerDeleted.InvokeAsync(Broker);
+                    
+                    var response = await BrokerFirmApiService.DeleteBroker(Broker.BrokerId);
+
+                    if (response.Success)
+                    {
+                        await OnBrokerDeleted.InvokeAsync(Broker);
+                    }
+                    else
+                    {
+                        // TODO - show message
+                    }
                 }
                 else
                 {
@@ -108,7 +117,17 @@ namespace FribergFastigheter.Client.Components.Broker
 
         protected override async Task OnInitializedAsync()
         {
-            Broker.HousingsCount = await BrokerFirmApiService.GetHousingCountByBrokerId(Broker.BrokerId);
+            var response = await BrokerFirmApiService.GetHousingCountByBrokerId(Broker.BrokerId); 
+            
+            if (response.Success)
+            {
+                Broker.HousingsCount = response.Value!.Value;
+            }
+            else
+            {
+                // TODO - handle
+            }
+            
         }
 
         #endregion

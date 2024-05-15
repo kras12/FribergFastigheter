@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using FribergFastigheter.Server.Data.Interfaces;
-using FribergFastigheter.Server.Services;
-using FribergFastigheterApi.Data.DatabaseContexts;
+﻿using FribergFastigheter.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using FribergFastigheter.Shared.Dto.Error;
+using FribergFastigheter.Server.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -72,7 +68,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// <!-- Co Authors: -->
         [HttpGet("image/{fileName}")]
         [ProducesResponseType<FileContentResult>(StatusCodes.Status200OK)]
-        [ProducesResponseType<ErrorMessageDto>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetImageFile(string fileName)
         {
             var fileResult = await _imageService.PrepareImageFileDownloadAsync(fileName);
@@ -83,7 +79,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
             }
             else
             {
-                return NotFound();
+                return NotFound(new MvcApiErrorResponseDto(Shared.Enums.ApiErrorMessageTypes.ResourceNotFound, "The image doesn't exists."));
             }
         }
 

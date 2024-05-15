@@ -104,18 +104,26 @@ namespace FribergFastigheter.Client.Components.Broker
 
             if (result.Succeeded)
             {
-                await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(BrokerInput));
-                AutoMapper.Map(BrokerInput!, Broker);
+                var response = await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(BrokerInput));
 
-                if (_deleteProfileImage)
+                if (response.Success)
                 {
-                    await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+                    AutoMapper.Map(BrokerInput!, Broker);
+
+                    if (_deleteProfileImage)
+                    {
+                        await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+                    }
+                    if (_uploadedProfileImage != null)
+                    {
+                        Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                    }
+                    await OnBrokerEdited.InvokeAsync(Broker);
                 }
-                if (_uploadedProfileImage != null)
+                else
                 {
-                    Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                    // TODO - Show message
                 }
-                await OnBrokerEdited.InvokeAsync(Broker);
             }
             else
             {

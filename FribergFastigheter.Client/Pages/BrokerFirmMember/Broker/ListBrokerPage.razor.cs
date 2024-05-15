@@ -43,18 +43,29 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 
 
         protected override async Task OnInitializedAsync()
-        { 
-            List<BrokerViewModel> result = (await BrokerFirmApiService.GetBrokers())
-                .Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
-            Brokers = result;
+        {
+            var outerResponse = await BrokerFirmApiService.GetBrokers();
 
+            if (outerResponse.Success)
+            {
+                Brokers = outerResponse.Value!.Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
+                var response = await BrokerFirmApiService.GetBrokerFirm();
 
-            BrokerFirm = Mapper.Map<BrokerFirmSummaryViewModel>(await BrokerFirmApiService.GetBrokerFirm());      
+                if (response.Success)
+                {
+                    BrokerFirm = Mapper.Map<BrokerFirmSummaryViewModel>(response.Value!);
+                }
+                else
+                {
+                    // TODO - Create message
+                }
+            }
+            else
+            {
+                // TODO - Create message
+            }
         }
 
-
-
         #endregion
-
     }
 }
