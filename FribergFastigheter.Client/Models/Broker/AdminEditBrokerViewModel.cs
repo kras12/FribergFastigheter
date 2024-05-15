@@ -9,7 +9,7 @@ namespace FribergFastigheter.Client.Models.Broker
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class AdminEditBrokerViewModel
+    public class AdminEditBrokerViewModel : ViewModelBase
     {
         #region Properties
 
@@ -26,15 +26,21 @@ namespace FribergFastigheter.Client.Models.Broker
         /// <summary>
         /// The email of the broker.
         /// </summary>
+        [Required]
+        [EmailAddress]
         public string Email { get; set; } = "";
         /// <summary>
         /// The first name of the broker.
         /// </summary>
+        [Required]
+        [RegularExpression(NameValidationExpression, ErrorMessage = NameValidationErrorMessage)]
         public string FirstName { get; set; } = "";
 
         /// <summary>
         /// The last name of the broker.
         /// </summary>
+        [Required]
+        [RegularExpression(NameValidationExpression, ErrorMessage = NameValidationErrorMessage)]
         public string LastName { get; set; } = "";
 
         /// <summary>

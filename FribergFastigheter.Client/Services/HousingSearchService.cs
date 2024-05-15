@@ -85,9 +85,18 @@ namespace FribergFastigheter.Client.Services
             return Task.Run(
                async () =>
                {
-                   HousingSearchFormInput.HousingCategories.Add(HousingCategoryViewModel.AllCategories);
-                   HousingSearchFormInput.HousingCategories.AddRange(_autoMapper.Map<List<HousingCategoryViewModel>>(await _housingApi.GetHousingCategories()));
-                   HousingSearchFormInput.SelectedCategoryId = HousingSearchFormInput.HousingCategories.First().HousingCategoryId;
+                   var response = await _housingApi.GetHousingCategories();
+
+                   if (response.Success)
+                   {
+                       HousingSearchFormInput.HousingCategories.Add(HousingCategoryViewModel.AllCategories);
+                       HousingSearchFormInput.HousingCategories.AddRange(_autoMapper.Map<List<HousingCategoryViewModel>>(response.Value!));
+                       HousingSearchFormInput.SelectedCategoryId = HousingSearchFormInput.HousingCategories.First().HousingCategoryId;
+                   }
+                   else
+                   {
+                       // TODO - Handle
+                   }                   
                });
         }
 
@@ -102,9 +111,18 @@ namespace FribergFastigheter.Client.Services
             return Task.Run(
                async () =>
                {
-                   HousingSearchFormInput.Municipalities.Add(MunicipalityViewModel.AllMunicipalities);
-                   HousingSearchFormInput.Municipalities.AddRange(_autoMapper.Map<List<MunicipalityViewModel>>(await _housingApi.GetMunicipalities()));
-                   HousingSearchFormInput.SelectedMunicipalityId = HousingSearchFormInput.Municipalities.First().MunicipalityId;
+                   var response = await _housingApi.GetMunicipalities();
+
+                   if (response.Success)
+                   {
+                       HousingSearchFormInput.Municipalities.Add(MunicipalityViewModel.AllMunicipalities);
+                       HousingSearchFormInput.Municipalities.AddRange(_autoMapper.Map<List<MunicipalityViewModel>>(response.Value!));
+                       HousingSearchFormInput.SelectedMunicipalityId = HousingSearchFormInput.Municipalities.First().MunicipalityId;
+                   }
+                   else
+                   {
+                       // TODO - Handle
+                   }
                });
         }
 

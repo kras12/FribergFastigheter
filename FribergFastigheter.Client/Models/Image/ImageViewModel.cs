@@ -7,7 +7,7 @@ namespace FribergFastigheter.Client.Models.Image
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class ImageViewModel
+    public class ImageViewModel : ViewModelBase
     {
         #region Properties
 

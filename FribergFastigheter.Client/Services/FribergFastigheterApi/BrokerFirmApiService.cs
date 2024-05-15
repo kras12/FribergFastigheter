@@ -212,11 +212,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<ApiResponseDto<object>> DeleteBroker([Required] int id)
+        public async Task<ApiResponseDto<object?>> DeleteBroker([Required] int id)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.DeleteAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
-            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<object>>();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<object?>>();
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 

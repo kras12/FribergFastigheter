@@ -9,7 +9,7 @@ namespace FribergFastigheter.Client.Models.Broker
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class EditBrokerViewModel
+    public class EditBrokerViewModel : ViewModelBase
     {
         #region Properties
 

@@ -8,7 +8,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingSearchInputViewModel
+    public class HousingSearchInputViewModel : ViewModelBase
     {
         #region Properties
 
@@ -20,25 +20,29 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The maximum living area in m² of the housing object.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int MaxLivingArea { get; set; } = 300;
 
         /// <summary>
         /// The maximum price of the housing object.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int MaxPrice { get; set; } = 20_000_000;
 
         /// <summary>
         /// The minimum living area in m² of the housing object.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int MinLivingArea { get; set; } = 20;
 
         /// <summary>
         /// The minimum price of the housing object.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int MinPrice { get; set; } = 0;
 
         /// <summary>
@@ -49,19 +53,22 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The number of results to fetch per page.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int NumberOfResultsPerPage { get; set; } = 25;
 
         /// <summary>
         /// The selected housing category.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int SelectedCategoryId { get; set; }
 
         /// <summary>
         /// The selected municipality.
         /// </summary>
-        [Range(0, int.MaxValue, ErrorMessage = "Ange ett positivt värde.")]
+        [Required]
+        [Range(0, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int SelectedMunicipalityId { get; set; }
 
         #endregion

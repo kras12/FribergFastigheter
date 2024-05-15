@@ -112,7 +112,12 @@ namespace FribergFastigheter.Client.Components.Broker
 
                     if (_deleteProfileImage)
                     {
-                        await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+                        var innerResponse = await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+
+                        if (!innerResponse.Success)
+                        {
+                            // TODO - handle
+                        }
                     }
                     if (_uploadedProfileImage != null)
                     {
@@ -163,10 +168,19 @@ namespace FribergFastigheter.Client.Components.Broker
             {
                 throw new InvalidOperationException("No image to upload was found");
             }
-            var result = await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, _uploadedProfileImage);
-            _uploadedProfileImage = null;
-            return result != null ? AutoMapper.Map<ImageViewModel>(result) : new ImageViewModel();
-            
+
+            var response = await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, _uploadedProfileImage);
+
+            if (response.Success)
+            {
+                _uploadedProfileImage = null;
+                return AutoMapper.Map<ImageViewModel>(response.Value!);
+            }
+            else
+            {
+                // TODO - handle
+                throw new Exception($"Failed to upload profile image: {response.GetErrorsAsString()}");
+            }            
         }
         #endregion
     }

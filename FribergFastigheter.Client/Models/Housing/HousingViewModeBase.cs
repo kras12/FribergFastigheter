@@ -8,7 +8,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingViewModelBase
+    public class HousingViewModelBase : ViewModelBase
     {
         #region Properties
 

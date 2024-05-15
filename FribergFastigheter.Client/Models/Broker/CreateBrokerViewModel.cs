@@ -8,7 +8,7 @@ namespace FribergFastigheter.Client.Models.Broker
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class CreateBrokerViewModel
+    public class CreateBrokerViewModel : ViewModelBase
     {
         #region Properties
 
@@ -22,21 +22,21 @@ namespace FribergFastigheter.Client.Models.Broker
         /// </summary>
         [Required]
         [EmailAddress]
-        [RegularExpression(@"^[\p{L}\p{N}\._\-]+\@[\p{L}\p{N}\.\-]+\.\p{L}+$", ErrorMessage = "Ogiltig epostadress.")]
+        [RegularExpression(EmailValidationExpression, ErrorMessage = EmailValidationErrorMessage)]
         public string Email { get; set; } = "";
 
         /// <summary>
         /// The first name of the broker.
         /// </summary>
         [Required]
-        [RegularExpression(@"^[\p{L} ]+$", ErrorMessage = "Får endast innehålla bokstäver och mellanrum.")]
+        [RegularExpression(NameValidationExpression, ErrorMessage = NameValidationErrorMessage)]
         public string FirstName { get; set; } = "";
 
         /// <summary>
         /// The last name of the broker.
         /// </summary>
         [Required]
-        [RegularExpression(@"^[\p{L} ]+$", ErrorMessage = "Får endast innehålla bokstäver och mellanrum.")]
+        [RegularExpression(NameValidationExpression, ErrorMessage = NameValidationErrorMessage)]
         public string LastName { get; set; } = "";
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// The password for the broker.
         /// </summary>
         [Required]
-        [RegularExpression(@"^(?=.*?\p{Ll})(?=.*?\p{Lu})(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{10,}$", ErrorMessage = "Lösenordet måste vara minst 10 tecken och innehålla stora och små bokstäver, siffror, och specialtecken (#?!@$ %^&*-)")]
+        [RegularExpression(PasswordValididationExpression, ErrorMessage = PasswordValidationErrorMessage)]
         public string Password { get; set; } = "";
 
         #endregion

@@ -7,7 +7,7 @@ namespace FribergFastigheter.Client.Models.BrokerFirm
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class LoginViewModel
+    public class LoginViewModel : ViewModelBase
     {
         #region Properties
 
@@ -15,7 +15,7 @@ namespace FribergFastigheter.Client.Models.BrokerFirm
         /// The user password. 
         /// </summary>
         [Required]
-        [RegularExpression(@"^(?=.*?\p{Ll})(?=.*?\p{Lu})(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{10,}$", ErrorMessage = "Lösenordet måste vara minst 10 tecken och innehålla stora och små bokstäver, siffror, och specialtecken (#?!@$ %^&*-)")]
+        [RegularExpression(PasswordValididationExpression, ErrorMessage = PasswordValidationErrorMessage)]
         public string Password { get; set; } = "";
 
         /// <summary>
