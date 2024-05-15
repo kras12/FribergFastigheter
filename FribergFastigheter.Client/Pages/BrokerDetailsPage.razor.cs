@@ -64,12 +64,31 @@ namespace FribergFastigheter.Client.Pages
 		protected async override Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-			Broker = AutoMapper.Map<BrokerViewModel>(await HousingApiService.GetBrokerById(BrokerId));
-			BrokerHousings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousingsByBrokerId(Broker.BrokerId, 3));
-			// TODO - Find a better way to retrieve the URLS
-			BrokerHousings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
-			BrokerHousings.Select(x => x.Broker).ToList().ForEach(x => x.Url = $"Broker/{x.BrokerId}");
-			BrokerHousings.Select(x => x.Broker.BrokerFirm).ToList().ForEach(x => x.Url = $"BrokerFirm/{x.BrokerFirmId}");
+
+			var response = await HousingApiService.GetBrokerById(BrokerId);
+
+			if (response.Success)
+			{
+				Broker = AutoMapper.Map<BrokerViewModel>(response.Value!);
+				var innerResponse = await HousingApiService.GetHousingsByBrokerId(Broker.BrokerId, 3);
+
+				if (innerResponse.Success)
+				{
+					BrokerHousings = AutoMapper.Map<List<HousingViewModel>>(innerResponse.Value!);
+					// TODO - Find a better way to retrieve the URLS
+					BrokerHousings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
+					BrokerHousings.Select(x => x.Broker).ToList().ForEach(x => x.Url = $"Broker/{x.BrokerId}");
+					BrokerHousings.Select(x => x.Broker.BrokerFirm).ToList().ForEach(x => x.Url = $"BrokerFirm/{x.BrokerFirmId}");
+				}
+				else
+				{
+					// TODO - Handle
+				}
+			}
+			else
+			{
+				// TODO - Handle
+			}				
 		}
 
 		#endregion

@@ -139,17 +139,24 @@ namespace FribergFastigheter.Client.Services
             int? categoryFilter = HousingSearchFormInput.SelectedCategoryId != HousingCategoryViewModel.AllCategories.HousingCategoryId ? HousingSearchFormInput.SelectedCategoryId : null;
             int? offsetRows = pageNumber != null ? (pageNumber - 1) * _lastHousingSearchInput.NumberOfResultsPerPage : null;
 
-            var result = await _housingApi.SearchHousings(maxNumberOfResultsPerPage: HousingSearchFormInput.NumberOfResultsPerPage, limitImageCountPerHousing: 3,
+            var response = await _housingApi.SearchHousings(maxNumberOfResultsPerPage: HousingSearchFormInput.NumberOfResultsPerPage, limitImageCountPerHousing: 3,
                 municipalityId: municipalityFilter, housingCategoryId: categoryFilter,
                 minPrice: HousingSearchFormInput.MinPrice, maxPrice: HousingSearchFormInput.MaxPrice,
                 minLivingArea: HousingSearchFormInput.MinLivingArea, maxLivingArea: HousingSearchFormInput.MaxLivingArea,
                 offsetRows: offsetRows);
 
-            _lastHousingSearchInput = _autoMapper.Map<HousingSearchInputViewModel>(HousingSearchFormInput);
-            HousingSearchResult = _autoMapper.Map<HousingSearchResultViewModel>(result);
-            // TODO - Find a better way to retrieve the URLS
-            HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
-            HaveSearchedHousings = true;
+            if (response.Success)
+            {
+				_lastHousingSearchInput = _autoMapper.Map<HousingSearchInputViewModel>(HousingSearchFormInput);
+				HousingSearchResult = _autoMapper.Map<HousingSearchResultViewModel>(response.Value!);
+				// TODO - Find a better way to retrieve the URLS
+				HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
+				HaveSearchedHousings = true;
+			}
+            else
+            {
+                // TODO - handle
+            }
         }
 
         #endregion
