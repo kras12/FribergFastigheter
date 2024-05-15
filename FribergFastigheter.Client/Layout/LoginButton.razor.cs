@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto.Login;
@@ -21,6 +22,11 @@ namespace FribergFastigheter.Client.Layout
         #region Fields
 
         /// <summary>
+		/// A collection of validation errors returned from the API.
+		/// </summary>
+		private List<string> _apiValidationErrors = new List<string>();
+
+		/// <summary>
         /// The id of the modal dialg. 
         /// </summary>
         private readonly string _modalDialogId = Guid.NewGuid().ToString();
@@ -95,6 +101,7 @@ namespace FribergFastigheter.Client.Layout
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task OnValidSubmit()
         {
+            _apiValidationErrors.Clear();
             await JSRuntime.InvokeVoidAsync("HideBrokerLoginModal", _modalDialogId);
             var response = await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
 
@@ -105,7 +112,21 @@ namespace FribergFastigheter.Client.Layout
             }
             else
             {
-                // TODO - show message
+                _apiValidationErrors = response.Errors.Select(x => x.Value).ToList();
+
+                // TODO - Find better solution
+                // The identity framework provides us with english messages, so we perform a quick translation.
+                for (int i = 0; i <  _apiValidationErrors.Count; i++)
+                {
+                    if (_apiValidationErrors[i].Equals("The UserName field is required.", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        _apiValidationErrors[i] = ViewModelBase.EmailValidationErrorMessage;
+                    }
+                    else if (_apiValidationErrors[i].Equals("The Password field is required.", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        _apiValidationErrors[i] = ViewModelBase.PasswordValidationErrorMessage;
+                    }
+                }
             }
         }
 

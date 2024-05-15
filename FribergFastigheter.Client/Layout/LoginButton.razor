@@ -28,6 +28,17 @@
                         <EditForm Context="EditFormContext" Model="FormInput" OnValidSubmit="OnValidSubmit">
                             <DataAnnotationsValidator></DataAnnotationsValidator>
                             <div class="d-flex flex-column gap-3 align-items-center">
+                                @if (_apiValidationErrors.Count > 0)
+                                {
+                                    <ul>
+                                        @{
+                                            foreach (var error in _apiValidationErrors)
+                                            {
+                                                <li class="text-danger">@error</li>
+                                            }
+                                        }
+                                    </ul>
+                                }                            
                                 <div class="d-flex flex-column w-75">
                                     <label for="email">Email</label>
                                     <InputText name="email" @bind-Value="FormInput.UserName"></InputText>
