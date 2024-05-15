@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Shared.Dto.Broker;
+﻿using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
@@ -176,13 +177,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public async Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker)
+        public async Task<ApiResponseDto<BrokerDto>> AdminCreateBroker([Required] RegisterBrokerDto broker)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsJsonAsync($"{AdminBrokerCreationApiEndpoint}", broker);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<BrokerDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            return EnsureNotNull(result, "Failed to create or serialize the resulting broker object.");
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<BrokerDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -193,11 +193,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: -->
-        public async Task AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker)
+        public async Task<ApiResponseDto<BrokerDto>> AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PutAsJsonAsync($"{AdminBrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
-            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<BrokerDto>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         #endregion
@@ -211,11 +212,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task DeleteBroker([Required] int id)
+        public async Task<ApiResponseDto<object>> DeleteBroker([Required] int id)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.DeleteAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
-            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<object>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -226,11 +228,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task EditBroker([Required] int brokerId, [Required] EditBrokerDto broker)
+        public async Task<ApiResponseDto<BrokerDto>> EditBroker([Required] int brokerId, [Required] EditBrokerDto broker)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PutAsJsonAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
-            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<BrokerDto>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -240,11 +243,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<BrokerDto> GetBrokerById([Required] int id)
+        public async Task<ApiResponseDto<BrokerDto>> GetBrokerById([Required] int id)
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<BrokerDto>($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
-            return EnsureNotNull(result, "Failed to fetch or serialize the broker");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<BrokerDto>>($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -253,11 +256,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<List<BrokerDto>> GetBrokers()
+        public async Task<ApiResponseDto<List<BrokerDto>>> GetBrokers()
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<List<BrokerDto>?>($"{BrokersApiEndPoint}");
-            return EnsureNotNull(result, "Failed to fetch or serialize brokers.");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<BrokerDto>>>($"{BrokersApiEndPoint}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -267,16 +270,17 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task Login(LoginDto loginData)
+        public async Task<ApiResponseDto<LoginResponseDto>> Login(LoginDto loginData)
         {
             var content = JsonContent.Create(loginData);
 
             var response = await _httpClient.PostAsync(BrokerLoginApiEndPoint, content);
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            EnsureNotNull(result, "Failed to serialize the response.");
-            await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Token);
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<LoginResponseDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return EnsureNotNull(result, "Failed to serialize the API response.");
+            await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Value!.Token);
+            return result!;
         }        
 
         #endregion
@@ -289,11 +293,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<BrokerFirmDto> GetBrokerFirm()
+        public async Task<ApiResponseDto<BrokerFirmDto>> GetBrokerFirm()
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<BrokerFirmDto>(BrokerFirmByIdApiEndPoint);
-            return EnsureNotNull(result, "Failed to fetch or serialize the broker firm.");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<BrokerFirmDto>>(BrokerFirmByIdApiEndPoint);
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -302,11 +306,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmStatisticsDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<BrokerFirmStatisticsDto> GetBrokerFirmStatistics()
+        public async Task<ApiResponseDto<BrokerFirmStatisticsDto>> GetBrokerFirmStatistics()
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<BrokerFirmStatisticsDto>(BrokerFirmStatisticsApiEndPoint);
-            return EnsureNotNull(result, "Failed to fetch or serialize the broker firm statistics object.");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<BrokerFirmStatisticsDto>>(BrokerFirmStatisticsApiEndPoint);
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         #endregion
@@ -320,13 +324,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containg a <see cref="HousingDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<HousingDto> CreateHousing([Required] CreateHousingDto housing)
+        public async Task<ApiResponseDto<HousingDto>> CreateHousing([Required] CreateHousingDto housing)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint}", housing);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<HousingDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            return EnsureNotNull(result, "Failed to serialize the returned housing object");
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<HousingDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -336,11 +340,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task DeleteHousing(int housingId)
+        public async Task<ApiResponseDto<object>> DeleteHousing(int housingId)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.DeleteAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}");
-            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<object>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -350,11 +355,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<HousingDto> GetHousingById([Required] int id)
+        public async Task<ApiResponseDto<HousingDto>> GetHousingById([Required] int id)
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<HousingDto>($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
-            return EnsureNotNull(result, "Failed to fetch or serialize the housing object");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<HousingDto>>($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, id.ToString())}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -363,11 +368,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<List<HousingCategoryDto>> GetHousingCategories()
+        public async Task<ApiResponseDto<List<HousingCategoryDto>>> GetHousingCategories()
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<List<HousingCategoryDto>>($"{HousingCategoryListApiEndpoint}");
-            return EnsureNotNull(result, "Failed to fetch or serialize the housing categories");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<HousingCategoryDto>>>($"{HousingCategoryListApiEndpoint}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -377,10 +382,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <returns>A <see cref="Task"/> containing a  <see cref="Int"/> Count</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-		public async Task<int> GetHousingCountByBrokerId(int brokerId)
+		public async Task<ApiResponseDto<ApiResponseValueTypeDto<int>>> GetHousingCountByBrokerId(int brokerId)
         {
             await SetAuthorizationHeader();
-            return await _httpClient.GetFromJsonAsync<int>($"{HousingCountByBrokerApiEndpoint}{BuildQueryString("brokerId", brokerId.ToString())}");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<ApiResponseValueTypeDto<int>>>($"{HousingCountByBrokerApiEndpoint}{BuildQueryString("brokerId", brokerId.ToString())}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -391,7 +397,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<List<HousingDto>> GetHousings(int? limitImagesPerHousing = null, int? brokerId = null)
+        public async Task<ApiResponseDto<List<HousingDto>>> GetHousings(int? limitImagesPerHousing = null, int? brokerId = null)
         {
             List<KeyValuePair<string, string>> queries = new();
 
@@ -406,8 +412,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             }
 
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<List<HousingDto>?>($"{HousingApiEndPoint}{BuildQueryString(queries)}");
-            return EnsureNotNull(result, "Failed to fetch or serialize the housing objects");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<HousingDto>>>($"{HousingApiEndPoint}{BuildQueryString(queries)}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -416,11 +422,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<List<MunicipalityDto>> GetMunicipalities()
+        public async Task<ApiResponseDto<List<MunicipalityDto>>> GetMunicipalities()
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<List<MunicipalityDto>>(MunicipalityListApiEndpoint);
-            return EnsureNotNull(result, "Failed to fetch or serialize the municipalties.");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<MunicipalityDto>>>(MunicipalityListApiEndpoint);
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -430,11 +436,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task UpdateHousing([Required] EditHousingDto housing)
+        public async Task<ApiResponseDto<HousingDto>> UpdateHousing([Required] EditHousingDto housing)
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PutAsJsonAsync($"{HousingByIdApiEndPoint.Replace(IdPlaceHolder, housing.HousingId.ToString())}", housing);
-            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<HousingDto>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         #endregion
@@ -449,7 +456,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteHousingImage(int housingId, int imageId)
+        public Task<ApiResponseDto<object>> DeleteHousingImage(int housingId, int imageId)
         {
             return DeleteHousingImages(housingId, new List<int>() { housingId });
         }
@@ -462,7 +469,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task DeleteHousingImages(int housingId, List<int> imageIds)
+        public async Task<ApiResponseDto<object>> DeleteHousingImages(int housingId, List<int> imageIds)
         {
             #region Checks
 
@@ -481,7 +488,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             await SetAuthorizationHeader();
             var response = await _httpClient.SendAsync(requestMessage);
-            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<object>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -491,11 +499,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<List<ImageDto>> GetHousingImages(int housingId)
+        public async Task<ApiResponseDto<List<ImageDto>>> GetHousingImages(int housingId)
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<List<ImageDto>>($"{HousingImageApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}");
-            return EnsureNotNull(result, "Failed to fetch or serialize the housing images");
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<ImageDto>>>($"{HousingImageApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}");
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -506,7 +514,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<List<ImageDto>> UploadHousingImages([Required] int housingId, List<IBrowserFile> newFiles)
+        public async Task<ApiResponseDto<List<ImageDto>>> UploadHousingImages([Required] int housingId, List<IBrowserFile> newFiles)
         {
             if (newFiles.Count == 0)
             {
@@ -523,8 +531,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsync($"{HousingImageApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}", content);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<List<ImageDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            return EnsureNotNull(result, "Failed to serialize the returned image objects");
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<List<ImageDto>>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         #endregion
@@ -539,10 +547,12 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public async Task DeleteBrokerProfileImage([Required] int brokerId)
+        public async Task<ApiResponseDto<object>> DeleteBrokerProfileImage([Required] int brokerId)
         {
             await SetAuthorizationHeader();
-            await _httpClient.DeleteAsync($"{BrokerProfileImageApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}");
+            var response = await _httpClient.DeleteAsync($"{BrokerProfileImageApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}");
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<object>>();
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         /// <summary>
@@ -553,7 +563,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
-        public async Task<ImageDto> UploadBrokerProfileImage([Required] int brokerId, IBrowserFile newFile)
+        public async Task<ApiResponseDto<ImageDto>> UploadBrokerProfileImage([Required] int brokerId, IBrowserFile newFile)
         {
             if (newFile == null)
             {
@@ -566,9 +576,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsync($"{BrokerProfileImageApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", content);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<ImageDto>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-
-            return EnsureNotNull(result, "Failed to serialize the returned images.");
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<ImageDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 
         #endregion

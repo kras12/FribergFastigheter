@@ -96,9 +96,17 @@ namespace FribergFastigheter.Client.Layout
         private async Task OnValidSubmit()
         {
             await JSRuntime.InvokeVoidAsync("HideBrokerLoginModal", _modalDialogId);
-            await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
-            FormInput = new LoginViewModel();
-            NavigationManager.NavigateTo("brokermember");
+            var response = await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
+
+            if (response.Success)
+            {
+                FormInput = new LoginViewModel();
+                NavigationManager.NavigateTo("brokermember");
+            }
+            else
+            {
+                // TODO - show message
+            }
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Shared.Dto.Broker;
+﻿using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
@@ -31,7 +32,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public Task<BrokerDto> AdminCreateBroker([Required] RegisterBrokerDto broker);
+        public Task<ApiResponseDto<BrokerDto>> AdminCreateBroker([Required] RegisterBrokerDto broker);
 
         /// <summary>
         /// Performs an admin edit of a broker.
@@ -41,7 +42,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: -->
-        public Task AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker);
+        public Task<ApiResponseDto<BrokerDto>> AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker);
 
         #endregion
 
@@ -54,7 +55,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteBroker([Required] int id);
+        public Task<ApiResponseDto<object>> DeleteBroker([Required] int id);
 
         /// <summary>
         /// Performs a regular edit on the logged in broker. 
@@ -64,7 +65,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task EditBroker([Required] int brokerId, [Required] EditBrokerDto broker);
+        public Task<ApiResponseDto<BrokerDto>> EditBroker([Required] int brokerId, [Required] EditBrokerDto broker);
 
         /// <summary>
         /// Fetches data for a broker. 
@@ -73,7 +74,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<BrokerDto> GetBrokerById([Required] int id);
+        public Task<ApiResponseDto<BrokerDto>> GetBrokerById([Required] int id);
 
         /// <summary>
         /// Fetches data for a broker. 
@@ -81,7 +82,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<List<BrokerDto>> GetBrokers();
+        public Task<ApiResponseDto<List<BrokerDto>>> GetBrokers();
 
         /// <summary>
         /// Logs in a broker.
@@ -90,7 +91,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task Login(LoginDto loginData);
+        public Task<ApiResponseDto<LoginResponseDto>> Login(LoginDto loginData);
 
         #endregion
 
@@ -102,7 +103,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<BrokerFirmDto> GetBrokerFirm();
+        public Task<ApiResponseDto<BrokerFirmDto>> GetBrokerFirm();
 
         /// <summary>
         /// Fetches statistics for a broker firm.
@@ -110,7 +111,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmStatisticsDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<BrokerFirmStatisticsDto> GetBrokerFirmStatistics();
+        public Task<ApiResponseDto<BrokerFirmStatisticsDto>> GetBrokerFirmStatistics();
 
         #endregion
 
@@ -123,7 +124,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containg a <see cref="HousingDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<HousingDto> CreateHousing([Required] CreateHousingDto housing);
+        public Task<ApiResponseDto<HousingDto>> CreateHousing([Required] CreateHousingDto housing);
 
         /// <summary>
         /// Deletes a housing object.
@@ -132,7 +133,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteHousing(int housingId);
+        public Task<ApiResponseDto<object>> DeleteHousing(int housingId);
 
         /// <summary>
         /// Fetches data for a housing object.
@@ -141,7 +142,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<HousingDto> GetHousingById([Required] int id);
+        public Task<ApiResponseDto<HousingDto>> GetHousingById([Required] int id);
 
         /// <summary>
         /// Fetches all housing categories.
@@ -149,7 +150,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<List<HousingCategoryDto>> GetHousingCategories();
+        public Task<ApiResponseDto<List<HousingCategoryDto>>> GetHousingCategories();
 
         /// <summary>
 		/// Fetches housing count that is being handled by a broker.
@@ -158,7 +159,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <returns>A <see cref="Task"/> containing a  <see cref="Int"/> Count</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-		public Task<int> GetHousingCountByBrokerId(int brokerId);
+		public Task<ApiResponseDto<ApiResponseValueTypeDto<int>>> GetHousingCountByBrokerId(int brokerId);
 
         /// <summary>
         /// Fetches all housing objects for a broker firm.
@@ -168,7 +169,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<List<HousingDto>> GetHousings(int? limitImagesPerHousing = null, int? brokerId = null);
+        public Task<ApiResponseDto<List<HousingDto>>> GetHousings(int? limitImagesPerHousing = null, int? brokerId = null);
 
         /// <summary>
         /// Fetches all municipalities.
@@ -176,7 +177,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<List<MunicipalityDto>> GetMunicipalities();
+        public Task<ApiResponseDto<List<MunicipalityDto>>> GetMunicipalities();
 
         /// <summary>
         /// Updates a housing object.
@@ -185,7 +186,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task UpdateHousing([Required] EditHousingDto housing);
+        public Task<ApiResponseDto<HousingDto>> UpdateHousing([Required] EditHousingDto housing);
 
         #endregion
 
@@ -199,7 +200,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteHousingImage([Required] int housingId, int imageId);
+        public Task<ApiResponseDto<object>> DeleteHousingImage([Required] int housingId, int imageId);
 
         /// <summary>
         /// Deletes an image for a housing object.
@@ -209,7 +210,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task DeleteHousingImages(int housingId, List<int> imageIds);
+        public Task<ApiResponseDto<object>> DeleteHousingImages(int housingId, List<int> imageIds);
 
         /// <summary>
         /// Fetches all images for a housing object. 
@@ -218,7 +219,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<List<ImageDto>> GetHousingImages(int housingId);
+        public Task<ApiResponseDto<List<ImageDto>>> GetHousingImages(int housingId);
 
         /// <summary>
         /// Uploads images for a housing object. 
@@ -228,7 +229,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<List<ImageDto>> UploadHousingImages([Required] int housingId, List<IBrowserFile> newFiles);
+        public Task<ApiResponseDto<List<ImageDto>>> UploadHousingImages([Required] int housingId, List<IBrowserFile> newFiles);
 
         #endregion
 
@@ -242,7 +243,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public Task DeleteBrokerProfileImage([Required] int brokerId);
+        public Task<ApiResponseDto<object>> DeleteBrokerProfileImage([Required] int brokerId);
 
         /// <summary>
         /// Uploads profileimage for a broker object. 
@@ -252,7 +253,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a collection of <see cref="ImageDto"/> objects for the uploaded images.</returns>
         /// <!-- Author: Marcus, Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<ImageDto> UploadBrokerProfileImage([Required] int brokerId, IBrowserFile newFile);
+        public Task<ApiResponseDto<ImageDto>> UploadBrokerProfileImage([Required] int brokerId, IBrowserFile newFile);
 
         #endregion
     }

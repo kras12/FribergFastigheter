@@ -56,8 +56,16 @@ namespace FribergFastigheter.Client.Pages
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task OnValidSubmit()
         {
-            await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
-            NavigationManager.NavigateTo("brokermember");
+            var response = await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
+
+            if (response.Success)
+            {
+                NavigationManager.NavigateTo("brokermember");
+            }
+            else
+            {
+                // TODO - show message
+            }
 		}
 
         #endregion

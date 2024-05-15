@@ -80,14 +80,31 @@ namespace FribergFastigheter.Client.Pages
 		/// <returns>A <see cref="Task"/> representing any asynchronous operation.</returns>
 		protected override async Task OnInitializedAsync()
 		{
-			BrokerFirmDto brokerFirm = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
-			BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);
-			BrokerFirm = brokerFirmResult;
+			var response = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
 
-			List<BrokerViewModel> result = (await HousingApiService.GetBrokers(BrokerFirmId))
-				.Select(x => AutoMapper.Map<BrokerViewModel>(x)).ToList();
-			Brokers = result;
-			Housings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousings(BrokerFirmId, 3));
+			if (response.Success )
+			{
+				BrokerFirmDto brokerFirm = response.Value!;
+                BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);
+                BrokerFirm = brokerFirmResult;
+
+				var innerResponse = await HousingApiService.GetBrokers(BrokerFirmId);
+
+				if (innerResponse.Success )
+				{
+					Brokers = AutoMapper.Map<List<BrokerViewModel>>(innerResponse.Value);
+                    Housings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousings(BrokerFirmId, 3));
+                }
+                else
+                {
+                    // TODO - Handle
+                }
+            }
+			else
+			{
+				// TODO - Handle
+			}
+            
 		}
 
 		public void OpenBrokerList()

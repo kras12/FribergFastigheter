@@ -11,6 +11,7 @@ using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data;
 using FribergFastigheter.Server.Dto;
+using FribergFastigheter.Shared.Dto.Api;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -383,7 +384,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             int brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
             int housingCount = await _housingRepository.GetHousingsCountAsync(brokerId: brokerId, brokerFirm: brokerFirmId);
-            return Ok(new MvcApiValueResponseDto<object>(housingCount));  
+            return Ok(new MvcApiValueResponseDto<ApiResponseValueTypeDto<int>>(new ApiResponseValueTypeDto<int>(housingCount)));
         }
 
         /// <summary>
