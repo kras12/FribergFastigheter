@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using FribergFastigheter.Client.Models.Broker;
-using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Models.Housing;
-using FribergFastigheter.Shared.Dto;
 
 namespace FribergFastigheter.Client.AutoMapper
 {
@@ -30,7 +28,6 @@ namespace FribergFastigheter.Client.AutoMapper
 
             CreateMap<BrokerViewModel, EditBrokerViewModel>()
                 .ReverseMap();
-
         }		
 	}
 }

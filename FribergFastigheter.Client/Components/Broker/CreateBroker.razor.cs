@@ -93,10 +93,19 @@ namespace FribergFastigheter.Client.Components.Broker
 
             if (result.Succeeded)
             {
-                var newBroker = await BrokerFirmApiService.AdminCreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
-                var newBrokerViewModel = Mapper.Map<BrokerViewModel>(newBroker);
-                newBrokerViewModel.ProfileImage = Mapper.Map<ImageViewModel>(await UploadProfileImage(newBroker!.BrokerId));
-                await OnBrokerCreated.InvokeAsync(newBrokerViewModel);
+                var response = await BrokerFirmApiService.AdminCreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
+
+                if (response.Success)
+                {
+                    var newBroker = response.Value;
+                    var newBrokerViewModel = Mapper.Map<BrokerViewModel>(newBroker);
+                    newBrokerViewModel.ProfileImage = Mapper.Map<ImageViewModel>(await UploadProfileImage(newBroker!.BrokerId));
+                    await OnBrokerCreated.InvokeAsync(newBrokerViewModel);
+                }
+                else
+                {
+                    // TODO - show message
+                }
             }
             else
             {
@@ -119,7 +128,16 @@ namespace FribergFastigheter.Client.Components.Broker
         {
             if (UploadedProfileImage != null)
             {
-                return await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, UploadedProfileImage);
+                var response = await BrokerFirmApiService.UploadBrokerProfileImage(brokerId, UploadedProfileImage);
+
+                if (response.Success)
+                {
+                    return response.Value!;
+                }
+                else
+                {
+                    // TODO - handle
+                }
             }
 
             return null;

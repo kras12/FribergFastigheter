@@ -1,4 +1,5 @@
-﻿using FribergFastigheter.Shared.Dto.Broker;
+﻿using FribergFastigheter.Shared.Dto.Api;
+using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.BrokerFirm;
 using FribergFastigheter.Shared.Dto.Housing;
 
@@ -19,7 +20,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         /// <param name="includeImageData"></param>
-        Task<BrokerDto> GetBrokerById(int id);
+        Task<ApiResponseDto<BrokerDto>> GetBrokerById(int id);
 
         /// <summary>
         /// Fetches a broker firm by ID.
@@ -28,16 +29,16 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerFirmDto"/> object.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<BrokerFirmDto> GetBrokerFirmById(int id);
+        public Task<ApiResponseDto<BrokerFirmDto>> GetBrokerFirmById(int id);
 
-		public Task<List<BrokerDto>> GetBrokers(int brokerFirmId);
+		public Task<ApiResponseDto<List<BrokerDto>>> GetBrokers(int brokerFirmId);
 
 		/// <summary>
 		/// Fetches a housing object by ID.
 		/// </summary>
 		/// <param name="housingId">The ID of the housing object.</param>
 		/// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
-		public Task<HousingDto> GetHousingById(int housingId);
+		public Task<ApiResponseDto<HousingDto>> GetHousingById(int housingId);
 
 		/// <summary>
 		/// Fetches all housing categories.
@@ -45,8 +46,8 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingCategoryDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public Task<List<HousingCategoryDto>> GetHousingCategories();
-		Task<List<HousingDto>> GetHousings(int brokerFirmId, int? limitImagesPerHousing = null, int? brokerId = null);
+		public Task<ApiResponseDto<List<HousingCategoryDto>>> GetHousingCategories();
+        public Task<ApiResponseDto<List<HousingDto>>> GetHousings(int brokerFirmId, int? limitImagesPerHousing = null, int? brokerId = null);
 
 		/// <summary>
 		/// Fetches housing objects that are assignt to a specific broker.
@@ -54,7 +55,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <param name="brokerId">The ID of the broker.</param>
 		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
 		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
-		public Task<List<HousingDto>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
+		public Task<ApiResponseDto<List<HousingDto>>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
 
 		/// <summary>
 		/// Fetches all municipalities.
@@ -62,7 +63,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <returns>A <see cref="Task"/> containing a collection of <see cref="MunicipalityDto"/>.</returns>
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
-		public Task<List<MunicipalityDto>> GetMunicipalities();
+		public Task<ApiResponseDto<List<MunicipalityDto>>> GetMunicipalities();
 
         /// <summary>
         /// Fetches all housings that matches the filters and options.
@@ -79,7 +80,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="HousingSearchResultDto"/> object if successful.</returns>
         /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
-        public Task<HousingSearchResultDto> SearchHousings(int? maxNumberOfResultsPerPage = null, int? limitImageCountPerHousing = null,
+        public Task<ApiResponseDto<HousingSearchResultDto>> SearchHousings(int? maxNumberOfResultsPerPage = null, int? limitImageCountPerHousing = null,
             int? municipalityId = null, int? housingCategoryId = null, decimal? minPrice = null,
             decimal? maxPrice = null, double? minLivingArea = null, double? maxLivingArea = null, int? offsetRows = null);
     }

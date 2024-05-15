@@ -5,6 +5,7 @@ using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Dto.Housing;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
 
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 {
@@ -41,16 +42,33 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 
         protected override async Task OnInitializedAsync()
         {
-            BrokerDto broker = await BrokerApiService.GetBrokerById(Id);
-            BrokerViewModel brokerResult = Mapper.Map<BrokerViewModel>(broker);
-            Broker = brokerResult;
-            List<HousingDto> housings = await BrokerApiService.GetHousings(brokerId: Id, limitImagesPerHousing: 3);
-            List<HousingViewModel> housingResult = Mapper.Map<List<HousingViewModel>>(housings);
-            Housings = housingResult;
+            var outerResponse = await BrokerApiService.GetBrokerById(Id);
+
+            if (outerResponse.Success)
+            {
+                BrokerDto broker = outerResponse.Value!;
+                BrokerViewModel brokerResult = Mapper.Map<BrokerViewModel>(broker);
+                Broker = brokerResult;
+
+                var innerResponse = await BrokerApiService.GetHousings(brokerId: Id, limitImagesPerHousing: 3);
+
+                if (innerResponse.Success)
+                {
+                    List<HousingDto> housings = innerResponse.Value!;
+                    List<HousingViewModel> housingResult = Mapper.Map<List<HousingViewModel>>(housings);
+                    Housings = housingResult;
+                }
+                else
+                {
+                    // TODO - show message
+                }
+            }
+            else
+            {
+                // TODO - show message
+            }            
         }
 
         #endregion
-
-
     }
 }

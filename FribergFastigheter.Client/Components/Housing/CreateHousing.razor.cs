@@ -96,8 +96,17 @@ namespace FribergFastigheter.Client.Components.Housing
             return Task.Run(
                async () =>
                {
-                   CreateHousingInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(await BrokerFirmApiService.GetHousingCategories()));
-                   CreateHousingInput.SelectedCategoryId = CreateHousingInput.HousingCategories.First().HousingCategoryId;
+                   var response = await BrokerFirmApiService.GetHousingCategories();
+
+                   if (response.Success)
+                   {
+                       CreateHousingInput.HousingCategories.AddRange(AutoMapper.Map<List<HousingCategoryViewModel>>(response.Value));
+                       CreateHousingInput.SelectedCategoryId = CreateHousingInput.HousingCategories.First().HousingCategoryId;
+                   }
+                   else
+                   {
+                       // TODO - Handle
+                   }
                });
         }
 
@@ -173,9 +182,18 @@ namespace FribergFastigheter.Client.Components.Housing
             if (result.Succeeded)
             {
                 CreateHousingInput.BrokerId = int.Parse((await AuthenticationStateTask).User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerId)!.Value);
-                var newHousing = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
-                newHousing.Images = await UploadImages(newHousing.HousingId);
-                await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
+                var response = await BrokerFirmApiService.CreateHousing(AutoMapper.Map<CreateHousingDto>(CreateHousingInput));
+
+                if (response.Success)
+                {
+                    var newHousing = response.Value!;
+                    newHousing.Images = await UploadImages(newHousing.HousingId);
+                    await OnHousingCreated.InvokeAsync(AutoMapper.Map<HousingViewModel>(newHousing));
+                }
+                else
+                {
+                    // TODO - show message.
+                }
             }
             else
             {
@@ -192,7 +210,16 @@ namespace FribergFastigheter.Client.Components.Housing
         {
             if (_uploadedFiles.Count > 0)
             {
-                return await BrokerFirmApiService.UploadHousingImages(housingId, _uploadedFiles);
+                var response = await BrokerFirmApiService.UploadHousingImages(housingId, _uploadedFiles);
+
+                if (response.Success)
+                {
+                    return response.Value!;
+                }
+                else
+                {
+                    // TODO - handle
+                }                
             }
 
             return new List<ImageDto>();

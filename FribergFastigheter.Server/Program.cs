@@ -5,23 +5,19 @@ using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Server.Data.Entities;
 using FribergFastigheter.Server.Data.Interfaces;
 using FribergFastigheter.Server.Data.Repositories;
-using FribergFastigheter.Server.HelperClasses.Data;
 using FribergFastigheter.Server.Services;
-using FribergFastigheter.Shared.Dto;
 using FribergFastigheterApi.Data.DatabaseContexts;
-using FribergFastigheterApi.HelperClasses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker;
+using FribergFastigheter.Server.Filters;
 using System.Text;
+using FribergFastigheter.Shared.Services.AuthorizationHandlers;
 
 namespace FribergFastigheter
 {
@@ -45,14 +41,15 @@ namespace FribergFastigheter
 			});
 #endif
 
-			// Add services to the container.
-			builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            
-            // Swagger
-            builder.Services.AddSwaggerGen();
+            /// Reformats validation problems details from bad requests into an ApiErrorResponseDto object.
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
+            builder.Services.AddControllers(options => options.Filters.Add(typeof(ReformatValidationProblemAttribute)));
 
+            // Swagger
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();            
+            builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(option =>
             {
                 option.SwaggerDoc("v1", new OpenApiInfo { Title = "Friberg Fastigheter API", Version = "v1" });
@@ -173,6 +170,9 @@ namespace FribergFastigheter
 
                 options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
                 policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.DeleteBroker)));
+
+                options.AddPolicy(ApplicationPolicies.BrokerFirmAssociation, policy =>
+               policy.AddRequirements(new CheckAssociationAuthorizationHandler(CheckAssociationAuthorizationHandler.ActionTypes.CheckBrokerFirmAssociation)));
             });
 
 

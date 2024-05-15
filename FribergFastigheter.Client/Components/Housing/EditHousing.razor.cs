@@ -198,7 +198,17 @@ namespace FribergFastigheter.Client.Components.Housing
             return Task.Run(
                async () =>
                {
-                   _housingCategories = AutoMapper.Map<List<HousingCategoryViewModel>>(await BrokerFirmApiService.GetHousingCategories());                 
+                   var response = await BrokerFirmApiService.GetHousingCategories();
+
+                   if (response.Success)
+                   {
+                       _housingCategories = AutoMapper.Map<List<HousingCategoryViewModel>>(response.Value!);
+                   }
+                   else
+                   {
+                       // TODO - Handle
+                   }
+                   
                });
         }
 

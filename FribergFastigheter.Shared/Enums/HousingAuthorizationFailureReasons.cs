@@ -16,11 +16,12 @@ namespace FribergFastigheter.Shared.Enums
         Unknown,
         BrokerChangeDenied,
         BrokerFirmChangeDenied,
+        BrokerNotBelongingToFirm,
         HousingAccessDenied,
         HousingCreateAccessDenied,
         HousingDeleteAccessDenied,
         HousingEditAccessDenied,
         InvalidToken,
-        UnsupportedAction
+        UnsupportedAction    
     }
 }
