@@ -11,7 +11,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class PaginationViewModel
+    public class PaginationViewModel : ViewModelBase
     {
         #region Properties
 

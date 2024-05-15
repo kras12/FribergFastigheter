@@ -7,7 +7,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class MunicipalityViewModel
+    public class MunicipalityViewModel : ViewModelBase
     {
         #region Constructors
 

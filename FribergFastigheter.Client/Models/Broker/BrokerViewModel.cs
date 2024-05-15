@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models.Broker
 {
-    public class BrokerViewModel
+    public class BrokerViewModel : ViewModelBase
     {
         #region Constructors
 

@@ -11,7 +11,7 @@ namespace FribergFastigheter.Client.Models.BrokerFirm
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class StatisticItemViewModel
+    public class StatisticItemViewModel : ViewModelBase
     {
         #region Properties
 
