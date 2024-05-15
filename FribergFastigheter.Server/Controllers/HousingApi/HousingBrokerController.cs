@@ -92,7 +92,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers(int id)
 		{
 
-			var brokers = (await _brokerRepository.GetAllBrokersByBrokerFirmIdAsync(id))
+			var brokers = (await _brokerRepository.GetBrokersAsync(id))
 				.Select(x => _mapper.Map<BrokerDto>(x))
 				.ToList();
 

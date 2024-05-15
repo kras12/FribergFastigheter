@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker;
+using System.Text;
 
 namespace FribergFastigheter
 {
