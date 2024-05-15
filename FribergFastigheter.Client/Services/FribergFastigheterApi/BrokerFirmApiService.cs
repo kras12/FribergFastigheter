@@ -278,10 +278,9 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<LoginResponseDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            return EnsureNotNull(result, "Failed to serialize the API response.");
             await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Value!.Token);
-            return result!;
-        }        
+            return EnsureNotNull(result, "Failed to serialize the API response.");
+        }
 
         #endregion
 
