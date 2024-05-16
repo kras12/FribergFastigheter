@@ -1,4 +1,6 @@
-﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
+﻿using FribergFastigheter.Shared.Dto.Housing;
+
+namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
 {
     /// <summary>
     /// Interface designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for editing housing objects.
@@ -8,18 +10,13 @@
     public interface IEditHousingAuthorizationData
     {
         /// <summary>
-        /// The existing housing broker firm ID.
+        /// The existing housing object.
         /// </summary>
-        public int ExistingHousingBrokerFirmId { get; }
+        public HousingDto ExistingHousing { get; set; }
 
         /// <summary>
-        /// The existing housing broker ID.
+        /// The new housing object.
         /// </summary>
-        public int ExistingHousingBrokerId { get; }
-
-        /// <summary>
-        /// The new housing broker ID.
-        /// </summary>
-        public int NewHousingBrokerId { get; }
+        public EditHousingDto NewHousing { get; set; }
     }
 }

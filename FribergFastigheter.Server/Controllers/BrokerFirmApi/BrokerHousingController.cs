@@ -284,8 +284,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.InputDataConflict, "The housing ID in the query parameter doesn't match the ID provided in the body."));
             }
 
-            var authData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: housing.Broker.BrokerFirm.BrokerFirmId,
-                existingHousingBrokerId: housing.Broker.BrokerId, newHousingBrokerId: updateHousingDto.BrokerId);
+            var authData = new EditHousingAuthorizationData(existingHousing: _autoMapper.Map<HousingDto>(housing), newHousing: updateHousingDto);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditHousingResource);
 
             if (result.Succeeded)

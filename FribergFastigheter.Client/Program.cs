@@ -60,6 +60,9 @@ namespace FribergFastigheter.Client
                 options.AddPolicy(ApplicationPolicies.CanEditHousing, policy => 
                     policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
 
+                options.AddPolicy(ApplicationPolicies.CanEditFullHousing, policy =>
+                    policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
+
                 options.AddPolicy(ApplicationPolicies.CanCreateHousingResource, policy =>
                     policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
 

@@ -166,16 +166,17 @@ namespace FribergFastigheter.Client.Components.Housing
         /// </summary>
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <exception cref="UnauthorizedAccessException"></exception>
-        private async Task EditHousingData()
+        private async Task UpdateHousingData()
         {
             var user = (await AuthenticationStateTask).User;
-            var housingAuthorizationData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
-                existingHousingBrokerId: Housing.Broker.BrokerId, newHousingBrokerId: EditHousingInput!.BrokerId);
+            var housingAuthorizationData = new EditHousingAuthorizationData(
+                existingHousing: AutoMapper.Map<HousingDto>(Housing),
+                newHousing: AutoMapper.Map<EditHousingDto>(EditHousingInput));
             var housingAuthorizationResult = await AuthorizationService.AuthorizeAsync(user, housingAuthorizationData, ApplicationPolicies.CanEditHousingResource);
 
             if (housingAuthorizationResult.Succeeded)
             {
-                var response = await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
+                var response = await BrokerFirmApiService.UpdateHousing(housingAuthorizationData.NewHousing);
 
                 if (response.Success)
                 {
@@ -389,7 +390,7 @@ namespace FribergFastigheter.Client.Components.Housing
         {
                 try
                 {
-                    await EditHousingData();
+                    await UpdateHousingData();
                 }
                 catch (UnauthorizedAccessException)
                 {
