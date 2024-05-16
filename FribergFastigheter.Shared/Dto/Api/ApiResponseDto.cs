@@ -93,6 +93,15 @@ namespace FribergFastigheter.Shared.Dto.Api
             return stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// Formats the error collection as a list.
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> of <see cref="string"/>.</returns>
+        public List<string> GetErrorsAsList()
+        {            
+            return Errors.Select(x => $"{x.Key}: {x.Value}").ToList();
+        }
+
         #endregion
     }
 }

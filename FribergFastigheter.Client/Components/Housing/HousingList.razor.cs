@@ -22,7 +22,7 @@ namespace FribergFastigheter.Client.Components.Housing
         /// </summary>
         public enum FilterTypes
         {
-            All,
+            NoFilter,
             Brokers
         }
 
@@ -30,10 +30,10 @@ namespace FribergFastigheter.Client.Components.Housing
 
         #region Fields
 
-		/// <summary>
-		/// The current filter applied to the list.
-		/// </summary>
-		private FilterTypes _currentListFilter = FilterTypes.All;
+        /// <summary>
+        /// The current filter applied to the list.
+        /// </summary>
+        private ListFilter _currentFilter = new();
 
 		/// <summary>
 		/// The filtered housing list that will be displayed.
@@ -125,12 +125,29 @@ namespace FribergFastigheter.Client.Components.Housing
         protected override async Task OnParametersSetAsync()
 		{
 			await base.OnParametersSetAsync();
-			RemoveHousingFilter();
-		}        
+			ResetFilter();
+		}
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Filters the list according to the current filter. 
+        /// </summary>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private void ApplyFilter()
+        {
+            if (_currentFilter.Type == FilterTypes.Brokers)
+            {
+                _filteredhousings = Housings.Where(x => x.Broker.BrokerId == _currentFilter.Broker!.BrokerId).ToList();
+            }
+            else
+            {
+                _filteredhousings = Housings;
+            }
+        }
 
         /// <summary>
         /// Scrolls to the element.
@@ -158,9 +175,9 @@ namespace FribergFastigheter.Client.Components.Housing
 		/// <param name="broker"></param>
 		private void FilterByBroker(BrokerViewModel broker)
 		{
-			_currentListFilter = FilterTypes.Brokers;
-			_filteredhousings = Housings.Where(x => x.Broker.BrokerId == broker.BrokerId).ToList();
-		}
+            _currentFilter = new ListFilter(broker);
+            ApplyFilter();
+        }
 
 		/// <summary>
 		/// Returns a list of brokers from the housing collection.
@@ -198,7 +215,7 @@ namespace FribergFastigheter.Client.Components.Housing
         {
             Housings.Add(createdHousing);
             _isCreatingHousing = false;
-            RemoveHousingFilter();
+            ResetFilter();
             ScrollToElement(createdHousing);
         }
 
@@ -220,23 +237,77 @@ namespace FribergFastigheter.Client.Components.Housing
             _filteredhousings.Remove(housing);
         }
 
-		/// <summary>
-		/// Event handler for when a list item have transformed into another form. 
-		/// </summary>
-		/// <param name="housing"></param>
-		private void OnListItemTransformed(HousingViewModel housing)
+        /// <summary>
+        /// Event handler for when the housing object was edited.
+        /// </summary>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        private void OnHousingEditedEventHandler(HousingViewModel housing)
+        {
+            ApplyFilter();
+        }
+
+        /// <summary>
+        /// Event handler for when a list item have transformed into another form. 
+        /// </summary>
+        /// <param name="housing"></param>
+        private void OnListItemTransformed(HousingViewModel housing)
 		{
 			ScrollToElement(housing);
 		}
 
 		/// <summary>
-		/// Removes the housing filter.
+		/// Resets the housing filter.
 		/// </summary>
-		private void RemoveHousingFilter()
+		private void ResetFilter()
         {
-            _currentListFilter = FilterTypes.All;
-            _filteredhousings = Housings;
+            _currentFilter = new ListFilter();
+            ApplyFilter();
         }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Filter class used in <see cref="HousingList"/> component. 
+    /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
+    class ListFilter
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Constructor to create a filter by broker.
+        /// </summary>
+        /// <param name="broker">The broker to filter by.</param>
+        public ListFilter(BrokerViewModel? broker = null)
+        {
+            Type = HousingList.FilterTypes.Brokers;
+            Broker = broker;
+        }
+
+        /// <summary>
+        /// Constructor for creating an empty filter. 
+        /// </summary>
+        public ListFilter()
+        {
+            Type = HousingList.FilterTypes.NoFilter;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// The broker to filter by. 
+        /// </summary>
+        public BrokerViewModel? Broker { get; private set; }
+
+        /// <summary>
+        /// The type of the filter.
+        /// </summary>
+        public HousingList.FilterTypes Type { get; private set; }        
 
         #endregion
     }

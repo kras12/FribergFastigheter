@@ -15,7 +15,7 @@
     </Authorized>
     <NotAuthorized>
         <li class="nav-item">
-            <a type="button" class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#@_modalDialogId">Log in</a>
+            <a type="button" class="nav-link btn btn-link" id="@(_modalDialogId)-toggle" data-bs-toggle="modal" data-bs-target="#@_modalDialogId">Logga in</a>
         </li>
         <div class="modal fade" id="@_modalDialogId" tabindex="-1" aria-labelledby="@(_modalDialogId)-label" aria-hidden="true">
             <div class="modal-dialog">
@@ -28,6 +28,17 @@
                         <EditForm Context="EditFormContext" Model="FormInput" OnValidSubmit="OnValidSubmit">
                             <DataAnnotationsValidator></DataAnnotationsValidator>
                             <div class="d-flex flex-column gap-3 align-items-center">
+                                @if (_apiValidationErrors.Count > 0)
+                                {
+                                    <ul>
+                                        @{
+                                            foreach (var error in _apiValidationErrors)
+                                            {
+                                                <li class="text-danger">@error</li>
+                                            }
+                                        }
+                                    </ul>
+                                }                            
                                 <div class="d-flex flex-column w-75">
                                     <label for="email">Email</label>
                                     <InputText name="email" @bind-Value="FormInput.UserName"></InputText>
@@ -55,9 +66,15 @@
 
 <script>
     function HideBrokerLoginModal(id) { 
-        console.log(document.getElementById(id));
         let modal = bootstrap.Modal.getInstance(document.getElementById(id))
-        console.log(modal);
+        //console.log(modal);
         modal.hide();
+    }
+
+    function ShowBrokerLoginModal(id) {
+        let modal = bootstrap.Modal.getInstance(document.getElementById(id))
+        let modalToggle = document.getElementById('id' + '-toggle')
+        //console.log(modal);
+        modal.show(modalToggle);
     }
 </script>

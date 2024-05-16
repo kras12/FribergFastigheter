@@ -460,7 +460,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 {
                     var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: false);
 
-                    if (result != null)
+                    if (result.Succeeded)
                     {
                         var broker = await _brokerRepository.GetBrokerByUserIdAsync(user.Id);
 

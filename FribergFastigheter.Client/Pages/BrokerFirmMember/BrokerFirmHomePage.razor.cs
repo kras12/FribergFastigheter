@@ -17,6 +17,12 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
     /// <!-- Co Authors: -->
     public partial class BrokerFirmHomePage : ComponentBase
     {
+        #region Constants
+
+        public const string BrokerMemberPageUrl = "/brokermember";
+
+        #endregion
+
         #region Fields
 
         /// <summary>

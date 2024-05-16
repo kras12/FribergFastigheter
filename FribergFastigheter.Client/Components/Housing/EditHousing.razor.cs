@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.Housing;
 using FribergFastigheter.Client.Models.Image;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
@@ -20,6 +21,11 @@ namespace FribergFastigheter.Client.Components.Housing
     public partial class EditHousing : ComponentBase
     {
         #region Fields
+
+        /// <summary>
+        /// A collection of brokers to support changing the broker of a housing object. 
+        /// </summary>
+        private List<BrokerViewModel>? _brokers = null;
 
         /// <summary>
         /// A collection of housing categories to use in the form bound edit housing view model.
@@ -109,7 +115,7 @@ namespace FribergFastigheter.Client.Components.Housing
         #region Methods
 
         /// <summary>
-        /// Creates a new edit housing model to be found to the edit form.
+        /// Creates a new edit housing model to be bound to the edit form.
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         private void CreateEditHousingModel()
@@ -122,6 +128,7 @@ namespace FribergFastigheter.Client.Components.Housing
 			EditHousingInput = AutoMapper.Map<EditHousingViewModel>(Housing);
             EditHousingInput.Municipalities = _municipalities;
             EditHousingInput.HousingCategories = _housingCategories;
+            EditHousingInput.Brokers = _brokers;
 		}
 
         /// <summary>
@@ -172,9 +179,7 @@ namespace FribergFastigheter.Client.Components.Housing
 
                 if (response.Success)
                 {
-                    AutoMapper.Map(EditHousingInput!, Housing);
-                    Housing.Municipality = _municipalities.First(x => x.MunicipalityId == EditHousingInput!.SelectedMunicipalityId);
-                    Housing.Category = _housingCategories.First(x => x.HousingCategoryId == EditHousingInput!.SelectedCategoryId);
+                    AutoMapper.Map(response.Value!, Housing);
                 }
                 else
                 {
@@ -207,6 +212,35 @@ namespace FribergFastigheter.Client.Components.Housing
                        // TODO - handle
                    }                   
                });
+        }
+
+        /// <summary>
+        /// Fetches and loads the brokers to enable admin editing.
+        /// </summary>
+        /// <returns>A <see cref="Task"/>.</returns>
+        /// <!-- Author: Jimmie -->
+		/// <!-- Co Authors: -->
+        private Task LoadBrokers()
+        {
+            return Task.Run(
+                async () =>
+                {
+                    var result = await AuthorizationService.AuthorizeAsync((await AuthenticationStateTask).User, ApplicationPolicies.BrokerAdmin);
+
+                    if (result.Succeeded)
+                    {
+                        var brokerResult = await BrokerFirmApiService.GetBrokers();
+
+                        if (brokerResult.Success)
+                        {
+                            _brokers = AutoMapper.Map<List<BrokerViewModel>>(brokerResult.Value!);
+                        }
+                        else
+                        {
+                            throw new Exception("Failed to load brokers.");
+                        }
+                    }
+                });
         }
 
 		/// <summary>
@@ -310,7 +344,21 @@ namespace FribergFastigheter.Client.Components.Housing
         protected async override Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await Task.WhenAll(LoadHousingCategories(), LoadMunicipalities(), LoadAllImages());
+
+            if (Housing == null)
+            {
+                throw new ArgumentException($"No housing object was provided in the parameter '{nameof(Housing)}'.", nameof(Housing));
+            }
+
+            try
+            {
+                await Task.WhenAll(LoadHousingCategories(), LoadMunicipalities(), LoadAllImages(), LoadBrokers());
+            }
+            catch (Exception ex)
+            {
+                // TODO - Handle
+                throw;
+            }
         }
 
         /// <summary>
@@ -388,17 +436,7 @@ namespace FribergFastigheter.Client.Components.Housing
 
                     if (response.Success)
                     {
-                        var innerResponse = await BrokerFirmApiService.UploadHousingImages(Housing.HousingId, _uploadedFiles);
-
-                        if (innerResponse.Success)
-                        {
-                            Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(innerResponse.Value!));
-                        }
-                        else
-                        {
-                            // Todo - Handle
-                        }
-
+                        Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(response.Value!));
                     }
                     else
                     {

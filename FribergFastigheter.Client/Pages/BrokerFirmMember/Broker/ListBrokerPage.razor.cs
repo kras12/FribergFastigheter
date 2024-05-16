@@ -12,9 +12,15 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
     /// Code behind for page listing Brokers by Brokerfirm.
     /// </summary>
     /// <!-- Author: Marcus -->
-    /// <!-- Co Authors: -->
+    /// <!-- Co Authors: Jimmie -->
     public partial class ListBrokerPage : ComponentBase
     {
+        #region Fields
+
+        private bool _isloadingData = false;
+
+        #endregion
+
         #region Properties
 
         public BrokerFirmSummaryViewModel BrokerFirm { get; set; }
@@ -24,12 +30,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         [Inject]
         public IMapper Mapper { get; set; }
 
-        #endregion
-
-        #region Fields
-
-
-        #endregion
+        #endregion        
 
         #region Constructors
 
@@ -42,27 +43,38 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
         #region Methods
 
 
+        /// <!-- Author: Marcus -->
+        /// <!-- Co Authors: Jimmie -->
         protected override async Task OnInitializedAsync()
         {
-            var outerResponse = await BrokerFirmApiService.GetBrokers();
+            _isloadingData = true;
 
-            if (outerResponse.Success)
+            try
             {
-                Brokers = outerResponse.Value!.Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
-                var response = await BrokerFirmApiService.GetBrokerFirm();
+                var outerResponse = await BrokerFirmApiService.GetBrokers();
 
-                if (response.Success)
+                if (outerResponse.Success)
                 {
-                    BrokerFirm = Mapper.Map<BrokerFirmSummaryViewModel>(response.Value!);
+                    Brokers = outerResponse.Value!.Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
+                    var response = await BrokerFirmApiService.GetBrokerFirm();
+
+                    if (response.Success)
+                    {
+                        BrokerFirm = Mapper.Map<BrokerFirmSummaryViewModel>(response.Value!);
+                    }
+                    else
+                    {
+                        // TODO - Create message
+                    }
                 }
                 else
                 {
                     // TODO - Create message
                 }
             }
-            else
+            finally
             {
-                // TODO - Create message
+                _isloadingData = false;
             }
         }
 

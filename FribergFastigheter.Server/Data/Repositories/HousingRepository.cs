@@ -68,12 +68,7 @@ namespace FribergFastigheter.Server.Data.Repositories
         {            
             applicationDbContext.HousingCategories.Entry(housing.Category).State = EntityState.Unchanged;
             applicationDbContext.Municipalities.Entry(housing.Municipality).State = EntityState.Unchanged;
-
-            if (!applicationDbContext.Brokers.Any(x => x.BrokerId == housing.Broker.BrokerId))
-            {
-                applicationDbContext.Brokers.Entry(housing.Broker).State = EntityState.Unchanged;
-            }
-            
+            applicationDbContext.Brokers.Entry(housing.Broker).State = EntityState.Unchanged;            
             applicationDbContext.Housings.Entry(housing).State = EntityState.Modified;
             await applicationDbContext.SaveChangesAsync();
         }

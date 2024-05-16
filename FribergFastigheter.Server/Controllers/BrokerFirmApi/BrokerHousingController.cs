@@ -292,7 +292,11 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             {
                 _autoMapper.Map(updateHousingDto, housing);
                 await _housingRepository.UpdateAsync(housing);
-                return Ok(new MvcApiValueResponseDto<HousingDto>(_autoMapper.Map<HousingDto>(housing)));
+
+                var updatedHousingDto = _autoMapper.Map<HousingDto>(await _housingRepository.GetHousingByIdAsync(housing.HousingId));
+                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, updatedHousingDto);
+
+                return Ok(new MvcApiValueResponseDto<HousingDto>(updatedHousingDto));
             }
             else
             {

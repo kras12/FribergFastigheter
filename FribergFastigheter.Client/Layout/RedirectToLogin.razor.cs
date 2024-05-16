@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
 namespace FribergFastigheter.Client.Layout
@@ -20,6 +21,20 @@ namespace FribergFastigheter.Client.Layout
         NavigationManager NavigationManager { get; set; }
 #pragma warning restore CS8618 
 
+        /// <summary>
+        /// The injected session storage service.
+        /// </summary>
+        [Inject]
+#pragma warning disable CS8618 
+        private ISessionStorageService SessionStorageService { get; set; }
+#pragma warning restore CS8618 
+
+        /// <summary>
+        /// The url to return to after login. 
+        /// </summary>
+        [Parameter]
+        public string? ReturnToUrl { get; set; }
+
         #endregion
 
         #region Methods
@@ -28,8 +43,13 @@ namespace FribergFastigheter.Client.Layout
         /// Method invoked when the component is ready to start, having received its initial
         /// parameters from its parent in the render tree.
         /// </summary>
-        protected override void OnInitialized()
+        protected async override Task OnInitializedAsync()
         {
+            if (!string.IsNullOrEmpty(ReturnToUrl))
+            {
+                await SessionStorageService.SetItemAsStringAsync(LoginButton.RedirectUrlStorageKey, ReturnToUrl);
+            }
+
             NavigationManager.NavigateToLogin("login");
         }
 

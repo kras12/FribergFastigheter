@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FribergFastigheter.Client.Models.Broker;
+using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models.Housing
 {
@@ -20,6 +21,11 @@ namespace FribergFastigheter.Client.Models.Housing
         /// The ID of the broker associated with the housing object.
         /// </summary>
         public int BrokerId { get; set; }
+
+        /// <summary>
+        /// A collection of brokers that administrators can choose from. 
+        /// </summary>
+        public List<BrokerViewModel>? Brokers { get; set; } = null;
 
         /// <summary>
         /// A collection of housing categories to choose from.
