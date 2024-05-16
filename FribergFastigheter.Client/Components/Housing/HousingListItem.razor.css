@@ -1,9 +1,4 @@
-﻿/* Card - Hover */
-.card:hover, card:focus {
-    background-color: #dbdbdb;
-}
-
-/*Card - Links*/
+﻿/*Card - Links*/
 .card a {
     text-decoration: none;
 }
