@@ -47,12 +47,26 @@ namespace FribergFastigheter.Client.Services
         /// <summary>
         /// The result of the housing search.
         /// </summary>
-        public HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;        
+        public HousingSearchResultViewModel? HousingSearchResult { get; set; } = null;
 
         /// <summary>
         /// The task for initializing service data. Wait for this task before starting to use the service. 
         /// </summary>
         public Task InitalizeTask { get; private set; }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Fires when the housing search has completed.
+        /// </summary>
+        public event Action OnHousingSearchCompleted;
+
+        /// <summary>
+        /// Fires when the housing search has started.
+        /// </summary>
+        public event Action OnHousingSearchStarted;
 
         #endregion
 
@@ -134,28 +148,37 @@ namespace FribergFastigheter.Client.Services
         /// <!-- Co Authors: -->
         public async Task SearchHousings(int? pageNumber = null)
         {
-            await InitalizeTask;
-            int? municipalityFilter = HousingSearchFormInput.SelectedMunicipalityId != MunicipalityViewModel.AllMunicipalities.MunicipalityId ? HousingSearchFormInput.SelectedMunicipalityId : null;
-            int? categoryFilter = HousingSearchFormInput.SelectedCategoryId != HousingCategoryViewModel.AllCategories.HousingCategoryId ? HousingSearchFormInput.SelectedCategoryId : null;
-            int? offsetRows = pageNumber != null ? (pageNumber - 1) * _lastHousingSearchInput.NumberOfResultsPerPage : null;
-
-            var response = await _housingApi.SearchHousings(maxNumberOfResultsPerPage: HousingSearchFormInput.NumberOfResultsPerPage, limitImageCountPerHousing: 3,
-                municipalityId: municipalityFilter, housingCategoryId: categoryFilter,
-                minPrice: HousingSearchFormInput.MinPrice, maxPrice: HousingSearchFormInput.MaxPrice,
-                minLivingArea: HousingSearchFormInput.MinLivingArea, maxLivingArea: HousingSearchFormInput.MaxLivingArea,
-                offsetRows: offsetRows);
-
-            if (response.Success)
+            try
             {
-				_lastHousingSearchInput = _autoMapper.Map<HousingSearchInputViewModel>(HousingSearchFormInput);
-				HousingSearchResult = _autoMapper.Map<HousingSearchResultViewModel>(response.Value!);
-				// TODO - Find a better way to retrieve the URLS
-				HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
-				HaveSearchedHousings = true;
-			}
-            else
+                HousingSearchResult = null;
+                OnHousingSearchStarted?.Invoke();
+                await InitalizeTask;
+                int? municipalityFilter = HousingSearchFormInput.SelectedMunicipalityId != MunicipalityViewModel.AllMunicipalities.MunicipalityId ? HousingSearchFormInput.SelectedMunicipalityId : null;
+                int? categoryFilter = HousingSearchFormInput.SelectedCategoryId != HousingCategoryViewModel.AllCategories.HousingCategoryId ? HousingSearchFormInput.SelectedCategoryId : null;
+                int? offsetRows = pageNumber != null ? (pageNumber - 1) * _lastHousingSearchInput.NumberOfResultsPerPage : null;
+
+                var response = await _housingApi.SearchHousings(maxNumberOfResultsPerPage: HousingSearchFormInput.NumberOfResultsPerPage, limitImageCountPerHousing: 3,
+                    municipalityId: municipalityFilter, housingCategoryId: categoryFilter,
+                    minPrice: HousingSearchFormInput.MinPrice, maxPrice: HousingSearchFormInput.MaxPrice,
+                    minLivingArea: HousingSearchFormInput.MinLivingArea, maxLivingArea: HousingSearchFormInput.MaxLivingArea,
+                    offsetRows: offsetRows);
+
+                if (response.Success)
+                {
+                    _lastHousingSearchInput = _autoMapper.Map<HousingSearchInputViewModel>(HousingSearchFormInput);
+                    HousingSearchResult = _autoMapper.Map<HousingSearchResultViewModel>(response.Value!);
+                    // TODO - Find a better way to retrieve the URLS
+                    HousingSearchResult.Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
+                    HaveSearchedHousings = true;
+                }
+                else
+                {
+                    // TODO - handle
+                }
+            }
+            finally
             {
-                // TODO - handle
+                OnHousingSearchCompleted?.Invoke();
             }
         }
 

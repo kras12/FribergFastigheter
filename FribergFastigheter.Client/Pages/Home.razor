@@ -97,7 +97,11 @@
                     
                 }
             </div>
-        }    
+        }
+    }
+    else if (_isSearchingHousings)
+    {
+        <LoadingIndicator></LoadingIndicator>
     }
     else if (HousingSearchService.HaveSearchedHousings)
     {

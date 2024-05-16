@@ -6,10 +6,17 @@
 @using FribergFastigheter.Shared.Constants
 @using Microsoft.AspNetCore.Authorization
 @*
-    <!-- Author: Jimmie -->
+<!-- Author: Jimmie -->
 <!-- Co Authors: -->
 *@
 @attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 <div class="vertical-page-container">
-	<HousingList Housings="_housings" TruncateLongDescriptions="true" EnableEditingControls="true"></HousingList>
+	@if (_isloadingData)
+	{
+		<LoadingIndicator></LoadingIndicator>
+	}
+	else
+	{
+		<HousingList Housings="_housings" TruncateLongDescriptions="true" EnableEditingControls="true"></HousingList>
+	}	
 </div>
