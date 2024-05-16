@@ -100,6 +100,11 @@
         public const string CanEditBroker = "CanEditBroker";
 
         /// <summary>
+        /// The can edit broker policy.
+        /// </summary>
+        public const string CanEditFullBroker = "CanEditFullBroker";
+
+        /// <summary>
         /// The can delete broker policy.
         /// </summary>
         public const string CanDeleteBroker = "CanDeleteBroker";

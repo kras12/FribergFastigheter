@@ -7,7 +7,7 @@ namespace FribergFastigheter.Shared.Dto.Broker
     /// </summary>
     /// <!-- Author: Marcus -->
     /// <!-- Co Authors: -->
-    public class RegisterBrokerDto
+    public class CreateBrokerDto
     {
         #region Properties
 

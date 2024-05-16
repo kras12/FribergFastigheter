@@ -87,6 +87,9 @@ namespace FribergFastigheter.Client
                 options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
                 policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.EditBroker)));
 
+                options.AddPolicy(ApplicationPolicies.CanEditFullBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.EditFullBroker)));
+
                 options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
                 policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.DeleteBroker)));
             });

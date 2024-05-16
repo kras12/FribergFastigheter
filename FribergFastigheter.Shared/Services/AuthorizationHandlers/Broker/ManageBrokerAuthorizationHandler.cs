@@ -1,8 +1,8 @@
 ﻿using FribergFastigheter.Shared.Constants;
+using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 
 namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker
 {
@@ -119,13 +119,13 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker
                         throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IEditBrokerAuthorizationData)}'.");
 
                     // Broker belongs to another firm
-                    if (editBrokerAuthData!.ExistingBrokerBrokerFirmId != brokerFirmId)
+                    if (editBrokerAuthData.ExistingBroker.BrokerFirm.BrokerFirmId != brokerFirmId)
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.BrokerAccessDenied.ToString()));
                         return Task.CompletedTask;
                     }
-                    //Editing another broker
-                    else if (editBrokerAuthData.ExistingBrokerBrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                    // Editing another broker
+                    else if (editBrokerAuthData.ExistingBroker.BrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.BrokerEditAccessDenied.ToString()));
                         return Task.CompletedTask;
@@ -136,16 +136,52 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker
                         context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.BrokerEditAccessDenied.ToString()));
                         return Task.CompletedTask;
                     }
+                    // Protected attributes
+                    else if (HasProtectedAttribuesChanged(editBrokerAuthData.ExistingBroker, editBrokerAuthData.NewBroker)
+                        && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                    {
+                        context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.BrokerEditAccessDenied.ToString()));
+                        return Task.CompletedTask;
+                    }
                     else
                     {
                         context.Succeed(requirement);
                         return Task.CompletedTask;
-                    }
+                    }                
 
                 default:
                     context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.UnsupportedAction.ToString()));
                     return Task.CompletedTask;
             }
+        }
+
+        /// <summary>
+        /// Returns true if any protected broker attributes have changed. 
+        /// These attributes requires elevated acccess to change. 
+        /// </summary>
+        /// <param name="existingBroker">The existing broker data.</param>
+        /// <param name="newBroker">The new broker data.</param>
+        /// <returns>True if any of the protected attributes have changed.</returns>
+        private bool HasProtectedAttribuesChanged(BrokerDto existingBroker, EditBrokerDto newBroker)
+        {
+            if (existingBroker.FirstName != newBroker.FirstName)
+            {
+                return true;
+            }
+            else if (existingBroker.LastName != newBroker.LastName)
+            {
+                return true;
+            }
+            else if (existingBroker.Email != newBroker.Email)
+            {
+                return true;
+            }
+            else if (existingBroker.PhoneNumber != newBroker.PhoneNumber)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

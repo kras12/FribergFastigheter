@@ -23,7 +23,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public interface IBrokerFirmApiService
     {
-        #region AdminMethods
+        #region BrokerMethods        
 
         /// <summary>
         /// Creates a new broker under the broker firm.
@@ -32,21 +32,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public Task<ApiResponseDto<BrokerDto>> AdminCreateBroker([Required] RegisterBrokerDto broker);
-
-        /// <summary>
-        /// Performs an admin edit of a broker.
-        /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        /// <!-- Author: Jimmie  -->
-        /// <!-- Co Authors: -->
-        public Task<ApiResponseDto<BrokerDto>> AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker);
-
-        #endregion
-
-        #region BrokerMethods        
+        public Task<ApiResponseDto<BrokerDto>> CreateBroker([Required] CreateBrokerDto broker);
 
         /// <summary>
         /// Deletes a broker.
@@ -60,12 +46,11 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Performs a regular edit on the logged in broker. 
         /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
         /// <param name="broker">The serialized DTO object to send.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<ApiResponseDto<BrokerDto>> EditBroker([Required] int brokerId, [Required] EditBrokerDto broker);
+        public Task<ApiResponseDto<BrokerDto>> EditBroker([Required] EditBrokerDto broker);
 
         /// <summary>
         /// Fetches data for a broker. 
