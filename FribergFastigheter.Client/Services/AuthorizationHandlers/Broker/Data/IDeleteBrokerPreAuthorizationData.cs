@@ -1,6 +1,6 @@
-﻿using FribergFastigheter.Client.Services.AuthorizationHandlers.Housing;
+﻿using FribergFastigheter.Client.Services.AuthorizationHandlers.Broker;
 
-namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Housing.Data
+namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Broker.Data
 {
     /// <summary>
     /// Interface designed to be used with the <see cref="ManageBrokerPreAuthorizationHandler"/> to enable authorization for deleting broker objects.

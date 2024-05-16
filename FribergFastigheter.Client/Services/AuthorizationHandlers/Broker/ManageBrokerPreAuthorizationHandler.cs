@@ -1,8 +1,8 @@
-﻿using FribergFastigheter.Client.Services.AuthorizationHandlers.Housing.Data;
+﻿using FribergFastigheter.Client.Services.AuthorizationHandlers.Broker.Data;
 using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Authorization;
 
-namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Housing
+namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Broker
 {
     /// <summary>
     /// Authorization handler with built in requirement to handle preliminary authorization for create, delete and edit of broker objects. 
