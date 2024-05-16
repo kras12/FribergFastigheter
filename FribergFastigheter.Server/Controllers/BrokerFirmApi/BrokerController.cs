@@ -416,7 +416,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     {
                         var broker = await _brokerRepository.GetBrokerByUserIdAsync(user.Id);
 
-                        if (broker != null)
+                        if (broker != null && !broker.IsDeleted)
                         {
                             return Ok(new MvcApiValueResponseDto<LoginResponseDto>(
                                 new LoginResponseDto()
