@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using System.ComponentModel;
 
 namespace FribergFastigheter.Client.Pages.BrokerFirmMember
@@ -20,9 +24,26 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
         /// </summary>
         private BrokerFirmStatisticsViewModel? _brokerFirmStatistics = null;
 
+        private string? _scrollToTop = null;
+
+        private string? formId = "EditForm";
+
+        /// <summary>
+        /// The id for the logged in broker if any. 
+        /// </summary>
+        int _loggedInBrokerId;
+
+        /// <summary>
+        /// The logged in broker if any. 
+        /// </summary>
+        BrokerViewModel _broker;
+
         #endregion
 
         #region Properties
+
+        [CascadingParameter]
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
         /// <summary>
         /// The injected auto mapper service.
@@ -40,8 +61,17 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
         private IBrokerFirmApiService BrokerFirmApiService { get; set; }
 #pragma warning restore CS8618 
 
+        /// <summary>
+        /// Injected JavaScript runtime.
+        /// </summary>
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
         [Parameter]
         public int Id { get; set; }
+
+        public bool? IsEditBrokerFormActive { get; set; } = null;
+
 
         #endregion
 
@@ -66,7 +96,52 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
             else
             {
                 // TODO - Show message
-            }        
+            }
+            
+            var state = await AuthenticationStateTask;
+            var Test = state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value;
+            if (state.User.Claims.Any(x => x.Type == ApplicationUserClaims.BrokerId))
+            {
+                _loggedInBrokerId = int.Parse(state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
+            }
+            var result = await BrokerFirmApiService.GetBrokerById(_loggedInBrokerId);
+            if (result.Success)
+            {
+              _broker = AutoMapper.Map<BrokerViewModel>(result.Value);
+            }
+        }
+
+        public async void OpenEditBroker()
+        {
+            
+            IsEditBrokerFormActive = true;
+            await ScrollToTop(formId);
+        }
+
+        public async void OnBrokerEdited()
+        {
+            IsEditBrokerFormActive = false;
+        }
+
+        public void CloseEditBroker()
+        {
+            IsEditBrokerFormActive = false;
+        }
+
+        public async Task ScrollToTop(string formId)
+        {
+            _scrollToTop = formId;
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            if (_scrollToTop != null)
+            {
+                await JSRuntime.InvokeVoidAsync("scrollToElement", _scrollToTop);
+                _scrollToTop = null;
+            }
         }
 
         #endregion
