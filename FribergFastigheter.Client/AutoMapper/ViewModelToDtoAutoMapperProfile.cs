@@ -43,6 +43,7 @@ namespace FribergFastigheter.Client.AutoMapper
             CreateMap<ImageViewModel,  ImageDto>();
             CreateMap<EditBrokerViewModel, EditBrokerDto>();
             CreateMap<LoginViewModel, LoginDto>();
+            CreateMap<EditBrokerViewModel, EditBrokerDto>();
         }		
 	}
 }
