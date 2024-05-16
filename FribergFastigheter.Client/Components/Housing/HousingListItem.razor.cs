@@ -109,6 +109,7 @@ namespace FribergFastigheter.Client.Components.Housing
             _isInEditMode = false;
             await OnHousingEdited.InvokeAsync(housing);
             await OnTransformed.InvokeAsync(housing);
+            StateHasChanged();
         }
 
         /// <summary>

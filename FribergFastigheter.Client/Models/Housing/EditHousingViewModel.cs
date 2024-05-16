@@ -1,4 +1,5 @@
 ﻿using FribergFastigheter.Client.Models.Broker;
+using FribergFastigheter.Client.Models.Image;
 using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models.Housing
@@ -36,6 +37,11 @@ namespace FribergFastigheter.Client.Models.Housing
         /// The ID of the housing object.
         /// </summary>
         public int HousingId { get; set; }
+
+        /// <summary>
+        /// The images for the housing object. 
+        /// </summary>
+        public List<ImageViewModel> Images { get; set; } = new();
 
         /// <summary>
         /// A collection of municipalitites to choose from.
