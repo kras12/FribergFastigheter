@@ -29,6 +29,31 @@
         /// </summary>
         public const string UserRole = "BrokerRole";
 
+        /// <summary>
+        /// The user name claim. 
+        /// </summary>
+        public const string UserName = "sub";
+
+        /// <summary>
+        /// The user email claim. 
+        /// </summary>
+        public const string Email = "email";
+
+        /// <summary>
+        /// The user firstname claim. 
+        /// </summary>
+        public const string FirstName = "given_name";
+
+        /// <summary>
+        /// The user lastname claim. 
+        /// </summary>
+        public const string LastName = "family_name";
+
+        /// <summary>
+        /// The user jti claim. 
+        /// </summary>
+        public const string Jti = "jti";
+
         #endregion
     }
 }

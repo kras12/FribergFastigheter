@@ -9,6 +9,7 @@ using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using FribergFastigheter.Client.Services.AuthorizationHandlers.Broker;
 using Blazored.SessionStorage;
 
 namespace FribergFastigheter.Client
@@ -71,14 +72,23 @@ namespace FribergFastigheter.Client
                 options.AddPolicy(ApplicationPolicies.CanEditHousingResource, policy =>
                     policy.AddRequirements(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.EditHousing)));
 
-                options.AddPolicy(ApplicationPolicies.CanCreateBroker, policy =>
+                options.AddPolicy(ApplicationPolicies.CanCreateBrokerResource, policy =>
                     policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.CreateBroker)));
 
-                options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
+                options.AddPolicy(ApplicationPolicies.CanEditBrokerResource, policy =>
                     policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.EditBroker)));
 
-                options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
+                options.AddPolicy(ApplicationPolicies.CanDeleteBrokerResource, policy =>
                     policy.AddRequirements(new ManageBrokerAuthorizationHandler(ManageBrokerAuthorizationHandler.ActionTypes.DeleteBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanCreateBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.CreateBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.EditBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.DeleteBroker)));
             });
 
             // Add API services with typed http clients

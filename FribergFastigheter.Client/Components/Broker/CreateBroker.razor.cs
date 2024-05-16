@@ -89,7 +89,7 @@ namespace FribergFastigheter.Client.Components.Broker
             var user = (await AuthenticationStateTask).User;
             var brokerId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var authorizationData = new CreateBrokerAuthorizationData(brokerId);
-            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanCreateBroker);
+            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanCreateBrokerResource);
 
             if (result.Succeeded)
             {

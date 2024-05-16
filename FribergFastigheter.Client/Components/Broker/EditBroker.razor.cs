@@ -62,7 +62,10 @@ namespace FribergFastigheter.Client.Components.Broker
         public BrokerViewModel Broker { get; set; }
 
         [SupplyParameterFromForm]
-        private AdminEditBrokerViewModel BrokerInput { get; set; }
+        private AdminEditBrokerViewModel AdminBrokerInput { get; set; }
+
+        [SupplyParameterFromForm]
+        private EditBrokerViewModel BrokerInput { get; set; }
 
         [Parameter]
         public EventCallback CloseEditBroker { get; set; }
@@ -76,65 +79,99 @@ namespace FribergFastigheter.Client.Components.Broker
 
         protected async override Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
+            await base.OnInitializedAsync();   
         }
 
-        private void CreateEditBrokerModel()
+        private async Task CreateEditBrokerModel()
         {
             if (Broker == null)
             {
                 throw new ArgumentNullException(nameof(Broker), "The broker object can't be null.");
             }
-
-            BrokerInput = AutoMapper.Map<AdminEditBrokerViewModel>(Broker);
+            if(await CheckPolicy(ApplicationPolicies.BrokerAdmin))
+            {
+                AdminBrokerInput = AutoMapper.Map<AdminEditBrokerViewModel>(Broker);
+            }
+            else if (await CheckPolicy(ApplicationPolicies.Broker))
+            {
+                BrokerInput = AutoMapper.Map<EditBrokerViewModel>(Broker);
+            }
+           
         }
 
         protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
-            CreateEditBrokerModel();
+            await CreateEditBrokerModel();
         }
 
         private async Task OnValidSubmit()
         {
-            var user = (await AuthenticationStateTask).User;
             var authorizationData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: Broker.BrokerFirm.BrokerFirmId,
                 existingBrokerBrokerId: Broker.BrokerId);
-            var result = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanEditBroker);
-
-            if (result.Succeeded)
-            {
-                var response = await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(BrokerInput));
-
-                if (response.Success)
+  
+                if (await CheckPolicy(ApplicationPolicies.BrokerAdmin) && await CheckPolicy(ApplicationPolicies.CanEditBrokerResource, authorizationData))
                 {
-                    AutoMapper.Map(BrokerInput!, Broker);
+                    var response = await BrokerFirmApiService.AdminEditBroker(Broker.BrokerId, AutoMapper.Map<AdminEditBrokerDto>(AdminBrokerInput));
 
-                    if (_deleteProfileImage)
+                    if (response.Success)
                     {
-                        var innerResponse = await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+                        AutoMapper.Map(AdminBrokerInput!, Broker);
 
-                        if (!innerResponse.Success)
+                        if (_deleteProfileImage)
                         {
-                            // TODO - handle
+                            var innerResponse = await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+
+                            if (!innerResponse.Success)
+                            {
+                                // TODO - handle
+                            }
                         }
+                        if (_uploadedProfileImage != null)
+                        {
+                            Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                        }
+                        await OnBrokerEdited.InvokeAsync(Broker);
                     }
-                    if (_uploadedProfileImage != null)
+                    else
                     {
-                        Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                        // TODO - Show message
                     }
-                    await OnBrokerEdited.InvokeAsync(Broker);
+                }      
+                
+                if (await CheckPolicy(ApplicationPolicies.Broker) && await CheckPolicy(ApplicationPolicies.CanEditBrokerResource, authorizationData))
+                {
+                    var response = await BrokerFirmApiService.EditBroker(Broker.BrokerId, AutoMapper.Map<EditBrokerDto>(BrokerInput));
+
+                    if (response.Success)
+                    {
+                        AutoMapper.Map(BrokerInput!, Broker);
+
+                        if (_deleteProfileImage)
+                        {
+                            var innerResponse = await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+
+                            if (!innerResponse.Success)
+                            {
+                                // TODO - handle
+                            }
+                        }
+                        if (_uploadedProfileImage != null)
+                        {
+                            Broker.ProfileImage = await UploadImages(Broker.BrokerId);
+                        }
+                        await OnBrokerEdited.InvokeAsync(Broker);
+                    }
+                    else
+                    {
+                        // TODO - Show message
+                    }
                 }
                 else
                 {
                     // TODO - Show message
                 }
-            }
-            else
-            {
-                // TODO - Show message
-            }
-
+            
         }
  
         private async Task CloseEditForm()
@@ -143,10 +180,18 @@ namespace FribergFastigheter.Client.Components.Broker
             await CloseEditBroker.InvokeAsync();
         }
 
-        private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
+        private async Task OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
         {
-            BrokerInput.ProfileImage = null;
+            if (await CheckPolicy(ApplicationPolicies.BrokerAdmin))
+            {
+                AdminBrokerInput.ProfileImage = null;
+            }
+            else if (await CheckPolicy(ApplicationPolicies.Broker))
+            {
+                BrokerInput.ProfileImage = null;
+            }
             _deleteProfileImage = true;
+            StateHasChanged();
         }
 
         private void OnFileUploadChanged(InputFileChangeEventArgs e)
@@ -182,6 +227,21 @@ namespace FribergFastigheter.Client.Components.Broker
                 throw new Exception($"Failed to upload profile image: {response.GetErrorsAsString()}");
             }            
         }
+
+        private async Task<bool> CheckPolicy(string policy)
+        {
+            var user = (await AuthenticationStateTask).User;
+            var result = await AuthorizationService.AuthorizeAsync(user, policy);
+            return result.Succeeded;
+        }
+
+        private async Task<bool> CheckPolicy<T>(string policy, T resorce)
+        {
+            var user = (await AuthenticationStateTask).User;
+            var result = await AuthorizationService.AuthorizeAsync(user, resorce, policy);
+            return result.Succeeded;
+        }
+
         #endregion
     }
 }

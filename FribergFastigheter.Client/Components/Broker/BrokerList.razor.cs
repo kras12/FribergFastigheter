@@ -1,12 +1,7 @@
-﻿using AutoMapper;
-using FribergFastigheter.Client.Models.Broker;
+﻿using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.BrokerFirm;
-using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace FribergFastigheter.Client.Components.Broker
 {
@@ -28,18 +23,8 @@ namespace FribergFastigheter.Client.Components.Broker
 
 
         #endregion
-        #region InjectedServiceProperties
 
-        /// <summary>
-        /// The injected Auto Mapper service. 
-        /// </summary>
-        [Inject]
-        private IMapper Mapper { get; set; }
-        /// <summary>
-        /// The injected housing API service.
-        /// </summary>
-        [Inject]
-        private IBrokerFirmApiService BrokerFirmApiService { get; set; }
+        #region InjectedServiceProperties
 
         /// <summary>
         /// Injected JavaScript runtime.
@@ -48,6 +33,7 @@ namespace FribergFastigheter.Client.Components.Broker
         public IJSRuntime JSRuntime { get; set; }
 
         #endregion
+
         #region Properties
 
         [Parameter]
@@ -142,7 +128,6 @@ namespace FribergFastigheter.Client.Components.Broker
         {
             Brokers.Remove(broker);
         }
-    
     }
         #endregion
 }

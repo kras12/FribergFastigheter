@@ -124,7 +124,7 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker
                         context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.BrokerAccessDenied.ToString()));
                         return Task.CompletedTask;
                     }
-                    // Housing belongs to another broker
+                    //Editing another broker
                     else if (editBrokerAuthData.ExistingBrokerBrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.BrokerEditAccessDenied.ToString()));
