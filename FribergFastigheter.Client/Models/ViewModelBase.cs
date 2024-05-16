@@ -28,6 +28,8 @@ namespace FribergFastigheter.Client.Models
 
         #region ValidationErrorMessages
 
+        public const string BuildYearValidationMessage = "Byggåret måste vara mellan 1900 och 2100";
+
         /// <summary>
         /// Validation error message for email validation.
         /// </summary>
@@ -46,7 +48,7 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// Validation error message for positive number validation.
         /// </summary>
-        public const string PositiveNumberValidationErrorMessage = "Ange ett positivt värde.";
+        public const string PositiveNumberValidationErrorMessage = "Ange ett positivt tal större än noll.";
 
         #endregion
     }
