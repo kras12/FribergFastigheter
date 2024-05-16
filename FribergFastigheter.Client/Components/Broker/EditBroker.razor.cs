@@ -111,9 +111,9 @@ namespace FribergFastigheter.Client.Components.Broker
                 {
                     AutoMapper.Map(response.Value, Broker);
 
-                    if (_deleteProfileImage)
-                    {
-                        var innerResponse = await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
+                        if (_deleteProfileImage)
+                        {
+                            var innerResponse = await BrokerFirmApiService.DeleteBrokerProfileImage(Broker.BrokerId);
 
                         if (innerResponse.Success)
                         {
