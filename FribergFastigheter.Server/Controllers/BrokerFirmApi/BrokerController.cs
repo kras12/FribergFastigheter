@@ -133,7 +133,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     registerBrokerDto.Email,
                     registerBrokerDto.Email,
                     registerBrokerDto.PhoneNumber,
-                    registerBrokerDto.Password
+                    registerBrokerDto.Password,
+                    emailConfirmed: true
                     );
 
                     var createUserResult = await _userManager.CreateAsync(applicationUser, registerBrokerDto.Password);
