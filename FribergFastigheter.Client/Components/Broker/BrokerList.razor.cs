@@ -2,11 +2,14 @@
 using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Shared.Constants;
 using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 
 namespace FribergFastigheter.Client.Components.Broker
 {
@@ -27,7 +30,9 @@ namespace FribergFastigheter.Client.Components.Broker
         private string? formId = "EditForm";
 
 
+
         #endregion
+
         #region InjectedServiceProperties
 
         /// <summary>
@@ -48,7 +53,12 @@ namespace FribergFastigheter.Client.Components.Broker
         public IJSRuntime JSRuntime { get; set; }
 
         #endregion
+
         #region Properties
+
+        [CascadingParameter]
+
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
         [Parameter]
         public List<BrokerViewModel> Brokers { get; set; }
@@ -142,7 +152,6 @@ namespace FribergFastigheter.Client.Components.Broker
         {
             Brokers.Remove(broker);
         }
-    
     }
         #endregion
 }
