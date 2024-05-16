@@ -75,6 +75,21 @@
         public const string CanEditHousingResource = "CanEditHousingResource";
 
         /// <summary>
+        /// The can create housing resource policy.
+        /// </summary>
+        public const string CanCreateBrokerResource = "CanCreateBrokerResource";
+
+        /// <summary>
+        /// The can edit broker resource policy.
+        /// </summary>
+        public const string CanEditBrokerResource = "CanEditBrokerResource";
+
+        /// <summary>
+        /// The can delete broker resource policy.
+        /// </summary>
+        public const string CanDeleteBrokerResource = "CanDeleteBrokerResource";
+
+        /// <summary>
         /// The can create housing policy.
         /// </summary>
         public const string CanCreateBroker = "CanCreateBroker";

@@ -1,11 +1,12 @@
 ﻿using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Models.Image;
+using FribergFastigheter.Client.Services.AuthorizationHandlers.Broker.Data;
 using FribergFastigheter.Shared.Dto;
 using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Client.Models.Broker
 {
-    public class BrokerViewModel : ViewModelBase
+    public class BrokerViewModel : ViewModelBase, IEditBrokerPreAuthorizationData, IDeleteBrokerPreAuthorizationData
     {
         #region Constructors
 
@@ -92,6 +93,47 @@ namespace FribergFastigheter.Client.Models.Broker
         public string? Url { get; set; } = null;
 
         public int? HousingsCount { get; set; } = null;
+
+        #endregion
+
+        #region IEditHousingPreAuthorizationData
+
+        /// <summary>
+        /// The broker firm ID
+        /// </summary>
+        int IEditBrokerPreAuthorizationData.ExistingBrokerBrokerFirmId
+        {
+            get
+            {
+                return BrokerFirm.BrokerFirmId;
+            }
+        }
+
+        /// <summary>
+        /// The broker ID
+        /// </summary>
+        int IEditBrokerPreAuthorizationData.ExistingBrokerBrokerId
+        {
+            get
+            {
+                return BrokerId;
+            }
+        }
+
+        #endregion
+
+        #region IDeleteBrokerPreAuthorizationData
+
+        /// <summary>
+        /// The broker firm ID
+        /// </summary>
+        int IDeleteBrokerPreAuthorizationData.ExistingBrokerBrokerFirmId
+        {
+            get
+            {
+                return BrokerFirm.BrokerFirmId;
+            }
+        }
 
         #endregion
     }

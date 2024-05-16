@@ -82,30 +82,29 @@ namespace FribergFastigheter.Client.Pages
 		{
 			var response = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
 
-			if (response.Success )
+			if (response.Success)
 			{
 				BrokerFirmDto brokerFirm = response.Value!;
-                BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);
-                BrokerFirm = brokerFirmResult;
+				BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);
+				BrokerFirm = brokerFirmResult;
 
-				var innerResponse = await HousingApiService.GetBrokers(BrokerFirmId);
+				Brokers = BrokerFirm.Brokers;
 
-				if (innerResponse.Success )
+				var housingsResponse = await HousingApiService.GetHousings(BrokerFirmId, 3);
+				if (housingsResponse.Success)
 				{
-					Brokers = AutoMapper.Map<List<BrokerViewModel>>(innerResponse.Value);
-                    Housings = AutoMapper.Map<List<HousingViewModel>>(await HousingApiService.GetHousings(BrokerFirmId, 3));
+					Housings = AutoMapper.Map<List<HousingViewModel>>(housingsResponse.Value);
                 }
-                else
-                {
+				else
+				{
                     // TODO - Handle
                 }
             }
-			else
-			{
-				// TODO - Handle
-			}
-            
-		}
+            else
+            {
+                // TODO - Handle
+            }
+        }
 
 		public void OpenBrokerList()
 		{

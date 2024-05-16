@@ -87,7 +87,7 @@ namespace FribergFastigheter.Client.Components.Broker
                 var user = (await AuthenticationStateTask).User;
                 var brokerFirmId = int.Parse(user.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
                 var authorizationData = new DeleteBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId);
-                var authorizeResult = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanDeleteBroker);
+                var authorizeResult = await AuthorizationService.AuthorizeAsync(user, authorizationData, ApplicationPolicies.CanDeleteBrokerResource);
                 
                 if (authorizeResult.Succeeded) 
                 {

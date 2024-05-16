@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FribergFastigheter.Client.Components.Broker;
 using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Models.Housing;
@@ -68,6 +69,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Firm
                 // TOOD - Show message
             }
         }
+
 
         public void OpenBrokerList()
         {

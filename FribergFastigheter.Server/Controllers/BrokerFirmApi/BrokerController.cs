@@ -133,7 +133,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             var authData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId,
                existingBrokerBrokerId: id);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditBroker);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditBrokerResource);
 
             if (result.Succeeded)
             {
@@ -172,7 +172,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 var brokerId = int.Parse(User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerId)!.Value);
                 var brokerFirmId = int.Parse(User.FindFirst(x => x.Type == ApplicationUserClaims.BrokerFirmId)!.Value);
                 var authData = new CreateBrokerAuthorizationData(brokerId);
-                var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateBroker);
+                var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanCreateBrokerResource);
 
                 if (result.Succeeded)
                 {
@@ -277,7 +277,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
 
             var authData = new DeleteBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteBroker);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanDeleteBrokerResource);
 
             if (result.Succeeded)
             {
@@ -372,7 +372,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
 
             var authData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId,
                existingBrokerBrokerId: id);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditBroker);
+            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditBrokerResource);
 
             if (result.Succeeded)
             {
