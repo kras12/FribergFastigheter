@@ -56,10 +56,19 @@ namespace FribergFastigheter.Client.Pages
         {
             await base.OnInitializedAsync();
 
-            _housingViewModel = AutoMapper.Map<HousingViewModel>(await HousingApiService.GetHousingById(Id));
-			// TODO - Find a better way to retrieve the URLS
-			_housingViewModel.Broker.Url = $"Broker/{_housingViewModel.Broker.BrokerId}";
-			_housingViewModel.Broker.BrokerFirm.Url = $"BrokerFirm/{_housingViewModel.Broker.BrokerFirm.BrokerFirmId}";
+            var response = await HousingApiService.GetHousingById(Id);
+
+            if (response.Success)
+            {
+				_housingViewModel = AutoMapper.Map<HousingViewModel>(response.Value!);
+				// TODO - Find a better way to retrieve the URLS
+				_housingViewModel.Broker.Url = $"Broker/{_housingViewModel.Broker.BrokerId}";
+				_housingViewModel.Broker.BrokerFirm.Url = $"BrokerFirm/{_housingViewModel.Broker.BrokerFirm.BrokerFirmId}";
+			}
+            else
+            {
+                // TODO - Handle
+            }
         }
 
         #endregion

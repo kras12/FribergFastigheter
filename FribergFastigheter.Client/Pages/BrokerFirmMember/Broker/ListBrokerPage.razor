@@ -6,12 +6,22 @@
 @using Microsoft.AspNetCore.Authorization
 @*
 <!-- Author: Marcus -->
-<!-- Co Authors: -->
+<!-- Co Authors: Jimmie -->
 *@
 @attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 
-@if (Brokers != null && BrokerFirm != null)
-{
-    <BrokerList BrokerFirm="BrokerFirm" Brokers="Brokers" />
-}
+<div class="vertical-page-container">
+    @if (_isloadingData)
+    {
+        <LoadingIndicator></LoadingIndicator>
+    }
+    else
+    {
+        @if (Brokers != null && BrokerFirm != null)
+        {
+            <BrokerList BrokerFirm="BrokerFirm" Brokers="Brokers" />
+        }
+    }
+</div>
+
 

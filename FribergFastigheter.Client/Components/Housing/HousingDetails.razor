@@ -28,7 +28,7 @@
         </div>    
         <div class="vertical-page-section">
             <ImageSlideShow Images="ImageSlides" ShowNavigationalDots="true"></ImageSlideShow>
-            <button @onclick="@(() => OpenImageGallery())">Bildgalleri</button>
+            <button class="btn" @onclick="@(() => OpenImageGallery())">Bildgalleri</button>
         </div>
         <div class="card-header full-width">
             <div class="card-title display-4 text-center">@(StringFormatHelper.FormatPrice(Housing.Price))</div>
@@ -78,7 +78,7 @@
             <div class="text-center">Bildgalleri</div>
         </div>
         <div></div>
-        <button class="center" @onclick="@(() => CloseImageGallery())">Stäng</button>
+        <button class="btn center" @onclick="@(() => CloseImageGallery())">Stäng</button>
         <div class="tiled-image-gallery tiled-image-gallery__image-size_medium full-width">
         @foreach (var image in Housing.Images)
         {

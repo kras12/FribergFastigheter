@@ -21,6 +21,11 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
         /// </summary>
         private List<HousingViewModel> _housings = new();
 
+        /// <summary>
+        /// Set to true when loading data.
+        /// </summary>
+        private bool _isloadingData = false;
+
         #endregion
 
         #region Properties
@@ -43,27 +48,38 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Housing
 
         #region Methods
 
-		/// <summary>
-		/// Method invoked when the component is ready to start, having received its initial 
-		/// parameters from its parent in the render tree. Override this method if you will 
-		/// perform an asynchronous operation and want the component to refresh when that 
-		/// operation is completed.
-		/// </summary>
-		/// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
-		protected override async Task OnInitializedAsync()
+        /// <summary>
+        /// Method invoked when the component is ready to start, having received its initial 
+        /// parameters from its parent in the render tree. Override this method if you will 
+        /// perform an asynchronous operation and want the component to refresh when that 
+        /// operation is completed.
+        /// </summary>
+        /// <returns>A System.Threading.Tasks.Task representing any asynchronous operation.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: --> 
+        protected override async Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
+            _isloadingData = true;
 
-            var response = await BrokerFirmApiService.GetHousings(limitImagesPerHousing: 3);
+            try
+            {
+                await base.OnInitializedAsync();
 
-            if (response.Success)
-            {
-                _housings = AutoMapper.Map<List<HousingViewModel>>(response.Value);
+                var response = await BrokerFirmApiService.GetHousings(limitImagesPerHousing: 3);
+
+                if (response.Success)
+                {
+                    _housings = AutoMapper.Map<List<HousingViewModel>>(response.Value);
+                }
+                else
+                {
+                    // Todo - Handle
+                }
             }
-            else
+            finally
             {
-                // Todo - Handle
-            }
+                _isloadingData = false;
+            }            
         }
 
 		#endregion

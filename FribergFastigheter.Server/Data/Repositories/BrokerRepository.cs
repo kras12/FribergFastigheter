@@ -69,7 +69,8 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public async Task UpdateAsync(Broker broker)
         {
-            applicationDbContext.BrokerFirms.Entry(broker.BrokerFirm).State = EntityState.Unchanged;
+			applicationDbContext.ChangeTracker.Clear();
+			applicationDbContext.BrokerFirms.Entry(broker.BrokerFirm).State = EntityState.Unchanged;
             applicationDbContext.Brokers.Entry(broker).State = EntityState.Modified;
             applicationDbContext.Users.Entry(broker.User).State = EntityState.Modified;
             broker.User.NormalizedEmail = broker.User.Email!.ToUpper();
@@ -151,7 +152,8 @@ namespace FribergFastigheter.Server.Data.Repositories
         /// <!-- Co Authors: -->
         public async Task DeleteProfileImage(int brokerId)
         {
-            var broker = applicationDbContext.Brokers.Where(x => x.BrokerId == brokerId)
+            var broker = applicationDbContext.Brokers
+                .Where(x => x.BrokerId == brokerId)
                 .FirstOrDefault();
 
             if (broker == null)
@@ -162,6 +164,7 @@ namespace FribergFastigheter.Server.Data.Repositories
             broker.ProfileImage = null;
 
             await applicationDbContext.SaveChangesAsync();
+            applicationDbContext.ChangeTracker.Clear();
         }
 
         #endregion

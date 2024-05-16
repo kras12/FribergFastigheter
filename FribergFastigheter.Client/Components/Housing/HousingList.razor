@@ -22,12 +22,10 @@
                         <button class="btn btn-primary" @onclick=@(() => OnCreateHousingButtonClicked())>Skapa bostadsobjekt</button>
                     </div>
                 </AuthorizeView>
-
-                @if (_filteredhousings.Count > 0)
-                {
+                @{
                     var brokers = GetBrokers();
 
-                    @if (brokers.Count > 0)
+                    if (brokers.Count > 0)
                     {
                         var loggedInBroker = brokers.Find(x => x.BrokerId == _loggedInBrokerId);
 
@@ -38,7 +36,7 @@
                         }
 
                         <div class="btn-group flex-wrap" role="group" aria-label="Basic radio toggle button group">
-                            <input type="radio" class="btn-check" name="btn-radio-housing-list" id="btn-toggle-housing-list" autocomplete="off" checked @onclick="@(() => RemoveHousingFilter())">
+                            <input type="radio" class="btn-check" name="btn-radio-housing-list" id="btn-toggle-housing-list" autocomplete="off" checked @onclick="@(() => ResetFilter())">
                             <label class="btn btn-outline-primary flex-grow-0" for="btn-toggle-housing-list">Alla bostäder</label>
 
                             @foreach (var broker in brokers)
@@ -59,7 +57,7 @@
             @foreach (var housing in _filteredhousings)
             {
                 <HousingListItem ElementId="@($"HousingListItem-{housing.HousingId}")" Housing="housing" OnTransformed="OnListItemTransformed"
-                                 TruncateLongDescriptions="TruncateLongDescriptions" OnHousingDeleted="OnHousingDeletedEventHandler" EnableEditingControls=@EnableEditingControls></HousingListItem>
+                                 TruncateLongDescriptions="TruncateLongDescriptions" OnHousingDeleted="OnHousingDeletedEventHandler" OnHousingEdited="OnHousingEditedEventHandler" EnableEditingControls=@EnableEditingControls></HousingListItem>
             }
         </div>
     }

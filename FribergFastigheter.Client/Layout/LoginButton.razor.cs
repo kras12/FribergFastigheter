@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
+using Blazored.SessionStorage;
+using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Models.BrokerFirm;
+using FribergFastigheter.Client.Pages.BrokerFirmMember;
 using FribergFastigheter.Client.Services.FribergFastigheterApi;
 using FribergFastigheter.Shared.Dto.Login;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
-using static FribergFastigheter.Client.Components.ConfirmButton;
 
 namespace FribergFastigheter.Client.Layout
 {
@@ -18,12 +19,26 @@ namespace FribergFastigheter.Client.Layout
     /// <!-- Co Authors: -->
     public partial class LoginButton : ComponentBase
     {
+        #region Constants
+
+        /// <summary>
+        /// The key where the component looks for redirect url targets after logging in. 
+        /// </summary>
+        public const string RedirectUrlStorageKey = "RedirectUrlAfterLoginKey";
+
+        #endregion
+
         #region Fields
 
         /// <summary>
-        /// The id of the modal dialg. 
+        /// A collection of validation errors returned from the API.
         /// </summary>
-        private readonly string _modalDialogId = Guid.NewGuid().ToString();
+        private List<string> _apiValidationErrors = new List<string>();
+
+		/// <summary>
+		/// The id of the modal dialg. 
+		/// </summary>
+		private readonly string _modalDialogId = Guid.NewGuid().ToString();
 
         #endregion
 
@@ -75,6 +90,14 @@ namespace FribergFastigheter.Client.Layout
         private NavigationManager NavigationManager { get; set; }
 #pragma warning restore CS8618 
 
+        /// <summary>
+        /// The injected session storage service.
+        /// </summary>
+        [Inject]
+#pragma warning disable CS8618 
+        private ISessionStorageService SessionStorageService { get; set; }
+#pragma warning restore CS8618 
+
         #endregion
 
         #region Methods
@@ -95,17 +118,45 @@ namespace FribergFastigheter.Client.Layout
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task OnValidSubmit()
         {
+            _apiValidationErrors.Clear();
             await JSRuntime.InvokeVoidAsync("HideBrokerLoginModal", _modalDialogId);
             var response = await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
 
             if (response.Success)
             {
                 FormInput = new LoginViewModel();
-                NavigationManager.NavigateTo("brokermember");
+                string navigateToUrl = BrokerFirmHomePage.BrokerMemberPageUrl;
+
+                if (await SessionStorageService.ContainKeyAsync(RedirectUrlStorageKey))
+                {
+                    string redirectToUrl = await SessionStorageService.GetItemAsStringAsync(RedirectUrlStorageKey);
+                    await SessionStorageService.RemoveItemAsync(RedirectUrlStorageKey);
+                    navigateToUrl = redirectToUrl;
+                }
+
+                NavigationManager.NavigateTo(navigateToUrl);
             }
             else
             {
-                // TODO - show message
+                _apiValidationErrors = response.Errors.Select(x => x.Value).ToList();
+
+                // TODO - Find better solution
+                // The identity framework provides us with english messages, so we perform a quick translation.
+                for (int i = 0; i < _apiValidationErrors.Count; i++)
+                {
+                    if (_apiValidationErrors[i].Equals("The UserName field is required.", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        _apiValidationErrors[i] = ViewModelBase.EmailValidationErrorMessage;
+                    }
+                    else if (_apiValidationErrors[i].Equals("The Password field is required.", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        _apiValidationErrors[i] = ViewModelBase.PasswordValidationErrorMessage;
+                    }
+                }
+
+                // The framework needs some time it seems
+                await Task.Delay(200);
+                await JSRuntime.InvokeVoidAsync("ShowBrokerLoginModal", _modalDialogId);
             }
         }
 

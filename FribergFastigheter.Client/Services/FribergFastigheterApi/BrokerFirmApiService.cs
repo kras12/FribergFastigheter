@@ -272,16 +272,17 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: Marcus -->
         public async Task<ApiResponseDto<LoginResponseDto>> Login(LoginDto loginData)
         {
-            var content = JsonContent.Create(loginData);
+			var response = await _httpClient.PostAsJsonAsync(BrokerLoginApiEndPoint, loginData);
 
-            var response = await _httpClient.PostAsync(BrokerLoginApiEndPoint, content);
-            response.EnsureSuccessStatusCode();
+			var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<LoginResponseDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
 
-            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<LoginResponseDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            if (result != null && result!.Success)
+            {
+				await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Value!.Token);
+			}           
+
             return EnsureNotNull(result, "Failed to serialize the API response.");
-            await ((BrokerFirmAuthenticationStateProvider)_authenticationStateProvider).SetTokenAsync(result!.Value!.Token);
-            return result!;
-        }        
+        }
 
         #endregion
 

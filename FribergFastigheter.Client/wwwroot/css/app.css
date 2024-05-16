@@ -7,18 +7,40 @@
     --default-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.2);
 
     /* The box shadow for hovered elements (navigation menu, buttons, etc) */
-    --box-shadow-hover: 0px 0px 2px 1px #ff5600;
+    --box-shadow-hover: 0px 0px 2px 1px #0632766b;
+
+    /* The box shadow color for hovered elements */
+    --box-shadow-hover-color: #0632766b;
+
+    /* The box shadow for focused elements (navigation menu, buttons, etc) */
+    --box-shadow-focused: 0 0 0 0.1rem black, 0 0 0 0.25rem var(--box-shadow-hover-color);
+
+    /* The background color for headers */
+    --header-background-color: #68767b;
 
     /* The background color for filled boxes */
     --filled-box-background-color: #ddd;
 
-    --default-orange-color: #df540f;
+    /* background color for loading indicators */
+    --loading-indicator-background-color: #0632766b;
+
+    /* The text color for navigation links */
     --navigation-link-text-color: fff;
 
-    --header-background-color: #68767b;
+    /* The background color for navigation menu bars */
+    --navigation-menu-bar-background-color: #8ba9bd2e;
+    
+    /* The background color for navigation menu headers */
     --navigation-menu-header-background-color: #adadad;
     
-    --action-element-hover-background-color: #999;
+    /* The background color for hovered elements */
+    --action-element-hover-background-color: #0606061f;
+
+    /* The background color for pagination numbers  */
+    --pagination-number-background-color: var(--action-element-hover-background-color);
+
+    /* The border color for tables */
+    --table-border-color: var(--action-element-hover-background-color);
 }
 
 /*==================================================*/
@@ -28,12 +50,6 @@
 body {
     font-family: 'Poppins', sans-serif;
     font-size: 1rem;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
 }
 
 :is(h1, h2, h3, h4, h5, h6) {
@@ -55,17 +71,59 @@ a {
     border-radius: 10px;
 }
 
+.housing-result-header div:first-child,
+.housing-result-header div:last-child {
+    min-width: 160px;
+}
+
+/*==================================================*/
+/* Accordion                                       */
+/*==================================================*/
+
+/* Accordion buttons */
+.accordion-header>.accordion-button {
+    background-color: #ebeff1;
+}
+
+/*==================================================*/
+/* Brokercard                                       */
+/*==================================================*/
+
+.broker-list {
+    display:flex;
+    flex-direction: column;
+    row-gap: 1.5rem;
+}
+    .broker-list .broker-card {
+        display: flex;
+        align-items: flex-start;
+    }
+    .broker-list .broker-card .broker-info {
+        flex: auto;
+        padding: 3rem;
+        
+    }
+.broker-details {
+    width: 50%;
+    box-shadow: 1px 1px 10px 3px grey;
+    padding: 1rem;
+}
+
 /*==================================================*/
 /* Cards                                            */
 /*==================================================*/
+
+/* Card */
+.card {
+    background-color: var(--navigation-menu-bar-background-color);
+}
 
 a:has(.card) {
     text-decoration: none;
 }
 
-.housing-result-header div:first-child,
-.housing-result-header div:last-child {
-    min-width: 160px;
+a :is(.card:hover, card:focus) {
+    background-color: #4b6d8740;
 }
 
 /*==================================================*/
@@ -121,24 +179,27 @@ body {
 /* Elements                                         */
 /*==================================================*/
 
-:is(nav a, .btn):hover,
-:is(nav a, .btn):focus
+:is(nav a, .btn, a>.card):hover
 {
   background-color: var(--action-element-hover-background-color);
+  border-color: var(--box-shadow-hover-color);
   box-shadow: var(--box-shadow-hover);
 }
 
-:is(btn .btn-link.nav-link, .form-control, .form-check-input, nav a):focus,
-:is(btn .btn-link.nav-link, .form-control, .form-check-input, nav a):focus-visible{
+:is(button.btn, .btn-link.nav-link, .form-control, .form-check-input, nav a, a>.card):focus,
+:is(button.btn, .btn-link.nav-link, .form-control, .form-check-input, nav a, a>.card):focus-visible,
+:is(button.btn, .btn-link.nav-link, .form-control, .form-check-input, nav a, a>.card):active
+{
     background-color: var(--action-element-hover-background-color);
-    box-shadow: 0 0 0 0.1rem black, 0 0 0 0.25rem var(--default-orange-color);
-    border-color: var(--default-orange-color);
+    box-shadow: var(--box-shadow-focused);
+    border-color: var(--box-shadow-hover-color);
     outline: none;
 }
 
 .btn-check:checked+.btn
 {
     background-color: var(--header-background-color);
+    border-color: var(--box-shadow-hover-color)
 }
 
 .btn, .btn-primary, .btn-outline-primary
@@ -149,11 +210,30 @@ body {
 .btn.btn-outline-primary,
 .btn-check+.btn:hover 
 {
+    border-color: var(--box-shadow-hover-color);
     color: black;
 }
 
 .btn-primary {
+    color: #fff;
     background-color: var(--header-background-color);
+}
+
+.btn-success {
+    background-color: #198754
+}
+
+.btn-warning {
+   background-color: #ffc107;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.navbar-brand {
+    border-radius: 10px;
+    padding: 0.5rem;    
 }
 
 /*==================================================*/
@@ -197,12 +277,9 @@ select.form-control {
     appearance: revert;
 }
 
-
-
 /*==================================================*/
 /* Images                                           */
 /*==================================================*/ 
-
 
 /* Broker Firm Logotype */
 .broker-firm-logotype {
@@ -246,28 +323,14 @@ img.cover-image
     object-fit: contain;
     box-shadow: 1px 1px 10px 3px grey;
 }
+
 /*==================================================*/
-/* Brokercard                                       */
+/* Menu                                             */
 /*==================================================*/
 
-.broker-list {
-    display:flex;
-    flex-direction: column;
-    row-gap: 1.5rem;
-}
-    .broker-list .broker-card {
-        display: flex;
-        align-items: flex-start;
-    }
-    .broker-list .broker-card .broker-info {
-        flex: auto;
-        padding: 3rem;
-        
-    }
-.broker-details {
-    width: 50%;
-    box-shadow: 1px 1px 10px 3px grey;
-    padding: 1rem;
+/* Navigation bar */
+nav.navbar {
+    background-color: var(--navigation-menu-bar-background-color);
 }
 
 /*==================================================*/
@@ -285,7 +348,7 @@ img.cover-image
 
 /* Pagination number - hover */
 .pagination-number:not(.active):is(:hover, :focus) {
-    background-color: var(--action-element-hover-background-color);
+    background-color: var(--pagination-number-background-color);
     cursor: pointer;
 }
 
@@ -385,7 +448,7 @@ th {
     border-top: 0.2em solid;
     border-top-color: #fdc53e;
     border-bottom: 0.2em solid;
-    border-bottom-color: var(--default-orange-color);
+    border-bottom-color: var(--table-border-color);
     font-weight: bolder;
     padding: 0.5em;
 }
@@ -393,7 +456,7 @@ th {
 tr {
     border-top: 0.2em solid;
     border-bottom: 0.2em solid;
-    border-bottom-color: var(--default-orange-color);
+    border-bottom-color: var(--table-border-color);
     padding: 0.5em;
 }
 
@@ -490,64 +553,6 @@ dd {
 }
 
 /*==================================================*/
-/* Other                                            */
-/*==================================================*/
-
-.div-statistics-left {
-    border-top: 0.2em solid;
-    border-right: 0.2em solid;
-    border-top-color: var(--default-orange-color);
-    border-right-color: var(--default-orange-color);
-    padding: 1em;
-    width: 15em;
-}
-
-.div-statistics-right {
-    border-top: 0.2em solid;
-    border-left: 0.2em solid;
-    border-top-color: var(--default-orange-color);
-    border-left-color: var(--default-orange-color);
-    padding: 1em;
-    width: 15em;
-}
-
-.form-input-box {
-    border-top: 0.2em solid;
-    border-top-color: #fdc53e;
-    border-bottom: 0.2em solid;
-    border-bottom-color: var(--default-orange-color);
-    margin: 0.2em;
-}
-
-select.form-input-box {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    background-color: white;
-}
-
-.form-information {
-    border-top: 0.2em solid;
-    border-top-color: #fdc53e;
-    border-bottom: 0.2em solid;
-    border-bottom-color: var(--default-orange-color);
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
-
-.colored-border-bottom
-{
-    border-bottom: 0.2em solid;
-    border-bottom-color: #fdc53e;
-    margin-bottom: 0
-}
-
-.colored-border-top
-{
-    border-top: 0.2em solid;
-    border-top-color: var(--default-orange-color);
-}
-
-/*==================================================*/
 /* Universal modifiers                              */
 /*==================================================*/
 
@@ -576,7 +581,7 @@ select.form-input-box {
 }
 
 /*==================================================*/
-/* Blazor                                           */
+/* Blazor styles from Visual Studio Template        */
 /*==================================================*/
 
 .valid.modified:not([type=checkbox]) {
@@ -656,3 +661,4 @@ select.form-input-box {
 .navbar-nav {
     gap: 0.2rem;
 }
+
