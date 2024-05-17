@@ -60,6 +60,9 @@ namespace FribergFastigheter.Client
                 options.AddPolicy(ApplicationPolicies.CanEditHousing, policy => 
                     policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
 
+                options.AddPolicy(ApplicationPolicies.CanEditFullHousing, policy =>
+                    policy.AddRequirements(new ManageHousingPreAuthorizationHandler(ManageHousingPreAuthorizationHandler.ActionTypes.EditHousing)));
+
                 options.AddPolicy(ApplicationPolicies.CanCreateHousingResource, policy =>
                     policy.Requirements.Add(new ManageHousingAuthorizationHandler(ManageHousingAuthorizationHandler.ActionTypes.CreateHousing)));
 
@@ -86,6 +89,9 @@ namespace FribergFastigheter.Client
 
                 options.AddPolicy(ApplicationPolicies.CanEditBroker, policy =>
                 policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.EditBroker)));
+
+                options.AddPolicy(ApplicationPolicies.CanEditFullBroker, policy =>
+                policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.EditFullBroker)));
 
                 options.AddPolicy(ApplicationPolicies.CanDeleteBroker, policy =>
                 policy.AddRequirements(new ManageBrokerPreAuthorizationHandler(ManageBrokerPreAuthorizationHandler.ActionTypes.DeleteBroker)));

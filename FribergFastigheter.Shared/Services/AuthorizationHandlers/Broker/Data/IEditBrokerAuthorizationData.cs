@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FribergFastigheter.Shared.Dto.Broker;
 
 namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data
 {
     public interface IEditBrokerAuthorizationData
     {
+        /// <summary>
+        /// The exsting broker.
+        /// </summary>
+        public BrokerDto ExistingBroker { get; set; }
 
         /// <summary>
-        /// The broker firm ID.
+        /// The new broker. 
         /// </summary>
-        public int ExistingBrokerBrokerFirmId { get; }
-
-        /// <summary>
-        /// The broker ID.
-        /// </summary>
-        public int ExistingBrokerBrokerId { get; }
+        public EditBrokerDto NewBroker { get; set; }
     }
 }

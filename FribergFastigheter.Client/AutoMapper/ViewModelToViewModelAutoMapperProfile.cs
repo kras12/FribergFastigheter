@@ -23,9 +23,6 @@ namespace FribergFastigheter.Client.AutoMapper
                 .ForMember(x => x.SelectedCategoryId, opt => opt.MapFrom(src => src.Category.HousingCategoryId))
                 .ReverseMap();
 
-            CreateMap<BrokerViewModel, AdminEditBrokerViewModel>()
-                .ReverseMap();
-
             CreateMap<BrokerViewModel, EditBrokerViewModel>()
                 .ReverseMap();
         }		

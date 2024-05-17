@@ -11,7 +11,6 @@
 @attribute [Authorize(Policy = ApplicationPolicies.Broker)]
 
 <div class="vertical-page-container" id="@formId">
-   @*  <div class="d-flex flex-row full-width justify-content-between" id="@formId"> *@
     @if (IsEditBrokerFormActive == true)
     {
         <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="_broker" />
@@ -76,5 +75,4 @@
             </TabbedStatisticsContainerFragment>
         </StatisticsCard> *@
 	}
-   @*  </div> *@
 </div>

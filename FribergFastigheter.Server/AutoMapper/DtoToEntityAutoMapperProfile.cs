@@ -39,18 +39,16 @@ namespace FribergFastigheter.Server.AutoMapper
 			.ForMember(dest => dest.Category, opt => opt.MapFrom(src => new HousingCategory() { HousingCategoryId = src.CategoryId }))
 			.ForMember(dest => dest.Municipality, opt => opt.MapFrom(src => new Municipality() { MunicipalityId = src.MunicipalityId }));
 
-			CreateMap<RegisterBrokerDto, Broker>()
+			CreateMap<CreateBrokerDto, Broker>()
 				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
-
-			CreateMap<AdminEditBrokerDto, Broker>()
-				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore())
-				.ForPath(dest => dest.User.FirstName, opt => opt.MapFrom(x => x.FirstName))
-				.ForPath(dest => dest.User.LastName, opt => opt.MapFrom(x => x.LastName))
-				.ForPath(dest => dest.User.Email, opt => opt.MapFrom(x => x.Email))
-				.ForPath(dest => dest.User.PhoneNumber, opt => opt.MapFrom(x => x.PhoneNumber));
 
 			CreateMap<EditBrokerDto, Broker>()
-				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
+				.ForMember(dest => dest.ProfileImage, opt => opt.Ignore())
+                .ForPath(dest => dest.User.FirstName, opt => opt.MapFrom(x => x.FirstName))
+                .ForPath(dest => dest.User.LastName, opt => opt.MapFrom(x => x.LastName))
+                .ForPath(dest => dest.User.Email, opt => opt.MapFrom(x => x.Email))
+                .ForPath(dest => dest.User.PhoneNumber, opt => opt.MapFrom(x => x.PhoneNumber));
+
         }
 	}
 }

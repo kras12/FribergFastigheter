@@ -1,15 +1,7 @@
-﻿using AutoMapper;
-using FribergFastigheter.Client.Models.Broker;
+﻿using FribergFastigheter.Client.Models.Broker;
 using FribergFastigheter.Client.Models.BrokerFirm;
-using FribergFastigheter.Client.Services.FribergFastigheterApi;
-using FribergFastigheter.Shared.Constants;
-using FribergFastigheter.Shared.Dto;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
 
 namespace FribergFastigheter.Client.Components.Broker
 {
@@ -30,21 +22,9 @@ namespace FribergFastigheter.Client.Components.Broker
         private string? formId = "EditForm";
 
 
-
         #endregion
 
         #region InjectedServiceProperties
-
-        /// <summary>
-        /// The injected Auto Mapper service. 
-        /// </summary>
-        [Inject]
-        private IMapper Mapper { get; set; }
-        /// <summary>
-        /// The injected housing API service.
-        /// </summary>
-        [Inject]
-        private IBrokerFirmApiService BrokerFirmApiService { get; set; }
 
         /// <summary>
         /// Injected JavaScript runtime.
@@ -55,10 +35,6 @@ namespace FribergFastigheter.Client.Components.Broker
         #endregion
 
         #region Properties
-
-        [CascadingParameter]
-
-        private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
         [Parameter]
         public List<BrokerViewModel> Brokers { get; set; }

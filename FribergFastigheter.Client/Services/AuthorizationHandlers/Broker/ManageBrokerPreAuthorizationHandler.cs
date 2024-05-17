@@ -20,7 +20,8 @@ namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Broker
         {
             CreateBroker,
             DeleteBroker,
-            EditBroker
+            EditBroker,
+            EditFullBroker
         }
 
         #endregion
@@ -104,8 +105,24 @@ namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Broker
                         throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IEditBrokerPreAuthorizationData)}'.");
                     }
 
-                    if (editAuthorizationData != null && editAuthorizationData.ExistingBrokerBrokerFirmId == brokerFirmId
+                    if (editAuthorizationData.ExistingBrokerBrokerFirmId == brokerFirmId
                         && (editAuthorizationData.ExistingBrokerBrokerId == brokerId || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin)))
+                    {
+                        context.Succeed(requirement);
+                        return Task.CompletedTask;
+                    }
+                    break;
+
+                case ActionTypes.EditFullBroker:
+                    var editFullAuthorizationData = context.Resource as IEditBrokerPreAuthorizationData;
+
+                    if (editFullAuthorizationData == null)
+                    {
+                        throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IEditBrokerPreAuthorizationData)}'.");
+                    }
+
+                    if (editFullAuthorizationData.ExistingBrokerBrokerFirmId == brokerFirmId 
+                        && context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
                         context.Succeed(requirement);
                         return Task.CompletedTask;

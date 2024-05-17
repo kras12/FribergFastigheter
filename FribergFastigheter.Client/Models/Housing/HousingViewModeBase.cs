@@ -16,16 +16,19 @@ namespace FribergFastigheter.Client.Models.Housing
         /// The address of the housing object.
         /// </summary>
         [Required]
+        [RegularExpression(LettersNumbersAndSpacesRegexPattern, ErrorMessage = OnlyLettersNumbersAndSpacesValidationMessage)]
         public string Address { get; set; } = "";
 
         /// <summary>
         /// The ancillaryArea (m2) of the housing object.
         /// </summary>
+        [Range(1, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public double? AncillaryArea { get; set; }
 
         /// <summary>
         /// The build year of the housing object.
         /// </summary>
+        [Range(1900, 2100, ErrorMessage = BuildYearValidationMessage)]
         public int? BuildYear { get; set; }
 
         /// <summary>
@@ -37,33 +40,39 @@ namespace FribergFastigheter.Client.Models.Housing
         /// <summary>
         /// The land area (m2) of the housing object.
         /// </summary>
+        [Range(1, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public double? LandArea { get; set; }
 
         /// <summary>
         /// The living area (m2) of the housing object.
         /// </summary>
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public double LivingArea { get; set; }
 
         /// <summary>
         /// The monthly fee of the housing object.
         /// </summary>
+        [Range(1, double.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public decimal? MonthlyFee { get; set; } = null;
 
         /// <summary>
         /// The price of the housing object.
         /// </summary>
         [Required]
+        [Range(1, double.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public decimal Price { get; set; }
 
         /// <summary>
         /// The number of rooms of the housing object.
         /// </summary>
+        [Range(1, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public int? RoomCount { get; set; } = null;
 
         /// <summary>
         /// The yearly running cost of the housing object.
         /// </summary>
+        [Range(1, double.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public decimal? YearlyRunningCost { get; set; } = null;
 
         #endregion

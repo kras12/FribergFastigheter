@@ -70,6 +70,11 @@
         public const string CanEditHousing = "CanEditHousing";
 
         /// <summary>
+        /// The can edit full housing policy.
+        /// </summary>
+        public const string CanEditFullHousing = "CanEditFullHousing";
+
+        /// <summary>
         /// The can edit housing resource policy.
         /// </summary>
         public const string CanEditHousingResource = "CanEditHousingResource";
@@ -98,6 +103,11 @@
         /// The can edit broker policy.
         /// </summary>
         public const string CanEditBroker = "CanEditBroker";
+
+        /// <summary>
+        /// The can edit broker policy.
+        /// </summary>
+        public const string CanEditFullBroker = "CanEditFullBroker";
 
         /// <summary>
         /// The can delete broker policy.

@@ -105,11 +105,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
             }
             
             var state = await AuthenticationStateTask;
-            var Test = state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value;
-            if (state.User.Claims.Any(x => x.Type == ApplicationUserClaims.BrokerId))
-            {
-                _loggedInBrokerId = int.Parse(state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
-            }
+            _loggedInBrokerId = int.Parse(state.User.FindFirst(ApplicationUserClaims.BrokerId)!.Value);
             var result = await BrokerFirmApiService.GetBrokerById(_loggedInBrokerId);
             if (result.Success)
             {

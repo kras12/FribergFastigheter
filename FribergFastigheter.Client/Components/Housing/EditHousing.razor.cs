@@ -149,7 +149,12 @@ namespace FribergFastigheter.Client.Components.Housing
                 {
                     var response = await BrokerFirmApiService.DeleteHousingImages(Housing.HousingId, _imagesToDelete.Select(x => x.ImageId).ToList());
 
-                    if (!response.Success)
+                    if (response.Success)
+                    {
+                        // Match by ID because there will be new objects if the house data was updated before this
+                        _imagesToDelete.ForEach(x => Housing.Images.RemoveAll(y => x.ImageId == y.ImageId));
+                    }
+                    else
                     {
                         // TODO - handle
                     }
@@ -166,16 +171,17 @@ namespace FribergFastigheter.Client.Components.Housing
         /// </summary>
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         /// <exception cref="UnauthorizedAccessException"></exception>
-        private async Task EditHousingData()
+        private async Task UpdateHousingData()
         {
             var user = (await AuthenticationStateTask).User;
-            var housingAuthorizationData = new EditHousingAuthorizationData(existingHousingBrokerFirmId: Housing.Broker.BrokerFirm.BrokerFirmId,
-                existingHousingBrokerId: Housing.Broker.BrokerId, newHousingBrokerId: EditHousingInput!.BrokerId);
+            var housingAuthorizationData = new EditHousingAuthorizationData(
+                existingHousing: AutoMapper.Map<HousingDto>(Housing),
+                newHousing: AutoMapper.Map<EditHousingDto>(EditHousingInput));
             var housingAuthorizationResult = await AuthorizationService.AuthorizeAsync(user, housingAuthorizationData, ApplicationPolicies.CanEditHousingResource);
 
             if (housingAuthorizationResult.Succeeded)
             {
-                var response = await BrokerFirmApiService.UpdateHousing(AutoMapper.Map<EditHousingDto>(EditHousingInput));
+                var response = await BrokerFirmApiService.UpdateHousing(housingAuthorizationData.NewHousing);
 
                 if (response.Success)
                 {
@@ -298,7 +304,6 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <returns></returns>
         private Task OnCancelHousingEditButtonClicked()
         {
-            Housing.Images.AddRange(_imagesToDelete);
             _imagesToDelete.Clear();
             return OnHousingEditCancelled.InvokeAsync(Housing);
         }
@@ -310,8 +315,8 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <returns>A <see cref="Task"/>.</returns>
         private void OnDeleteImageButtonClickedEventHandler(ImageViewModel image)
         {
+            EditHousingInput!.Images.Remove(image);
             _imagesToDelete.Add(image);
-            Housing.Images.Remove(image);
         }
 
         /// <summary>
@@ -389,7 +394,7 @@ namespace FribergFastigheter.Client.Components.Housing
         {
                 try
                 {
-                    await EditHousingData();
+                    await UpdateHousingData();
                 }
                 catch (UnauthorizedAccessException)
                 {
