@@ -60,7 +60,10 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             var parsedToken = new JwtSecurityTokenHandler().ReadJwtToken(_token);
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(parsedToken.Claims, authenticationType: "BrokerFirmApiUser", nameType: JwtRegisteredClaimNames.GivenName, roleType: ApplicationUserClaims.UserRole)));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(
+                parsedToken.Claims, authenticationType: "BrokerFirmApiUser", 
+                nameType: JwtRegisteredClaimNames.GivenName, 
+                roleType: ApplicationUserClaims.UserRole)));
         }
 
         /// <summary>
