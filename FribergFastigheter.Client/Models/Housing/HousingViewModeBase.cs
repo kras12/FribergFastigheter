@@ -16,6 +16,7 @@ namespace FribergFastigheter.Client.Models.Housing
         /// The address of the housing object.
         /// </summary>
         [Required]
+        [RegularExpression(LettersNumbersAndSpacesRegexPattern, ErrorMessage = OnlyLettersNumbersAndSpacesValidationMessage)]
         public string Address { get; set; } = "";
 
         /// <summary>

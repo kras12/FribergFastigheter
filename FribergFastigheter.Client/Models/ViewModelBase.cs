@@ -15,6 +15,16 @@ namespace FribergFastigheter.Client.Models
         public const string EmailValidationExpression = @"^[\p{L}\p{N}\._\-]+\@[\p{L}\p{N}\.\-]+\.\p{L}+$", ErrorMessage = "Ogiltig epostadress.";
 
         /// <summary>
+        /// Regular expression pattern to only allow letters, numbers and spaces. 
+        /// </summary>
+        protected const string LettersAndSpacesRegexPattern = @"^[\p{L} ]+$";
+
+        /// <summary>
+        /// Regular expression pattern to only allow letters, numbers and spaces. 
+        /// </summary>
+        protected const string LettersNumbersAndSpacesRegexPattern = @"^[\p{L}\p{N} ]+$";
+
+        /// <summary>
         /// Regular expression for name validation.
         /// </summary>
         public const string NameValidationExpression = @"^[\p{L} ]+$";
@@ -28,6 +38,9 @@ namespace FribergFastigheter.Client.Models
 
         #region ValidationErrorMessages
 
+        /// <summary>
+        /// Validation error message for build year.
+        /// </summary>
         public const string BuildYearValidationMessage = "Byggåret måste vara mellan 1900 och 2100";
 
         /// <summary>
@@ -38,7 +51,12 @@ namespace FribergFastigheter.Client.Models
         /// <summary>
         /// Validation error message for name validation.
         /// </summary>
-        public const string NameValidationErrorMessage = "Får endast innehålla bokstäver och mellanrum.";
+        public const string NameValidationErrorMessage = "Enbart bokstäver och mellanslag är tillåtet.";
+
+        /// <summary>
+        /// A message to inform the user that only letters, numbers and spaces are allowed as input. 
+        /// </summary>
+        protected const string OnlyLettersNumbersAndSpacesValidationMessage = "Enbart bokstäver, number och mellanslag är tillåtet.";
 
         /// <summary>
         /// Validation error message for password validation.

@@ -16,6 +16,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// <summary>
         /// The ID of the broker.
         /// </summary>
+        [Required]
         public int BrokerId { get; set; }
 
         /// <summary>
@@ -28,7 +29,9 @@ namespace FribergFastigheter.Client.Models.Broker
         /// </summary>
         [Required]
         [EmailAddress]
+        [RegularExpression(EmailValidationExpression, ErrorMessage = EmailValidationErrorMessage)]
         public string Email { get; set; } = "";
+
         /// <summary>
         /// The first name of the broker.
         /// </summary>
@@ -46,6 +49,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// <summary>
         /// The phone number of the broker.
         /// </summary>
+        [Required]
         public string PhoneNumber { get; set; } = "";
 
         /// <summary>
