@@ -52,6 +52,10 @@ body {
     font-size: 1rem;
 }
 
+body, .navbar-brand, .nav-link, .card {
+    color: #306f89;
+}
+
 :is(h1, h2, h3, h4, h5, h6) {
     text-align: center;
 }
@@ -216,7 +220,7 @@ body {
 
 .btn-primary {
     color: #fff;
-    background-color: var(--header-background-color);
+    background-color: #306f89;
 }
 
 .btn-success {
