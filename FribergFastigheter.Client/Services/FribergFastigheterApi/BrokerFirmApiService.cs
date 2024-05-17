@@ -294,7 +294,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         {
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsJsonAsync($"{HousingApiEndPoint}", housing);
-            response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<HousingDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }
@@ -496,7 +495,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsync($"{HousingImageApiEndPoint.Replace(IdPlaceHolder, housingId.ToString())}", content);
-            response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<List<ImageDto>>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }
@@ -541,7 +539,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
             await SetAuthorizationHeader();
             var response = await _httpClient.PostAsync($"{BrokerProfileImageApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", content);
-            response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<ImageDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }
