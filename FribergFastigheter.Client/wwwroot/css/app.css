@@ -47,7 +47,7 @@
 /* Font                                             */
 /*==================================================*/
 
-body {
+body {    
     font-family: 'Poppins', sans-serif;
     font-size: 1rem;
 }
@@ -78,6 +78,13 @@ a {
 .housing-result-header div:first-child,
 .housing-result-header div:last-child {
     min-width: 160px;
+}
+
+/*==================================================*/
+/* Logo                                            */
+/*==================================================*/
+.site-logo {
+    max-height: 2rem;
 }
 
 /*==================================================*/
