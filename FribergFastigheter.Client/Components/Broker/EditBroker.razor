@@ -5,7 +5,18 @@
             <EditForm Context="FormContext" Model="BrokerFormInput" OnValidSubmit="OnValidSubmit">
                 <DataAnnotationsValidator></DataAnnotationsValidator>
                 <div class="d-flex flex-column align-items-center">
-                <div class="d-flex flex-column gap-3 col-md-6 col-xxl-5">
+                    <div class="d-flex flex-column gap-3 col-md-6 col-xxl-5">
+                        @if (_apiValidationErrors.Count > 0)
+                        {
+                            <ul>
+                                @{
+                                    foreach (var error in _apiValidationErrors)
+                                    {
+                                        <li class="text-danger">@error</li>
+                                    }
+                                }
+                            </ul>
+                        }
                         <AuthorizeView Context="BrokerAdminEdit" Policy="@ApplicationPolicies.CanEditFullBroker" Resource="Broker">
                         <div class="d-flex flex-column">
                             <label>Förnamn*</label>

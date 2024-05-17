@@ -5,6 +5,17 @@
             <EditForm Context="FormContext" Model="CreateBrokerInput" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator></DataAnnotationsValidator>
             <div class="d-flex flex-column gap-3">
+                @if (_apiValidationErrors.Count > 0)
+                {
+                    <ul>
+                        @{
+                            foreach (var error in _apiValidationErrors)
+                            {
+                                <li class="text-danger">@error</li>
+                            }
+                        }
+                    </ul>
+                }
                 <label>Obligatoriska uppgifter</label>
                 <div class="d-flex flex-column">
                     <label>Förnamn*</label>

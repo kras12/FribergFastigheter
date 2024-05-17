@@ -58,7 +58,7 @@ namespace FribergFastigheter.Shared.Dto.Broker
         /// The username/email of the broker.
         /// </summary>
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = EmailValidationErrorMessage)]
         [RegularExpression(EmailValidationExpression, ErrorMessage = EmailValidationErrorMessage)]
         public string Email { get; set; } = "";
 

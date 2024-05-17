@@ -23,6 +23,11 @@ namespace FribergFastigheter.Client.Components.Broker
     {
         #region Fields
 
+        /// <summary>
+        /// A collection of validation errors returned from the API.
+        /// </summary>
+        private List<string> _apiValidationErrors = new List<string>();
+
         private IBrowserFile? UploadedProfileImage = null;
 
         #endregion
@@ -104,7 +109,7 @@ namespace FribergFastigheter.Client.Components.Broker
                 }
                 else
                 {
-                    // TODO - show message
+                    _apiValidationErrors = response.GetErrorDescriptionsAsList();
                 }
             }
             else

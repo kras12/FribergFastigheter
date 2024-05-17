@@ -23,6 +23,11 @@ namespace FribergFastigheter.Client.Components.Housing
         #region Fields
 
         /// <summary>
+        /// A collection of validation errors returned from the API.
+        /// </summary>
+        private List<string> _apiValidationErrors = new List<string>();
+
+        /// <summary>
         /// A collection of brokers to support changing the broker of a housing object. 
         /// </summary>
         private List<BrokerViewModel>? _brokers = null;
@@ -134,9 +139,9 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <summary>
         /// Sends an request to the API to delete chosen images (if any) from the housing object. 
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <returns>True if the operation succeeded</returns>
         /// <exception cref="UnauthorizedAccessException"></exception>
-        private async Task DeleteImages()
+        private async Task<bool> DeleteImages()
         {
             var user = (await AuthenticationStateTask).User;
 
@@ -153,6 +158,7 @@ namespace FribergFastigheter.Client.Components.Housing
                     {
                         // Match by ID because there will be new objects if the house data was updated before this
                         _imagesToDelete.ForEach(x => Housing.Images.RemoveAll(y => x.ImageId == y.ImageId));
+                        return true;
                     }
                     else
                     {
@@ -162,16 +168,18 @@ namespace FribergFastigheter.Client.Components.Housing
                 else
                 {
                     throw new UnauthorizedAccessException();
-                }
+                }                
             }
+
+            return false;
         }
 
         /// <summary>
         /// Sends an request to the API to update the housing object. 
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <returns>True if the operation succeeded.</returns>
         /// <exception cref="UnauthorizedAccessException"></exception>
-        private async Task UpdateHousingData()
+        private async Task<bool> UpdateHousingData()
         {
             var user = (await AuthenticationStateTask).User;
             var housingAuthorizationData = new EditHousingAuthorizationData(
@@ -186,16 +194,20 @@ namespace FribergFastigheter.Client.Components.Housing
                 if (response.Success)
                 {
                     AutoMapper.Map(response.Value!, Housing);
+                    return true;
                 }
                 else
                 {
-                    // TODO - Handle
+                    //_apiValidationErrors = response.GetErrorDescriptionsAsList();
+                    _apiValidationErrors = response.GetErrorsAsList();
                 }
             }
             else
             {
                 throw new UnauthorizedAccessException();
             }
+
+            return false;
         }
 
         /// <summary>
@@ -392,42 +404,27 @@ namespace FribergFastigheter.Client.Components.Housing
         /// <!-- Co Authors: -->
 		private async Task OnValidSubmit()
         {
-                try
+            try
+            {
+                if (await UpdateHousingData() 
+                    && await DeleteImages() 
+                    && await UploadImages())
                 {
-                    await UpdateHousingData();
+                    await OnHousingEdited.InvokeAsync(Housing);
                 }
-                catch (UnauthorizedAccessException)
-                {
-                    // TODO - Show message
-                }
-
-                try
-                {
-                    await DeleteImages();
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // TODO - Show message
-                }
-
-                try
-                {
-                    await UploadImages();
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // TODO - Show message
-                }
-
-                await OnHousingEdited.InvokeAsync(Housing);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // TODO - Show message
+            }
         }             
 
         /// <summary>
         /// Sends an request to the API to upload chosen images (if any) to the housing object. 
         /// </summary>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        /// <returns>True if the operation succeeded.</returns>
         /// <exception cref="UnauthorizedAccessException"></exception>
-        private async Task UploadImages()
+        private async Task<bool> UploadImages()
         {
             if (_uploadedFiles.Count > 0)
             {
@@ -442,6 +439,7 @@ namespace FribergFastigheter.Client.Components.Housing
                     if (response.Success)
                     {
                         Housing.Images.AddRange(AutoMapper.Map<List<ImageViewModel>>(response.Value!));
+                        return true;
                     }
                     else
                     {
@@ -453,6 +451,8 @@ namespace FribergFastigheter.Client.Components.Housing
                     throw new UnauthorizedAccessException();
                 }
             }
+
+            return true;
         }
 
         #endregion

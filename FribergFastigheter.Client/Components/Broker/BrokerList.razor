@@ -31,11 +31,11 @@
             @foreach (var broker in Brokers)
             {
                 <div class="broker-card" id="@($"BrokerListItem-{broker.BrokerId}")">
-                    <a href="/brokermember/broker/@broker.BrokerId">
+                    <a href="broker/@broker.BrokerId">
                         <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
                     </a>
                     <div class="broker-info">
-                        <a href="/brokermember/broker/@broker.BrokerId">
+                        <a href="broker/@broker.BrokerId">
                             <h4>@broker.FirstName @broker.LastName</h4>
                         </a>
                         <h5>

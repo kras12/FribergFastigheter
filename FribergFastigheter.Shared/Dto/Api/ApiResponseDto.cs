@@ -83,6 +83,15 @@ namespace FribergFastigheter.Shared.Dto.Api
         #region Methods
 
         /// <summary>
+        /// Formats the error descriptions as a list.
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> of <see cref="string"/>.</returns>
+        public List<string> GetErrorDescriptionsAsList()
+        {
+            return Errors.Select(x => x.Value).ToList();
+        }
+
+        /// <summary>
         /// Formats the error collection as a string.
         /// </summary>
         /// <returns>A <see cref="string"/>.</returns>

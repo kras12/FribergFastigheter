@@ -70,7 +70,7 @@ namespace FribergFastigheter.Client.Pages
 			if (response.Success)
 			{
 				Broker = AutoMapper.Map<BrokerViewModel>(response.Value!);
-				var innerResponse = await HousingApiService.GetHousingsByBrokerId(Broker.BrokerId, 3);
+				var innerResponse = await HousingApiService.GetHousingsByBroker(Broker.BrokerId, 3);
 
 				if (innerResponse.Success)
 				{

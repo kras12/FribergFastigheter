@@ -22,6 +22,11 @@ namespace FribergFastigheter.Client.Components.Housing
         #region Fields
 
         /// <summary>
+        /// A collection of validation errors returned from the API.
+        /// </summary>
+        private List<string> _apiValidationErrors = new List<string>();
+
+        /// <summary>
         ///  A collection of images to upload. 
         /// </summary>
         private List<IBrowserFile> _uploadedFiles = new();
@@ -202,7 +207,7 @@ namespace FribergFastigheter.Client.Components.Housing
                 }
                 else
                 {
-                    // TODO - show message.
+                    _apiValidationErrors = response.GetErrorDescriptionsAsList();
                 }
             }
             else
