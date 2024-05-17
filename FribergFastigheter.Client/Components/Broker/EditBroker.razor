@@ -41,7 +41,7 @@
                     </AuthorizeView>
                     <div class="d-flex flex-column">
                         <label>Beskrivning*</label>
-                        <InputTextArea @bind-Value="BrokerFormInput.Description"></InputTextArea>
+                        <InputTextArea rows="5" @bind-Value="BrokerFormInput.Description"></InputTextArea>
                         <ValidationMessage For="@(() => BrokerFormInput.Description)" />
                     </div>
                     <div class="d-flex flex-row justify-content-left gap-5">
