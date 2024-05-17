@@ -5,10 +5,16 @@
         <div></div>
         <div><h2>@Broker.FirstName @Broker.LastName</h2></div>
         <div>
-            @if(Broker.BrokerFirm.Logotype != null)
-        
+            @if(Broker.BrokerFirm.Logotype != null)        
             {
-                <img src="@Broker.BrokerFirm.Logotype.Url" />
+                <AuthorizeView>
+                    <Authorized>
+                        <img src="@Broker.BrokerFirm.Logotype.Url" />
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="brokerfirm/@Broker.BrokerFirm.BrokerFirmId"><img src="@Broker.BrokerFirm.Logotype.Url" /></a>
+                    </NotAuthorized>
+                </AuthorizeView>
             } 
         </div>
     </div>
@@ -16,7 +22,14 @@
         <div class="broker-card">
             <div class="broker-info">
                 <h4>Info:</h4>
-                <h5>Mäklarbyrå: @Broker.BrokerFirm.Name</h5>
+                <AuthorizeView>
+                    <Authorized>
+                        <h5>Mäklarbyrå: @Broker.BrokerFirm.Name</h5>
+                    </Authorized>
+                    <NotAuthorized>
+                        <h5>Mäklarbyrå: <a href="brokerfirm/@Broker.BrokerFirm.BrokerFirmId">@Broker.BrokerFirm.Name</a></h5>
+                    </NotAuthorized>
+                </AuthorizeView>
                 <h5>Telefonnummer: @Broker.PhoneNumber</h5>
                 <h5>Email: @Broker.Email</h5>
             </div>
