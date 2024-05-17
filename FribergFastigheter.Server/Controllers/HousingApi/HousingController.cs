@@ -106,13 +106,12 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <returns>An embedded <see cref="HousingDto"/> object.</returns>
 		/// <!-- Author: Jimmie, Marcus -->
 		/// <!-- Co Authors: -->
-		[HttpGet("housingsbybrokerfirmid")]
+		[HttpGet("housings")]
 		[ProducesResponseType<List<MvcApiValueResponseDto<List<HousingDto>>>>(StatusCodes.Status200OK)]
-		public async Task<ActionResult<List<HousingDto>>> GetHousings(int brokerFirmId, int? brokerId = null, int? limitImagesPerHousing = null)
+		public async Task<ActionResult<List<HousingDto>>> GetHousings(int? brokerFirmId, int? brokerId = null, int? limitImagesPerHousing = null)
 		{
-
-			List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsAsync(brokerFirmId: brokerFirmId,/* brokerId: brokerId,*/
-				limitImagesPerHousing: limitImagesPerHousing));
+			List<HousingDto> result = _mapper.Map<List<HousingDto>>(await _housingRepository.GetHousingsAsync(brokerFirmId: brokerFirmId, brokerId: brokerId,
+                limitImagesPerHousing: limitImagesPerHousing));
 			_imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, result);
 
             return Ok(new MvcApiValueResponseDto<List<HousingDto>>(result));
@@ -134,7 +133,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <returns>A <see cref="HousingSearchResultDto"/> object containing the results.</returns>
 		/// <!-- Author: Marcus -->
 		/// <!-- Co Authors: Jimmie -->
-		[HttpGet("housings")]
+		[HttpGet("housings/search")]
         [ProducesResponseType<MvcApiValueResponseDto<HousingSearchResultDto>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<HousingSearchResultDto>> SearchHousings(int? brokerId = null, int? municipalityId = null, int? housingCategoryId = null,
             int? limitHousings = null, int? limitImagesPerHousing = null,
