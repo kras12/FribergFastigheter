@@ -13,7 +13,7 @@ namespace FribergFastigheter.Client.Pages
     /// </summary>
     /// <!-- Author: Marcus -->
     /// <!-- Co Authors: -->
-    public partial class BrokerFirmPage : ComponentBase
+    public partial class BrokerFirmDetailsPage : ComponentBase
 	{
 		#region InjectedServiceProperties
 #pragma warning disable CS8618
@@ -62,7 +62,7 @@ namespace FribergFastigheter.Client.Pages
 
 		#region Constructors
 
-		public BrokerFirmPage()
+		public BrokerFirmDetailsPage()
 		{
 
 		}
@@ -90,7 +90,7 @@ namespace FribergFastigheter.Client.Pages
 
 				Brokers = BrokerFirm.Brokers;
 
-				var housingsResponse = await HousingApiService.GetHousings(BrokerFirmId, 3);
+				var housingsResponse = await HousingApiService.GetHousingsByBrokerFirm(BrokerFirmId, 3);
 				if (housingsResponse.Success)
 				{
 					Housings = AutoMapper.Map<List<HousingViewModel>>(housingsResponse.Value);

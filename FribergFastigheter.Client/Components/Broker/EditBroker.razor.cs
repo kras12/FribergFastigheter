@@ -23,6 +23,11 @@ namespace FribergFastigheter.Client.Components.Broker
         #region Fields
 
         /// <summary>
+        /// A collection of validation errors returned from the API.
+        /// </summary>
+        private List<string> _apiValidationErrors = new List<string>();
+
+        /// <summary>
         /// True if the user have chosen to delete the profile image.
         /// </summary>
         private bool _deleteProfileImage = false;
@@ -132,7 +137,7 @@ namespace FribergFastigheter.Client.Components.Broker
                 }
                 else
                 {
-                    // TODO - Show message
+                    _apiValidationErrors = response.GetErrorDescriptionsAsList();
                 }
             }
             else

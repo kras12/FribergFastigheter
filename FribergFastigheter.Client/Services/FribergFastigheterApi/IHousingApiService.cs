@@ -31,14 +31,40 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <!-- Co Authors: -->
         public Task<ApiResponseDto<BrokerFirmDto>> GetBrokerFirmById(int id);
 
-		public Task<ApiResponseDto<List<BrokerDto>>> GetBrokers(int brokerFirmId);
+        /// <summary>
+        /// Fetches data for a broker. 
+        /// </summary>
+        /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
+        /// <!-- Author: Jimmie  -->
+        /// <!-- Co Authors: Marcus -->
+        public Task<ApiResponseDto<List<BrokerDto>>> GetBrokers(int brokerFirmId);
 
-		/// <summary>
-		/// Fetches a housing object by ID.
-		/// </summary>
-		/// <param name="housingId">The ID of the housing object.</param>
-		/// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
-		public Task<ApiResponseDto<HousingDto>> GetHousingById(int housingId);
+        /// <summary>
+        /// Fetches housing objects that are assignt to a specific broker.
+        /// </summary>
+        /// <param name="brokerId">The ID of the broker.</param>
+        /// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<ApiResponseDto<List<HousingDto>>> GetHousingsByBroker(int brokerId, int? limitImagesPerHousing = null);
+
+        /// <summary>
+        /// Fetches all housing objects for a broker firm.
+        /// </summary>
+        /// <param name="brokerFirmId">The ID of the broker firm.</param>
+        /// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public Task<ApiResponseDto<List<HousingDto>>> GetHousingsByBrokerFirm(int brokerFirmId, int? limitImagesPerHousing = null);
+
+        /// <summary>
+        /// Fetches a housing object by ID.
+        /// </summary>
+        /// <param name="housingId">The ID of the housing object.</param>
+        /// <returns>A <see cref="Task"/> containing a <see cref="HousingDto"/> object.</returns>
+        public Task<ApiResponseDto<HousingDto>> GetHousingById(int housingId);
 
 		/// <summary>
 		/// Fetches all housing categories.
@@ -47,15 +73,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 		/// <!-- Author: Jimmie -->
 		/// <!-- Co Authors: -->
 		public Task<ApiResponseDto<List<HousingCategoryDto>>> GetHousingCategories();
-        public Task<ApiResponseDto<List<HousingDto>>> GetHousings(int brokerFirmId, int? limitImagesPerHousing = null, int? brokerId = null);
-
-		/// <summary>
-		/// Fetches housing objects that are assignt to a specific broker.
-		/// </summary>
-		/// <param name="brokerId">The ID of the broker.</param>
-		/// <param name="limitImagesPerHousing">Sets the max limit of images to return per housing object.</param>
-		/// <returns>A <see cref="Task"/> containing a collection of <see cref="HousingDto"/> objects if successful.</returns>
-		public Task<ApiResponseDto<List<HousingDto>>> GetHousingsByBrokerId(int brokerId, int? limitImagesPerHousing = null);
 
 		/// <summary>
 		/// Fetches all municipalities.

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace FribergFastigheter.Shared.Dto.Housing
 {
@@ -86,6 +87,7 @@ namespace FribergFastigheter.Shared.Dto.Housing
         /// The price of the housing object.
         /// </summary>
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = PositiveNumberValidationErrorMessage)]
         public decimal Price { get; set; }
 
         /// <summary>

@@ -11,7 +11,18 @@
             <div class="card-body">
                 <EditForm Context="FormContext" Model="EditHousingInput" OnValidSubmit="OnValidSubmit">
                     <DataAnnotationsValidator></DataAnnotationsValidator>
-                    <div class="d-flex flex-column gap-3 w-100">
+                    <div class="d-flex flex-column gap-3 w-100 align-items-center">
+                        @if (_apiValidationErrors.Count > 0)
+                        {
+                            <ul>
+                                @{
+                                    foreach (var error in _apiValidationErrors)
+                                    {
+                                        <li class="text-danger">@error</li>
+                                    }
+                                }
+                            </ul>
+                        }
                         <AccordionContainer>
                             <div class="d-flex flex-column gap-3 w-100 align-items-center">
                                 <AccordionPageFragment ButtonText="Obligatoriska uppgifter" StartOpen=true>
