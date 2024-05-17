@@ -1,5 +1,4 @@
-﻿
-   <div class="vertical-page-container">
+﻿   <div class="vertical-page-container">
         <div><img class="broker-firm-logotype-big" src="@BrokerFirm.Logotype?.Url" /></div>
         <div style="padding-top: 3rem"><h2>Lite om @BrokerFirm.Name:</h2></div>
             <div class="broker-details">
@@ -10,7 +9,12 @@
                 }
                 else
                 {
-                    <p>@BrokerFirm.Description</p>
+                    var paragraphs = BrokerFirm.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var paragraph in paragraphs)
+                    {
+                        <p>@($"{paragraph}{Environment.NewLine}")</p>
+                    }
                 }
             </div>
     </div>
