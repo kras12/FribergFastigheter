@@ -147,6 +147,8 @@ namespace FribergFastigheter.Client.Components.Housing
             {
                 _filteredhousings = Housings;
             }
+
+            StateHasChanged();
         }
 
         /// <summary>

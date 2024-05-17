@@ -20,20 +20,6 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public class BrokerFirmApiService : ApiServiceBase, IBrokerFirmApiService
     {
-        #region AdminApiConstants
-
-        /// <summary>
-        /// The broker API endpoint address.
-        /// </summary>
-        private const string AdminBrokerByIdApiEndPoint = $"{ApiBase}/admin/broker/{IdPlaceHolder}";
-
-        /// <summary>
-        /// The register broker API endpoint address.
-        /// </summary>
-        private const string AdminBrokerCreationApiEndpoint = $"{ApiBase}/admin/brokers/create";
-
-        #endregion
-
         #region BrokerApiConstants
 
         /// <summary>
@@ -168,7 +154,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
 
         #endregion
 
-        #region AdminMethods
+        #region BrokerMethods        
 
         /// <summary>
         /// Creates a new broker under the broker firm.
@@ -177,33 +163,13 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Marcus -->
         /// <!-- Co Authors: Jimmie -->
-        public async Task<ApiResponseDto<BrokerDto>> AdminCreateBroker([Required] RegisterBrokerDto broker)
+        public async Task<ApiResponseDto<BrokerDto>> CreateBroker([Required] CreateBrokerDto broker)
         {
             await SetAuthorizationHeader();
-            var response = await _httpClient.PostAsJsonAsync($"{AdminBrokerCreationApiEndpoint}", broker);
+            var response = await _httpClient.PostAsJsonAsync($"{BrokersApiEndPoint}", broker);
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<BrokerDto>>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }
-
-        /// <summary>
-        /// Performs an admin edit of a broker.
-        /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
-        /// <param name="broker">The serialized DTO object to send.</param>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        /// <!-- Author: Jimmie  -->
-        /// <!-- Co Authors: -->
-        public async Task<ApiResponseDto<BrokerDto>> AdminEditBroker([Required] int brokerId, [Required] AdminEditBrokerDto broker)
-        {
-            await SetAuthorizationHeader();
-            var response = await _httpClient.PutAsJsonAsync($"{AdminBrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
-            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<BrokerDto>>();
-            return EnsureNotNull(result, "Failed to serialize the API response.");
-        }
-
-        #endregion
-
-        #region BrokerMethods        
 
         /// <summary>
         /// Deletes a broker.
@@ -223,15 +189,14 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <summary>
         /// Performs a regular edit on the logged in broker. 
         /// </summary>
-        /// <param name="id">The ID of the broker to update.</param>
         /// <param name="broker">The serialized DTO object to send.</param>
         /// <returns>A <see cref="Task"/>.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<ApiResponseDto<BrokerDto>> EditBroker([Required] int brokerId, [Required] EditBrokerDto broker)
+        public async Task<ApiResponseDto<BrokerDto>> EditBroker([Required] EditBrokerDto broker)
         {
             await SetAuthorizationHeader();
-            var response = await _httpClient.PutAsJsonAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, brokerId.ToString())}", broker);
+            var response = await _httpClient.PutAsJsonAsync($"{BrokerByIdApiEndPoint.Replace(IdPlaceHolder, broker.BrokerId.ToString())}", broker);
             var result = await response.Content.ReadFromJsonAsync<ApiResponseDto<BrokerDto>>();
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }

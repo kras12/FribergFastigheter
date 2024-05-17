@@ -3,11 +3,11 @@
 namespace FribergFastigheter.Shared.Dto.Broker
 {
     /// <summary>
-    /// A DTO class that contains data for when a broker is editing themselves.
+    /// A DTO class that holds data for creating a broker. 
     /// </summary>
     /// <!-- Author: Marcus -->
     /// <!-- Co Authors: -->
-    public class EditBrokerDto
+    public class CreateBrokerDto
     {
         #region ValidationExpressions
 
@@ -50,18 +50,12 @@ namespace FribergFastigheter.Shared.Dto.Broker
         #region Properties
 
         /// <summary>
-        /// The ID of the broker.
-        /// </summary>
-        [Required]
-        public int BrokerId { get; set; }
-
-        /// <summary>
         /// The description of the broker.
         /// </summary>
         public string Description { get; set; } = "";
 
         /// <summary>
-        /// The email of the broker.
+        /// The username/email of the broker.
         /// </summary>
         [Required]
         [EmailAddress]
@@ -83,6 +77,13 @@ namespace FribergFastigheter.Shared.Dto.Broker
         public string LastName { get; set; } = "";
 
         /// <summary>
+        ///The password for the broker.
+        /// </summary>
+        [Required]
+        [RegularExpression(PasswordValididationExpression, ErrorMessage = PasswordValidationErrorMessage)]
+        public string Password { get; set; } = "";
+
+        /// <summary>
         /// The phone number of the broker.
         /// </summary>
         [Required]
@@ -91,4 +92,3 @@ namespace FribergFastigheter.Shared.Dto.Broker
         #endregion
     }
 }
-

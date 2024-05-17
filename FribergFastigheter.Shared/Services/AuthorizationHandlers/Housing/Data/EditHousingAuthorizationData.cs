@@ -1,4 +1,6 @@
-﻿namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
+﻿using FribergFastigheter.Shared.Dto.Housing;
+
+namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data
 {
     /// <summary>
     /// Data storage class designed to be used with the <see cref="ManageHousingAuthorizationHandler"/> to enable authorization for editing housing objects.
@@ -12,15 +14,12 @@
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="existingHousingBrokerFirmId">The broker firm ID.</param>
-        /// <param name="existingHousingBrokerId">The old broker ID.</param>
-        /// <param name="newHousingBrokerId">The new broker ID.</param>
-        public EditHousingAuthorizationData(int existingHousingBrokerFirmId,
-            int existingHousingBrokerId, int newHousingBrokerId)
+        /// <param name="existingHousing">The existing housing object.</param>
+        /// <param name="newHousing">The new housing object.</param>
+        public EditHousingAuthorizationData(HousingDto existingHousing, EditHousingDto newHousing)
         {
-            NewHousingBrokerId = newHousingBrokerId;
-            ExistingHousingBrokerFirmId = existingHousingBrokerFirmId;
-            ExistingHousingBrokerId = existingHousingBrokerId;
+            ExistingHousing = existingHousing;
+            NewHousing = newHousing;
         }
 
         #endregion
@@ -28,19 +27,14 @@
         #region Properties
 
         /// <summary>
-        /// The broker firm ID.
+        /// The existing housing object.
         /// </summary>
-        public int ExistingHousingBrokerFirmId { get; }
+        public HousingDto ExistingHousing { get; set; }
 
         /// <summary>
-        /// The old broker ID.
+        /// The new housing object.
         /// </summary>
-        public int ExistingHousingBrokerId { get; }
-
-        /// <summary>
-        /// The new broker ID.
-        /// </summary>
-        public int NewHousingBrokerId { get; }
+        public EditHousingDto NewHousing { get; set; }
 
         #endregion
     }

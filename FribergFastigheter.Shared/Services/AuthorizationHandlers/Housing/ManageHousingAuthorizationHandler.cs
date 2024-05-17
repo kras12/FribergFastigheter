@@ -2,7 +2,6 @@
 using FribergFastigheter.Shared.Enums;
 using FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing.Data;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 
 namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing
 {
@@ -191,19 +190,20 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Housing
                         throw new ArgumentException($"This authorization check requires a resource of type '{typeof(IEditHousingAuthorizationData)}'.");
 
                     // Housing belongs to another firm
-                    if (editHousingAuthData!.ExistingHousingBrokerFirmId != brokerFirmId)
+                    if (editHousingAuthData!.ExistingHousing.Broker.BrokerFirm.BrokerFirmId != brokerFirmId)
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingAccessDenied.ToString()));
                         return Task.CompletedTask;
                     }
                     // Change of broker
-                    else if (editHousingAuthData.NewHousingBrokerId != editHousingAuthData.ExistingHousingBrokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                    else if (editHousingAuthData.NewHousing.BrokerId != editHousingAuthData.ExistingHousing.Broker.BrokerId 
+                        && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.BrokerChangeDenied.ToString()));
                         return Task.CompletedTask;
                     }
                     // Housing belongs to another broker
-                    else if (editHousingAuthData.ExistingHousingBrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                    else if (editHousingAuthData.ExistingHousing.Broker.BrokerId != brokerId && !context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
                         context.Fail(new AuthorizationFailureReason(requirement, HousingAuthorizationFailureReasons.HousingEditAccessDenied.ToString()));
                         return Task.CompletedTask;

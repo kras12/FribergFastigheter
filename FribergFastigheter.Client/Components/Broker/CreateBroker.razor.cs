@@ -93,7 +93,7 @@ namespace FribergFastigheter.Client.Components.Broker
 
             if (result.Succeeded)
             {
-                var response = await BrokerFirmApiService.AdminCreateBroker(Mapper.Map<RegisterBrokerDto>(CreateBrokerInput));
+                var response = await BrokerFirmApiService.CreateBroker(Mapper.Map<CreateBrokerDto>(CreateBrokerInput));
 
                 if (response.Success)
                 {

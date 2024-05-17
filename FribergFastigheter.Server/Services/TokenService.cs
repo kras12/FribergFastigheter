@@ -68,10 +68,7 @@ namespace FribergFastigheter.Server.Services
                 new Claim(ApplicationUserClaims.Jti, Guid.NewGuid().ToString()),
                 new Claim(ApplicationUserClaims.BrokerId, broker.BrokerId.ToString()),
                 new Claim(ApplicationUserClaims.BrokerFirmId, broker.BrokerFirm.BrokerFirmId.ToString()),
-                new Claim(ApplicationUserClaims.UserId, broker.User.Id.ToString()),
-                
-
-
+                new Claim(ApplicationUserClaims.UserId, broker.User.Id.ToString())
             };
 
             var roles = await _userManager.GetRolesAsync(broker.User);

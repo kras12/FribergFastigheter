@@ -99,56 +99,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             _authorizationService = authorizationService;
         }
 
-        #endregion
-
-        #region AdminApiEndpoints
-
-        /// <summary>
-        /// An API endpoint for editing broker objects. 
-        /// </summary>
-        /// <param name="id">The ID of the broker associated with the update</param>
-        /// <param name="AdminEditBrokerDto">The serialized DTO object.</param>
-        /// <!-- Author: Jimmie -->
-        /// <!-- Co Authors:  -->
-        [Authorize(policy: ApplicationPolicies.BrokerAdmin)]
-        [HttpPut("admin/broker/{id:int}")]
-        [ProducesResponseType<MvcApiValueResponseDto<BrokerDto>>(StatusCodes.Status200OK)]
-        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> AdminEditBroker([Required] int id, [FromBody] AdminEditBrokerDto editBrokerDto)
-        {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-
-            if (id != editBrokerDto.BrokerId)
-            {
-                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object."));
-            }
-
-            var broker = await _brokerRepository.GetBrokerByIdAsync(id);
-
-            if (broker == null)
-            {
-                return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced broker doesn't exists."));
-            }
-
-            var authData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId,
-               existingBrokerBrokerId: id);
-            var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditBrokerResource);
-
-            if (result.Succeeded)
-            {
-                _autoMapper.Map(editBrokerDto, broker);
-                await _brokerRepository.UpdateAsync(broker);
-                return Ok(new MvcApiValueResponseDto<BrokerDto>(_autoMapper.Map<BrokerDto>(broker)));
-            }
-            else
-            {
-                return Unauthorized(new MvcApiErrorResponseDto(result));
-            }   
-        }
-
-
-        #endregion
+        #endregion        
 
         #region ApiEndPoints
 
@@ -160,12 +111,12 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
         [Authorize(Policy = ApplicationPolicies.BrokerAdmin)]
-        [HttpPost("admin/brokers/create")]
+        [HttpPost("brokers")]
         [ProducesResponseType<MvcApiValueResponseDto<BrokerDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateBroker([FromBody] RegisterBrokerDto registerBrokerDto)
+        public async Task<IActionResult> CreateBroker([FromBody] CreateBrokerDto registerBrokerDto)
         {
             try
             {
@@ -182,7 +133,8 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     registerBrokerDto.Email,
                     registerBrokerDto.Email,
                     registerBrokerDto.PhoneNumber,
-                    registerBrokerDto.Password
+                    registerBrokerDto.Password,
+                    emailConfirmed: true
                     );
 
                     var createUserResult = await _userManager.CreateAsync(applicationUser, registerBrokerDto.Password);
@@ -356,8 +308,6 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> EditBroker([Required] int id, [FromBody] EditBrokerDto editBrokerDto)
         {
-            var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            
             if (id != editBrokerDto.BrokerId)
             {
                 return BadRequest(new MvcApiErrorResponseDto(ApiErrorMessageTypes.InputDataConflict, "The referenced broker doesn't match the supplied broker object."));
@@ -370,15 +320,17 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 return NotFound(new MvcApiErrorResponseDto(ApiErrorMessageTypes.ResourceNotFound, "The referenced broker doesn't exists."));
             }           
 
-            var authData = new EditBrokerAuthorizationData(existingBrokerBrokerFirmId: brokerFirmId,
-               existingBrokerBrokerId: id);
+            var authData = new EditBrokerAuthorizationData(existingBroker: _autoMapper.Map<BrokerDto>(broker), 
+                newBroker: editBrokerDto);
             var result = await _authorizationService.AuthorizeAsync(User, authData, ApplicationPolicies.CanEditBrokerResource);
 
             if (result.Succeeded)
             {
                 _autoMapper.Map(editBrokerDto, broker!);
                 await _brokerRepository.UpdateAsync(broker!);
-                return Ok(new MvcApiValueResponseDto<BrokerDto>(_autoMapper.Map<BrokerDto>(broker)));
+                var brokerDto = _autoMapper.Map<BrokerDto>(broker);
+                _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokerDto);
+                return Ok(new MvcApiValueResponseDto<BrokerDto>(brokerDto));
             }
             else
             {
@@ -464,7 +416,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                     {
                         var broker = await _brokerRepository.GetBrokerByUserIdAsync(user.Id);
 
-                        if (broker != null)
+                        if (broker != null && !broker.IsDeleted)
                         {
                             return Ok(new MvcApiValueResponseDto<LoginResponseDto>(
                                 new LoginResponseDto()

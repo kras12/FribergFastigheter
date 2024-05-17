@@ -42,6 +42,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// <summary>
         /// The phone number of the broker.
         /// </summary>
+        [Required]
         public string PhoneNumber { get; set; } = "";
 
         /// <summary>
