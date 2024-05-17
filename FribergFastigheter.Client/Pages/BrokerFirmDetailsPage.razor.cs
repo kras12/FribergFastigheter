@@ -13,7 +13,7 @@ namespace FribergFastigheter.Client.Pages
     /// </summary>
     /// <!-- Author: Marcus -->
     /// <!-- Co Authors: -->
-    public partial class BrokerFirmPage : ComponentBase
+    public partial class BrokerFirmDetailsPage : ComponentBase
 	{
 		#region InjectedServiceProperties
 #pragma warning disable CS8618
@@ -62,7 +62,7 @@ namespace FribergFastigheter.Client.Pages
 
 		#region Constructors
 
-		public BrokerFirmPage()
+		public BrokerFirmDetailsPage()
 		{
 
 		}
