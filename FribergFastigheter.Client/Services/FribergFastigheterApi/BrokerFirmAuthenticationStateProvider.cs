@@ -13,6 +13,15 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <!-- Co Authors: -->
     public class BrokerFirmAuthenticationStateProvider : AuthenticationStateProvider
     {
+        #region Constants
+
+        /// <summary>
+        /// The storage key for the JWT token.
+        /// </summary>
+        private const string JwtTokenStorageKey = "FribergFastigheterApiToken";
+
+        #endregion
+
         #region Fields
 
         /// <summary>
@@ -50,7 +59,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         {
             if (_token == null)
             {
-                _token = await _localStorageService.GetItemAsStringAsync("FribergFastigheterApiToken");
+                _token = await GetTokenAsync();
             }
 
             if (string.IsNullOrEmpty(_token))
@@ -64,7 +73,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
                 parsedToken.Claims, authenticationType: "BrokerFirmApiUser", 
                 nameType: JwtRegisteredClaimNames.GivenName, 
                 roleType: ApplicationUserClaims.UserRole)));
-        }
+        }        
 
         /// <summary>
         /// Gets the token from local storage. 
@@ -72,19 +81,24 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> that contains token as a <see cref="string"/>.</returns>
         public async Task<string?> GetTokenAsync()
         {
-            var token = await _localStorageService.GetItemAsStringAsync("FribergFastigheterApiToken");
-
-            if (token != null)
+            if (_token == null)
             {
-                var expiration = new JwtSecurityTokenHandler().ReadJwtToken(token).ValidTo;
+                _token = await _localStorageService.GetItemAsStringAsync(JwtTokenStorageKey);
+            }
+
+            if (_token != null)
+            {
+                var expiration = new JwtSecurityTokenHandler().ReadJwtToken(_token).ValidTo;
 
                 if (expiration > DateTime.Now)
                 {
-                    return token;
+                    return _token;
                 }
                 else
                 {
-                    await _localStorageService.RemoveItemAsync("FribergFastigheterApiToken");
+                    _token = null;
+                    await _localStorageService.RemoveItemAsync(JwtTokenStorageKey);
+                    NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
                 }
             }
 
@@ -97,7 +111,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> that represents an async operation.</returns>
         public async Task RemoveTokenAsync()
         {
-            await _localStorageService.RemoveItemAsync("FribergFastigheterApiToken");
+            await _localStorageService.RemoveItemAsync(JwtTokenStorageKey);
             _token = null;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
@@ -109,7 +123,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> that represents an async operation.</returns>
         public async Task SetTokenAsync(string token)
         {
-            await _localStorageService.SetItemAsStringAsync("FribergFastigheterApiToken", token);
+            await _localStorageService.SetItemAsStringAsync(JwtTokenStorageKey, token);
             _token = token;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
