@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using FribergFastigheter.Client.Services.AuthorizationHandlers.Broker;
 using Blazored.SessionStorage;
+using FribergFastigheter.Client.Services.Authentication;
 
 namespace FribergFastigheter.Client
 {
@@ -104,6 +105,7 @@ namespace FribergFastigheter.Client
             {
                 client.BaseAddress = new Uri(builder.Configuration["FribergFastigheterApiBaseUrl"]!);
             });
+            builder.Services.AddTransient<IBrokerAuthenticationService, BrokerAuthenticationService>();
 
             /// <!-- Author: Jimmie -->
             /// <!-- Co Authors: -->
