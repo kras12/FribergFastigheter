@@ -27,28 +27,28 @@ namespace FribergFastigheter
     {
         public static void Main(string[] args)
         {
-			var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(args);
 
+            // ==================================================================================================================
+            // Data
+            // ==================================================================================================================
 
-			// Add Cors policy for our debug build
-#if DEBUG
-			builder.Services.AddCors(options =>
-			{
-				options.AddPolicy("LocalHostingCorsPolicy", builder => builder.WithOrigins("https://localhost:7038")
-					 .AllowAnyMethod()
-					 .AllowAnyHeader()
-					 .AllowCredentials());
-			});
-#endif
+            // DB Context
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
 
-            /// Reformats validation problems details from bad requests into an ApiErrorResponseDto object.
-            /// <!-- Author: Jimmie -->
-            /// <!-- Co Authors: -->
-            builder.Services.AddControllers(options => options.Filters.Add(typeof(ReformatValidationProblemAttribute)));
+            // Repositories
+            builder.Services.AddTransient<IHousingRepository, HousingRepository>();
+            builder.Services.AddTransient<IBrokerRepository, BrokerRepository>();
+            builder.Services.AddTransient<IBrokerFirmRepository, BrokerFirmRepository>();
+
+            // ==================================================================================================================
+            // Documentation
+            // ==================================================================================================================
 
             // Swagger
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();            
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddSwaggerGen(option =>
             {
@@ -78,29 +78,41 @@ namespace FribergFastigheter
                 });
             });
 
-            // DB Context
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-				options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
-
-			// Repositories
-			builder.Services.AddTransient<IHousingRepository, HousingRepository>();
-            builder.Services.AddTransient<IBrokerRepository, BrokerRepository>();
-            builder.Services.AddTransient<IBrokerFirmRepository, BrokerFirmRepository>();
+            // ==================================================================================================================
+            // Mapping
+            // ==================================================================================================================
 
             // Auto Mapper
             builder.Services.AddAutoMapper(typeof(EntityToDtoAutoMapperProfile), typeof(DtoToEntityAutoMapperProfile));
 
-            // Custom Services
-            builder.Services.AddTransient<IImageService, ImageService>();
+            // ==================================================================================================================
+            // Network (converters, cors, data transfers, filters)
+            // ==================================================================================================================
 
             // Add serialization converters
             builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-            // Token service
-            builder.Services.AddTransient<ITokenService, TokenService>();
+            // Cors policy
+#if DEBUG
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("LocalHostingCorsPolicy", builder => builder.WithOrigins("https://localhost:7038")
+                     .AllowAnyMethod()
+                     .AllowAnyHeader()
+                     .AllowCredentials());
+            });
+#endif
+
+            /// Reformats validation problems details from bad requests into an ApiErrorResponseDto object.
+            /// <!-- Author: Jimmie -->
+            /// <!-- Co Authors: -->
+            builder.Services.AddControllers(options => options.Filters.Add(typeof(ReformatValidationProblemAttribute)));
+
+            // ==================================================================================================================
+            // Security (authentication, authorization, identity)
+            // ==================================================================================================================
 
             // Identity Services
-
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
@@ -111,6 +123,7 @@ namespace FribergFastigheter
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            // Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme =
@@ -175,44 +188,43 @@ namespace FribergFastigheter
                policy.AddRequirements(new CheckAssociationAuthorizationHandler(CheckAssociationAuthorizationHandler.ActionTypes.CheckBrokerFirmAssociation)));
             });
 
+            // Token service
+            builder.Services.AddTransient<ITokenService, TokenService>();
 
-            // Compression test			
-            //builder.Services.AddResponseCompression(options =>
-            //{
-            //	options.EnableForHttps = true;
-            //    options.Providers.Add<BrotliCompressionProvider>();
-            //	options.Providers.Add<GzipCompressionProvider>();
-            //});
-            //builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Fastest);
-            //builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            // ==================================================================================================================
+            // Uncategorized
+            // ==================================================================================================================
+
+            // Image Services
+            builder.Services.AddTransient<IImageService, ImageService>();
 
             var app = builder.Build();
 
 #if DEBUG
-			app.UseCors("LocalHostingCorsPolicy");
+            app.UseCors("LocalHostingCorsPolicy");
 #endif
 
-			// Compression test
-			//app.UseResponseCompression();
-
-			// Configure the HTTP request pipeline.
-			if (app.Environment.IsDevelopment())
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-			app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-			app.MapControllers();
+            app.MapControllers();
 
-			using (var scope = app.Services.CreateScope())
-			{
+            // ==================================================================================================================
+            // Migration and seeding
+            // ==================================================================================================================
+            using (var scope = app.Services.CreateScope())
+            {
                 var services = scope.ServiceProvider;
-				var context = services.GetRequiredService<ApplicationDbContext>();
+                var context = services.GetRequiredService<ApplicationDbContext>();
                 context.Database.Migrate();
 
 #if DEBUG
@@ -221,11 +233,11 @@ namespace FribergFastigheter
                     var seedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files", "MockData", "HousingSeedData.json");
                     var seedHelper = new SeedDataHelper(seedFile);
                     seedHelper.SeedMockData(app).Wait();
-				}
+                }
 #endif
-            }        
+            }
 
             app.Run();
-        }         
+        }
     }
 }
