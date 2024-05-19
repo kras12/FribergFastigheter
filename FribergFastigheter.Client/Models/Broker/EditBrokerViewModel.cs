@@ -22,6 +22,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// <summary>
         /// The description of the broker.
         /// </summary>
+        [RegularExpression(BlackListDangerousCharactersExpression, ErrorMessage = BlackListDangerousCharactersValidationMessage)]
         public string Description { get; set; } = "";
 
         /// <summary>

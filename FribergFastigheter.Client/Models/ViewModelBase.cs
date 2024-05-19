@@ -15,6 +15,11 @@ namespace FribergFastigheter.Client.Models
         public const string EmailValidationExpression = @"^[\p{L}\p{N}\._\-]+\@[\p{L}\p{N}\.\-]+\.\p{L}+$", ErrorMessage = "Ogiltig epostadress.";
 
         /// <summary>
+        /// Regular expression for blacklisting of dangerous characters.
+        /// </summary>
+        public const string BlackListDangerousCharactersExpression = @"^[^<>]+$";
+
+        /// <summary>
         /// Regular expression pattern to only allow letters, numbers and spaces. 
         /// </summary>
         protected const string LettersAndSpacesRegexPattern = @"^[\p{L} ]+$";
@@ -37,6 +42,11 @@ namespace FribergFastigheter.Client.Models
         #endregion
 
         #region ValidationErrorMessages
+
+        /// <summary>
+        /// Validation error message for blacklisting of dangerous characters
+        /// </summary>
+        public const string BlackListDangerousCharactersValidationMessage = "Följande tecken är inte tillåtna: '<>'";
 
         /// <summary>
         /// Validation error message for build year.

@@ -13,6 +13,11 @@ namespace FribergFastigheter.Shared.Dto.Housing
         #region ValidationExpressions
 
         /// <summary>
+        /// Regular expression for blacklisting of dangerous characters.
+        /// </summary>
+        public const string BlackListDangerousCharactersExpression = @"^[^<>]+$";
+
+        /// <summary>
         /// Regular expression pattern to only allow letters, numbers and spaces. 
         /// </summary>
         protected const string LettersNumbersAndSpacesRegexPattern = @"^[\p{L}\p{N} ]+$";
@@ -20,6 +25,11 @@ namespace FribergFastigheter.Shared.Dto.Housing
         #endregion
 
         #region ValidationErrorMessages
+
+        /// <summary>
+        /// Validation error message for blacklisting of dangerous characters
+        /// </summary>
+        public const string BlackListDangerousCharactersValidationMessage = "Följande tecken är inte tillåtna: '<>'";
 
         /// <summary>
         /// Validation error message for build year.
@@ -63,6 +73,7 @@ namespace FribergFastigheter.Shared.Dto.Housing
         /// The description of the housing object.
         /// </summary>
         [Required]
+        [RegularExpression(BlackListDangerousCharactersExpression, ErrorMessage = BlackListDangerousCharactersValidationMessage)]
         public string Description { get; set; } = "";
 
         /// <summary>

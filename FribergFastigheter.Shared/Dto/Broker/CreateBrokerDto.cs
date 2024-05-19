@@ -12,6 +12,11 @@ namespace FribergFastigheter.Shared.Dto.Broker
         #region ValidationExpressions
 
         /// <summary>
+        /// Regular expression for blacklisting of dangerous characters.
+        /// </summary>
+        public const string BlackListDangerousCharactersExpression = @"^[^<>]+$";
+
+        /// <summary>
         /// Regular expression for email validation.
         /// </summary>
         public const string EmailValidationExpression = @"^[\p{L}\p{N}\._\-]+\@[\p{L}\p{N}\.\-]+\.\p{L}+$", ErrorMessage = "Ogiltig epostadress.";
@@ -29,6 +34,11 @@ namespace FribergFastigheter.Shared.Dto.Broker
         #endregion
 
         #region ValidationErrorMessages
+
+        /// <summary>
+        /// Validation error message for blacklisting of dangerous characters
+        /// </summary>
+        public const string BlackListDangerousCharactersValidationMessage = "Följande tecken är inte tillåtna: '<>'";
 
         /// <summary>
         /// Validation error message for email validation.
@@ -52,6 +62,7 @@ namespace FribergFastigheter.Shared.Dto.Broker
         /// <summary>
         /// The description of the broker.
         /// </summary>
+        [RegularExpression(BlackListDangerousCharactersExpression, ErrorMessage = BlackListDangerousCharactersValidationMessage)]
         public string Description { get; set; } = "";
 
         /// <summary>

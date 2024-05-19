@@ -35,6 +35,7 @@ namespace FribergFastigheter.Client.Models.Housing
         /// The description of the housing object.
         /// </summary>
         [Required]
+        [RegularExpression(BlackListDangerousCharactersExpression, ErrorMessage = BlackListDangerousCharactersValidationMessage)]
         public string Description { get; set; } = "";
 
         /// <summary>
