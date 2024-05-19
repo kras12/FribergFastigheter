@@ -86,6 +86,7 @@ namespace FribergFastigheter.Shared.Dto.Broker
         /// The phone number of the broker.
         /// </summary>
         [Required]
+        [Phone]
         public string PhoneNumber { get; set; } = "";
 
         #endregion
