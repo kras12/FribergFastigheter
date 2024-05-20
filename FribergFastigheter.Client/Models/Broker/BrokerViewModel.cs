@@ -94,7 +94,7 @@ namespace FribergFastigheter.Client.Models.Broker
         }
 
         /// <summary>
-        /// An optional URL linking to the housing object.
+        /// An optional URL linking to the broker.
         /// </summary>
         public string? Url { get; set; } = null;
 

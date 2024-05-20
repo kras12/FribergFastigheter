@@ -56,6 +56,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
                 if (outerResponse.Success)
                 {
                     Brokers = outerResponse.Value!.Select(x => Mapper.Map<BrokerViewModel>(x)).ToList();
+                    Brokers.ForEach(x => x.Url = $"brokermember/broker/{x.BrokerId}");
                     var response = await BrokerFirmApiService.GetBrokerFirm();
 
                     if (response.Success)

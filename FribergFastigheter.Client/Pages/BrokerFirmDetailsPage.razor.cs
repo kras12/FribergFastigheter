@@ -89,11 +89,16 @@ namespace FribergFastigheter.Client.Pages
 				BrokerFirm = brokerFirmResult;
 
 				Brokers = BrokerFirm.Brokers;
+                Brokers.ForEach(x => x.Url = $"broker/{x.BrokerId}");
 
-				var housingsResponse = await HousingApiService.GetHousingsByBrokerFirm(BrokerFirmId, 3);
+                var housingsResponse = await HousingApiService.GetHousingsByBrokerFirm(BrokerFirmId, 3);
 				if (housingsResponse.Success)
 				{
 					Housings = AutoMapper.Map<List<HousingViewModel>>(housingsResponse.Value);
+                    // TODO - Find a better way to retrieve the URLS
+                    Housings.ForEach(x => x.Url = $"Housing/{x.HousingId}");
+                    Housings.Select(x => x.Broker).ToList().ForEach(x => x.Url = $"Broker/{x.BrokerId}");
+                    Housings.Select(x => x.Broker.BrokerFirm).ToList().ForEach(x => x.Url = $"BrokerFirm/{x.BrokerFirmId}");
                 }
 				else
 				{
