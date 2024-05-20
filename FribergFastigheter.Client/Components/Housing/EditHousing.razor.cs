@@ -167,11 +167,11 @@ namespace FribergFastigheter.Client.Components.Housing
                 }
                 else
                 {
-                    throw new UnauthorizedAccessException();
-                }                
+                    //_apiValidationErrors = response.GetErrorDescriptionsAsList();
+                }
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -198,7 +198,6 @@ namespace FribergFastigheter.Client.Components.Housing
                 }
                 else
                 {
-                    //_apiValidationErrors = response.GetErrorDescriptionsAsList();
                     _apiValidationErrors = response.GetErrorsAsList();
                 }
             }
@@ -444,6 +443,7 @@ namespace FribergFastigheter.Client.Components.Housing
                     else
                     {
                         // Todo - Handle
+                        return false;
                     }
                 }
                 else

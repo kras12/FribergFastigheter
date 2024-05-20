@@ -51,7 +51,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember.Broker
 
             try
             {
-                var outerResponse = await BrokerFirmApiService.GetBrokers();
+                var outerResponse = await BrokerFirmApiService.GetBrokers(includeHousingCount: true);
 
                 if (outerResponse.Success)
                 {

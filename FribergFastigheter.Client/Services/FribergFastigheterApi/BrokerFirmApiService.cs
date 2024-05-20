@@ -221,10 +221,17 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public async Task<ApiResponseDto<List<BrokerDto>>> GetBrokers()
+        public async Task<ApiResponseDto<List<BrokerDto>>> GetBrokers(bool includeHousingCount = false)
         {
             await SetAuthorizationHeader();
-            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<BrokerDto>>>($"{BrokersApiEndPoint}");
+            List<KeyValuePair<string, string>> queries = new();
+
+            if (includeHousingCount)
+            {
+                queries.Add(new KeyValuePair<string, string>("includeHousingCount", true.ToString()));
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<ApiResponseDto<List<BrokerDto>>>($"{BrokersApiEndPoint}{BuildQueryString(queries)}");
             return EnsureNotNull(result, "Failed to serialize the API response.");
         }
 

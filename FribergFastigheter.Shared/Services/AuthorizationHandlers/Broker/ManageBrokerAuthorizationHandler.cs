@@ -147,7 +147,7 @@ namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker
                     {
                         context.Succeed(requirement);
                         return Task.CompletedTask;
-                    }                
+                    }
 
                 default:
                     context.Fail(new AuthorizationFailureReason(requirement, BrokerAuthorizationFailureReasons.UnsupportedAction.ToString()));

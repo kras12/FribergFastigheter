@@ -75,7 +75,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetBrokerFirmById()
 		{
 			var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(brokerFirmId);
+			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(brokerFirmId, includeDeletedBrokers: false);
 
 			if (brokerFirm == null)
 			{

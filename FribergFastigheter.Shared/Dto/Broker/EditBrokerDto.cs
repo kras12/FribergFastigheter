@@ -39,6 +39,11 @@ namespace FribergFastigheter.Shared.Dto.Broker
         public string FirstName { get; set; } = "";
 
         /// <summary>
+        /// The number of houses the broker manages.
+        /// </summary>
+        public int? HousingCount { get; set; }
+
+        /// <summary>
         /// The last name of the broker.
         /// </summary>
         [Required]

@@ -115,21 +115,6 @@ namespace FribergFastigheter.Client.Components.Broker
             } 
         }
 
-        protected override async Task OnInitializedAsync()
-        {
-            var response = await BrokerFirmApiService.GetHousingCountByBrokerId(Broker.BrokerId); 
-            
-            if (response.Success)
-            {
-                Broker.HousingsCount = response.Value!.Value;
-            }
-            else
-            {
-                // TODO - handle
-            }
-            
-        }
-
         #endregion
     }
 }
