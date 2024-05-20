@@ -90,7 +90,7 @@ namespace FribergFastigheter.Client.Services.AuthorizationHandlers.Broker
                     }
 
                     if (deleteAuthorizationData.ExistingBrokerBrokerFirmId == brokerFirmId
-                         || context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
+                         && context.User.IsInRole(ApplicationUserRoles.BrokerAdmin))
                     {
                         context.Succeed(requirement);
                         return Task.CompletedTask;

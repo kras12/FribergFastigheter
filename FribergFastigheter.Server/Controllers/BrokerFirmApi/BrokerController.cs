@@ -148,7 +148,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                             var brokerUserIdClaim = User.FindFirst(x => x.Type == ApplicationUserClaims.UserId);
                             var user = await _userManager.FindByIdAsync(brokerUserIdClaim!.Value);
 
-                            var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(brokerFirmId);
+                            var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(brokerFirmId, includeDeletedBrokers: false);
 
                             var broker = new Broker(
                                 brokerFirm!,
@@ -156,7 +156,10 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                                 user: applicationUser);
                             await _brokerRepository.AddAsync(broker);
 
-                            return Ok(new MvcApiValueResponseDto<BrokerDto>(_autoMapper.Map<BrokerDto>(broker)));
+                            var brokerDto = _autoMapper.Map<BrokerDto>(broker);
+                            brokerDto.HousingCount = 0;
+
+                            return Ok(new MvcApiValueResponseDto<BrokerDto>(brokerDto));
                         }
                         else
                         {
@@ -330,6 +333,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
                 await _brokerRepository.UpdateAsync(broker!);
                 var brokerDto = _autoMapper.Map<BrokerDto>(broker);
                 _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokerDto);
+                brokerDto.HousingCount = editBrokerDto.HousingCount;
                 return Ok(new MvcApiValueResponseDto<BrokerDto>(brokerDto));
             }
             else
@@ -379,13 +383,19 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
         [Authorize(policy: ApplicationPolicies.Broker)]
         [HttpGet("brokers")]
         [ProducesResponseType<MvcApiValueResponseDto<List<BrokerDto>>>(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers()
+        public async Task<ActionResult<IEnumerable<BrokerDto>>> GetBrokers(bool? includeHousingCount = false)
         {
             var brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            
-            var brokers = (await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId))
-                .Select(x => _autoMapper.Map<BrokerDto>(x))
-                .ToList();
+            List<BrokerDto> brokers = new();
+
+            if (includeHousingCount != null && includeHousingCount.Value)
+            {
+                brokers = _autoMapper.Map<List<BrokerDto>>(await _brokerRepository.GetBrokersWithHousingCountAsync(brokerFirmId: brokerFirmId));                
+            }
+            else
+            {
+                brokers = _autoMapper.Map<List<BrokerDto>>(await _brokerRepository.GetBrokersAsync(brokerFirmId: brokerFirmId));
+            }           
 
             _imageService.PrepareDto(HttpContext, BrokerFileController.ImageDownloadApiEndpoint, brokers);
             return Ok(new MvcApiValueResponseDto<List<BrokerDto>>(brokers));
