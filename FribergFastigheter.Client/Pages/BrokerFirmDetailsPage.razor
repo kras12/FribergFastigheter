@@ -11,25 +11,20 @@
 <div class="vertical-page-container">
 @if(BrokerFirm != null)
 {
-    <BrokerFirmDetails BrokerFirm="BrokerFirm" />
-    
-        <div class="btn-group flex-wrap" role="group" aria-label="Basic radio toggle button group">
-            <input type="radio" class="btn-check" name="btn-radio-list" id="btn-radio-broker-list" autocomplete="off" checked @onclick="@(() => OpenBrokerList())">
-            <label class="btn btn-outline-primary flex-grow-0" for="btn-radio-broker-list">Alla Mäklare</label>
-            <input type="radio" class="btn-check" name="btn-radio-list" id="btn-radio-housing-list" autocomplete="off" @onclick="@(() => OpenHousingList())">
-            <label class="btn btn-outline-primary flex-grow-0" for="btn-radio-housing-list">Alla Bostäder</label>
-        </div>
-   
-
+    <BrokerFirmDetails BrokerFirm="BrokerFirm" />    
+    <div class="btn-group flex-wrap" role="group" aria-label="Basic radio toggle button group">
+        <input type="radio" class="btn-check" name="btn-radio-list" id="btn-radio-broker-list" autocomplete="off" checked @onclick="@(() => OpenBrokerList())">
+        <label class="btn btn-outline-primary flex-grow-0" for="btn-radio-broker-list">Alla Mäklare</label>
+        <input type="radio" class="btn-check" name="btn-radio-list" id="btn-radio-housing-list" autocomplete="off" @onclick="@(() => OpenHousingList())">
+        <label class="btn btn-outline-primary flex-grow-0" for="btn-radio-housing-list">Alla Bostäder</label>
+    </div>
     @if(IsBrokerListorHousingListActive == true )
     {
         <BrokerList Brokers="Brokers" />
     }
     else if (IsBrokerListorHousingListActive == false)
     {
-        <HousingList Housings="Housings" />
-    }
-   
-     
+        <HousingList Housings="Housings" TruncateLongDescriptions="true" />
+    }     
 }
 </div>
