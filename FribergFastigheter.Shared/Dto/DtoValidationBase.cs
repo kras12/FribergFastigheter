@@ -1,18 +1,11 @@
-﻿using System.Security.Policy;
-
-namespace FribergFastigheter.Client.Models
+﻿namespace FribergFastigheter.Shared.Dto
 {
     /// <summary>
-    /// ViewModel base class.
+    /// DTO base class that contains validation constants.
     /// </summary>
-    public abstract class ViewModelBase
+    public class DtoValidationBase
     {
         #region ValidationExpressions
-
-        /// <summary>
-        /// Regular expression for email validation.
-        /// </summary>
-        public const string EmailValidationExpression = @"^[\p{L}\p{N}\._\-]+\@[\p{L}\p{N}\.\-]+\.\p{L}+$", ErrorMessage = "Ogiltig epostadress.";
 
         /// <summary>
         /// Regular expression for blacklisting of dangerous characters.
@@ -20,14 +13,9 @@ namespace FribergFastigheter.Client.Models
         public const string BlackListDangerousCharactersExpression = @"^[^<>]+$";
 
         /// <summary>
-        /// Regular expression pattern to only allow letters, numbers and spaces. 
+        /// Regular expression for email validation.
         /// </summary>
-        protected const string LettersAndSpacesRegexPattern = @"^[\p{L} ]+$";
-
-        /// <summary>
-        /// Regular expression pattern to only allow letters, numbers and spaces. 
-        /// </summary>
-        protected const string LettersNumbersAndSpacesRegexPattern = @"^[\p{L}\p{N} ]+$";
+        public const string EmailValidationExpression = @"^[\p{L}\p{N}\._\-]+\@[\p{L}\p{N}\.\-]+\.\p{L}+$", ErrorMessage = "Ogiltig epostadress.";
 
         /// <summary>
         /// Regular expression for name validation.
@@ -38,6 +26,11 @@ namespace FribergFastigheter.Client.Models
         /// Regular expression for password validation.
         /// </summary>
         public const string PasswordValididationExpression = @"^(?=.*?\p{Ll})(?=.*?\p{Lu})(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{10,}$";
+
+        /// <summary>
+        /// Regular expression pattern to only allow letters, numbers and spaces. 
+        /// </summary>
+        protected const string LettersNumbersAndSpacesRegexPattern = @"^[\p{L}\p{N} ]+$";
 
         #endregion
 
@@ -64,11 +57,6 @@ namespace FribergFastigheter.Client.Models
         public const string NameValidationErrorMessage = "Enbart bokstäver och mellanslag är tillåtet.";
 
         /// <summary>
-        /// A message to inform the user that only letters, numbers and spaces are allowed as input. 
-        /// </summary>
-        protected const string OnlyLettersNumbersAndSpacesValidationMessage = "Enbart bokstäver, number och mellanslag är tillåtet.";
-
-        /// <summary>
         /// Validation error message for password validation.
         /// </summary>
         public const string PasswordValidationErrorMessage = "Lösenordet måste vara minst 10 tecken och innehålla stora och små bokstäver, siffror, och specialtecken (#?!@$ %^&*-)";
@@ -78,6 +66,11 @@ namespace FribergFastigheter.Client.Models
         /// </summary>
         public const string PositiveNumberValidationErrorMessage = "Ange ett positivt tal större än noll.";
 
-        #endregion
+        /// <summary>
+        /// A message to inform the user that only letters, numbers and spaces are allowed as input. 
+        /// </summary>
+        protected const string OnlyLettersNumbersAndSpacesValidationMessage = "Enbart bokstäver, number och mellanslag är tillåtet.";
+
+        #endregion        
     }
 }
