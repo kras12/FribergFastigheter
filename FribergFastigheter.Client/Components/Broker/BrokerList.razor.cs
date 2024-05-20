@@ -45,6 +45,9 @@ namespace FribergFastigheter.Client.Components.Broker
         public bool? IsNewBrokerFormActive { get; set; } = null;
         public bool? IsEditBrokerFormActive { get; set; } = null;
 
+        [Parameter]
+        public bool EnableEditMode { get; set; } = false;
+
 
         #endregion
 
@@ -89,6 +92,7 @@ namespace FribergFastigheter.Client.Components.Broker
         {
             Brokers.Add(newBroker);
             IsNewBrokerFormActive = false;
+            StateHasChanged();
             await ScrollToElement(newBroker);
         }
 
@@ -121,12 +125,14 @@ namespace FribergFastigheter.Client.Components.Broker
         public async void OnBrokerEdited(BrokerViewModel editedBroker)
         {
             IsEditBrokerFormActive = false;
+            StateHasChanged();
             await ScrollToElement(editedBroker);
         }
 
         public async void OnBrokerDeleted(BrokerViewModel broker)
         {
             Brokers.Remove(broker);
+            StateHasChanged();
         }
     }
         #endregion

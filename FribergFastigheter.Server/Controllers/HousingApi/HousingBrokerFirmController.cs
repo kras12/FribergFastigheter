@@ -64,7 +64,7 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		[ProducesResponseType<MvcApiErrorResponseDto>(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<IEnumerable<BrokerFirmDto>>> GetById(int id)
 		{
-			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id);
+			var brokerFirm = await _brokerFirmRepository.GetBrokerFirmByIdAsync(id, includeDeletedBrokers: false);
 
 			if (brokerFirm == null)
 			{

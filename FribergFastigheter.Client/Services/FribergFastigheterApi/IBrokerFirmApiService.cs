@@ -67,7 +67,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
         /// <returns>A <see cref="Task"/> containing a <see cref="BrokerDto"/> object.</returns>
         /// <!-- Author: Jimmie  -->
         /// <!-- Co Authors: Marcus -->
-        public Task<ApiResponseDto<List<BrokerDto>>> GetBrokers();
+        public Task<ApiResponseDto<List<BrokerDto>>> GetBrokers(bool includeHousingCount = false);
 
         /// <summary>
         /// Logs in a broker.

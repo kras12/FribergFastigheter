@@ -82,7 +82,7 @@ namespace FribergFastigheter.Client.Pages
 		{
 			var response = await HousingApiService.GetBrokerFirmById(BrokerFirmId);
 
-			if (response.Success)
+            if (response.Success)
 			{
 				BrokerFirmDto brokerFirm = response.Value!;
 				BrokerFirmViewModel brokerFirmResult = AutoMapper.Map<BrokerFirmViewModel>(brokerFirm);

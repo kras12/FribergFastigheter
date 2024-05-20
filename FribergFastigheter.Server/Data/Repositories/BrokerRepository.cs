@@ -112,6 +112,32 @@ namespace FribergFastigheter.Server.Data.Repositories
             return await query.ToListAsync();
         }
 
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
+        public async Task<List<BrokerWithHousingCount>> GetBrokersWithHousingCountAsync(int? brokerFirmId = null, bool includeDeleted = false)
+        {
+            var query = applicationDbContext.Brokers
+                .AsNoTracking();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(x => !x.IsDeleted);
+            }
+
+            if (brokerFirmId != null)
+            {
+                query = query.Where(x => x.BrokerFirm.BrokerFirmId == brokerFirmId);
+            }
+
+            return await query
+                .GroupJoin(applicationDbContext.Housings,
+                    broker => broker.BrokerId,
+                    housing => housing.Broker.BrokerId,
+                    (broker, housings) => new BrokerWithHousingCount(broker, housings.Count())
+                )
+                .ToListAsync();
+        }
+
         /// <!-- Author: Jimmie, Marcus -->
         /// <!-- Co Authors: -->
         public Task<bool> Exists(int id)

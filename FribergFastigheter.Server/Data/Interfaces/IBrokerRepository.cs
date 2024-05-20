@@ -16,6 +16,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task DeleteProfileImage(int brokerId);
         Task<bool> Exists(int id);
         Task<List<Broker>> GetBrokersAsync(int? brokerFirmId = null, bool includeDeleted = false);
+        public Task<List<BrokerWithHousingCount>> GetBrokersWithHousingCountAsync(int? brokerFirmId = null, bool includeDeleted = false);
         Task<Broker?> GetBrokerByIdAsync(int id);
         public Task<Broker?> GetBrokerByUserIdAsync(string id);
         Task<Image?> GetProfileImage(int brokerId);

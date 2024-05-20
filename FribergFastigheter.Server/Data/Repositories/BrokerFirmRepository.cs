@@ -97,9 +97,16 @@ namespace FribergFastigheter.Server.Data.Repositories
             await applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id)
+        public async Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id, bool? includeDeletedBrokers = true)
         {
-            return await applicationDbContext.BrokerFirms.AsNoTracking().FirstOrDefaultAsync(b => b.BrokerFirmId == id);
+            var firm = await applicationDbContext.BrokerFirms.AsNoTracking().FirstOrDefaultAsync(b => b.BrokerFirmId == id);
+            
+            if (includeDeletedBrokers != null && includeDeletedBrokers.Value == false)
+            {
+                firm!.Brokers.RemoveAll(x => x.IsDeleted);
+            }            
+
+            return firm;
         }
 
         public async Task<List<BrokerFirm>> GetAllBrokerFirmsAsync()

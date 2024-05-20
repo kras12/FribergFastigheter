@@ -15,7 +15,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         Task AddAsync(BrokerFirm brokerFirm);
         Task DeleteAsync(BrokerFirm brokerFirm);
         Task<List<BrokerFirm>> GetAllBrokerFirmsAsync();
-        Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id);
+        public Task<BrokerFirm?> GetBrokerFirmByIdAsync(int id, bool? includeDeletedBrokers = true);
         Task UpdateAsync(BrokerFirm brokerFirm);
         Task<int> BrokerCount(int brokerFirmId);
 		Task<bool> HaveBroker(int brokerFirmId, int brokerId);
