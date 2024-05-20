@@ -1,67 +1,64 @@
-﻿<div class="vertical-page-container">
+﻿<div class="d-flex flex-row full-width justify-content-between" id="@formId">
+    <div></div>
+    <div><h2>Mäklare</h2></div>
+    <div>
+        @if (BrokerFirm != null && BrokerFirm.Logotype != null)
+        {
+            <img src="@BrokerFirm.Logotype.Url" />
+        }
 
-    <div class="d-flex flex-row full-width justify-content-between" id="@formId">
-        <div></div>
-        <div><h2>Mäklare</h2></div>
-        <div>
-            @if (BrokerFirm != null && BrokerFirm.Logotype != null)
-            {
-                <img src="@BrokerFirm.Logotype.Url" />
-            }
-
-        </div>
     </div>
-    <AuthorizeView>
-        <AuthorizeView Context="CreateBrokerButtonContext" Policy="@ApplicationPolicies.CanCreateBroker">
-            <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
-        </AuthorizeView>
-
-        @if (IsNewBrokerFormActive == true)
-        {
-            <CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
-        }
-        @if (IsEditBrokerFormActive == true)
-        {
-            <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
-        }
+</div>
+<AuthorizeView>
+    <AuthorizeView Context="CreateBrokerButtonContext" Policy="@ApplicationPolicies.CanCreateBroker">
+        <div><button class="btn btn-primary" @onclick="@(() => OpenCreateNewBroker())">Lägg till en ny mäklare</button></div>
     </AuthorizeView>
-    <div class="broker-list">
-        @if (Brokers.Count > 0)
+
+    @if (IsNewBrokerFormActive == true)
+    {
+        <CreateBroker OnBrokerCreated="OnCreatedBroker" CloseCreateNewBroker="CloseCreateNewBroker"/>
+    }
+    @if (IsEditBrokerFormActive == true)
+    {
+        <EditBroker OnBrokerEdited="OnBrokerEdited" CloseEditBroker="CloseEditBroker" Broker="Broker" />
+    }
+</AuthorizeView>
+<div class="broker-list">
+    @if (Brokers.Count > 0)
+    {
+        @foreach (var broker in Brokers)
         {
-            @foreach (var broker in Brokers)
-            {
-                <div class="broker-card" id="@($"BrokerListItem-{broker.BrokerId}")">
+            <div class="broker-card" id="@($"BrokerListItem-{broker.BrokerId}")">
+                <a href="broker/@broker.BrokerId">
+                    <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
+                </a>
+                <div class="broker-info">
                     <a href="broker/@broker.BrokerId">
-                        <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
+                        <h4>@broker.FirstName @broker.LastName</h4>
                     </a>
-                    <div class="broker-info">
-                        <a href="broker/@broker.BrokerId">
-                            <h4>@broker.FirstName @broker.LastName</h4>
-                        </a>
-                        <h5>
-                            Mäklarbyrå: @broker.BrokerFirm.Name
-                        </h5>
-                        <h5>
-                            Telefonnummer: @broker.PhoneNumber
-                        </h5>
-                        <h5>
-                            Email: @broker.Email
-                        </h5>
-                        <div class="d-flex flex-row gap-3">
-                                <AuthorizeView Policy="@ApplicationPolicies.CanEditBroker" Resource="broker">
-                                <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
-                            </AuthorizeView>
-                                <AuthorizeView Policy="@ApplicationPolicies.CanDeleteBroker" Resource="broker">
-                                <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
-                            </AuthorizeView>
-                        </div>    
-                    </div>
+                    <h5>
+                        Mäklarbyrå: @broker.BrokerFirm.Name
+                    </h5>
+                    <h5>
+                        Telefonnummer: @broker.PhoneNumber
+                    </h5>
+                    <h5>
+                        Email: @broker.Email
+                    </h5>
+                    <div class="d-flex flex-row gap-3">
+                            <AuthorizeView Policy="@ApplicationPolicies.CanEditBroker" Resource="broker">
+                            <button class="btn btn-primary" @onclick="@(() => OpenEditBroker(broker))">Editera</button>
+                        </AuthorizeView>
+                            <AuthorizeView Policy="@ApplicationPolicies.CanDeleteBroker" Resource="broker">
+                            <DeleteBroker OnBrokerDeleted="OnBrokerDeleted" Broker="broker" />
+                        </AuthorizeView>
+                    </div>    
                 </div>
-            }
+            </div>
         }
-        else
-        {
-            <p>Kan inte hitta några mäklare.</p>
-        }
-    </div>
+    }
+    else
+    {
+        <p>Kan inte hitta några mäklare.</p>
+    }
 </div>

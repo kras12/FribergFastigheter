@@ -15,6 +15,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// <summary>
         /// The description of the broker.
         /// </summary>
+        [RegularExpression(BlackListDangerousCharactersExpression, ErrorMessage = BlackListDangerousCharactersValidationMessage)]
         public string Description { get; set; } = "";
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace FribergFastigheter.Client.Models.Broker
         /// The phone number of the broker.
         /// </summary>
         [Required]
+        [Phone]
         public string PhoneNumber { get; set; } = "";
 
         /// <summary>

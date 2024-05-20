@@ -8,36 +8,8 @@ namespace FribergFastigheter.Shared.Dto.Housing
     /// </summary>
     /// <!-- Author: Jimmie -->
     /// <!-- Co Authors: -->
-    public class HousingBaseDto
+    public class HousingBaseDto : DtoValidationBase
     {
-        #region ValidationExpressions
-
-        /// <summary>
-        /// Regular expression pattern to only allow letters, numbers and spaces. 
-        /// </summary>
-        protected const string LettersNumbersAndSpacesRegexPattern = @"^[\p{L}\p{N} ]+$";
-
-        #endregion
-
-        #region ValidationErrorMessages
-
-        /// <summary>
-        /// Validation error message for build year.
-        /// </summary>
-        public const string BuildYearValidationMessage = "Byggåret måste vara mellan 1900 och 2100";
-
-        /// <summary>
-        /// A message to inform the user that only letters, numbers and spaces are allowed as input. 
-        /// </summary>
-        protected const string OnlyLettersNumbersAndSpacesValidationMessage = "Enbart bokstäver, number och mellanslag är tillåtet.";
-
-        /// <summary>
-        /// Validation error message for positive number validation.
-        /// </summary>
-        public const string PositiveNumberValidationErrorMessage = "Ange ett positivt tal större än noll.";
-
-        #endregion        
-
         #region Properties
 
         /// <summary>
@@ -63,6 +35,7 @@ namespace FribergFastigheter.Shared.Dto.Housing
         /// The description of the housing object.
         /// </summary>
         [Required]
+        [RegularExpression(BlackListDangerousCharactersExpression, ErrorMessage = BlackListDangerousCharactersValidationMessage)]
         public string Description { get; set; } = "";
 
         /// <summary>

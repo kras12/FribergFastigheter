@@ -3,10 +3,9 @@ using Blazored.SessionStorage;
 using FribergFastigheter.Client.Models;
 using FribergFastigheter.Client.Models.BrokerFirm;
 using FribergFastigheter.Client.Pages.BrokerFirmMember;
-using FribergFastigheter.Client.Services.FribergFastigheterApi;
+using FribergFastigheter.Client.Services.Authentication;
 using FribergFastigheter.Shared.Dto.Login;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.JSInterop;
 
@@ -50,22 +49,14 @@ namespace FribergFastigheter.Client.Layout
         [Inject]
 #pragma warning disable CS8618 
         private IMapper AutoMapper { get; set; }
-#pragma warning restore CS8618 
+#pragma warning restore CS8618
 
         /// <summary>
-        /// The injected authentication state provider. 
+        /// The injected broker authentication service. 
         /// </summary>
         [Inject]
 #pragma warning disable CS8618 
-        private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-#pragma warning restore CS8618 
-
-        /// <summary>
-        /// The injected broker firm API service. 
-        /// </summary>
-        [Inject]
-#pragma warning disable CS8618 
-        private IBrokerFirmApiService BrokerFirmApiService { get; set; }
+        private IBrokerAuthenticationService BrokerAuthenticationService { get; set; }
 #pragma warning restore CS8618 
 
         /// <summary>
@@ -108,7 +99,7 @@ namespace FribergFastigheter.Client.Layout
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task OnLogoutButtonClicked()
         {
-            await ((BrokerFirmAuthenticationStateProvider)AuthenticationStateProvider).RemoveTokenAsync();
+            await BrokerAuthenticationService.Logout();
             NavigationManager.NavigateToLogout("/");
         }
 
@@ -120,7 +111,7 @@ namespace FribergFastigheter.Client.Layout
         {
             _apiValidationErrors.Clear();
             await JSRuntime.InvokeVoidAsync("HideBrokerLoginModal", _modalDialogId);
-            var response = await BrokerFirmApiService.Login(AutoMapper.Map<LoginDto>(FormInput));
+            var response = await BrokerAuthenticationService.Login(AutoMapper.Map<LoginDto>(FormInput));
 
             if (response.Success)
             {

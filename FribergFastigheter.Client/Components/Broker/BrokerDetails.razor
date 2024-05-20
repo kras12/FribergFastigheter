@@ -1,6 +1,4 @@
-﻿
-
-<div class="vertical-page-container">
+﻿<div class="vertical-page-container">
     <div class="d-flex flex-row full-width justify-content-between">
         <div></div>
         <div><h2>@Broker.FirstName @Broker.LastName</h2></div>
@@ -45,7 +43,12 @@
         }
         else
         {
-        <p>@Broker.Description</p>
+            var paragraphs = Broker.Description.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var paragraph in paragraphs)
+            {
+                <p>@($"{paragraph}{Environment.NewLine}")</p>
+            }
         }
     </div>
 </div>
