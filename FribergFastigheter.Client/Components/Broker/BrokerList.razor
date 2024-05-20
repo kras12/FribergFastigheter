@@ -1,4 +1,5 @@
-﻿<div class="d-flex flex-row full-width justify-content-between" id="@formId">
+﻿@using FribergFastigheter.Client.Components.Links
+<div class="d-flex flex-row full-width justify-content-between" id="@formId">
     <div></div>
     <div><h2>Mäklare</h2></div>
     <div>
@@ -32,13 +33,13 @@
         @foreach (var broker in Brokers)
         {
             <div class="broker-card" id="@($"BrokerListItem-{broker.BrokerId}")">
-                <a href="broker/@broker.BrokerId">
+                <DynamicLink ShowLink="@(!string.IsNullOrEmpty(broker.Url))" Url="@broker.Url">
                     <img class="profile-img" src="@broker.ProfileImageOrPlaceholder" />
-                </a>
+                </DynamicLink>
                 <div class="broker-info">
-                    <a href="broker/@broker.BrokerId">
+                    <DynamicLink ShowLink="@(!string.IsNullOrEmpty(broker.Url))" Url="@broker.Url">
                         <h4>@broker.FirstName @broker.LastName</h4>
-                    </a>
+                    </DynamicLink>
                     <h5>
                         Mäklarbyrå: @broker.BrokerFirm.Name
                     </h5>
