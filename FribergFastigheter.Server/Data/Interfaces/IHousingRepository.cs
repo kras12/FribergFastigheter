@@ -50,7 +50,7 @@ namespace FribergFastigheter.Server.Data.Interfaces
         /// </summary>
         /// <param name="housing">The housing object.</param>
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-		public async Task DeleteAsync(Housing housing);
+		public Task DeleteAsync(Housing housing);
 
         /// <summary>
         /// Deletes an image for a housing object.
