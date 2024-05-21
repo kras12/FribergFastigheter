@@ -386,7 +386,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerFirmApi
             }
 
             int brokerFirmId = int.Parse(User.FindFirst(ApplicationUserClaims.BrokerFirmId)!.Value);
-            int housingCount = await _housingRepository.GetHousingsCountAsync(brokerId: brokerId, brokerFirm: brokerFirmId);
+            int housingCount = await _housingRepository.GetHousingsCountAsync(brokerId: brokerId, brokerFirmId: brokerFirmId);
             return Ok(new MvcApiValueResponseDto<ApiResponseValueTypeDto<int>>(new ApiResponseValueTypeDto<int>(housingCount)));
         }
 
