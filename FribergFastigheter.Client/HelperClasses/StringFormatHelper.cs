@@ -3,6 +3,8 @@
     /// <summary>
     /// Helper class to format strings.
     /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
     public static class StringFormatHelper
     {
         #region Methods

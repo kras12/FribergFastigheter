@@ -6,7 +6,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// A view model class that represents a municipality.
     /// </summary>
     /// <!-- Author: Jimmie -->
-    /// <!-- Co Authors: Dan -->
+    /// <!-- Co Authors: -->
     public class MunicipalityViewModel : ViewModelBase
     {
         #region Constructors

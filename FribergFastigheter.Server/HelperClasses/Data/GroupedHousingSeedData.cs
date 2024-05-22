@@ -2,10 +2,12 @@
 
 namespace FribergFastigheter.Server.HelperClasses.Data
 {
-    /// <summary>
-    /// A class that stores grouped seed data for a housing object.
-    /// </summary>
-    public class GroupedHousingSeedData
+	/// <summary>
+	/// A class that stores grouped seed data for a housing object.
+	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
+	public class GroupedHousingSeedData
     {
         #region Properties
 

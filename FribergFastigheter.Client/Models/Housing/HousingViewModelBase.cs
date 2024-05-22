@@ -7,7 +7,7 @@ namespace FribergFastigheter.Client.Models.Housing
     /// A view model base class that represents a housing object.
     /// </summary>
     /// <!-- Author: Jimmie -->
-    /// <!-- Co Authors: Dan -->
+    /// <!-- Co Authors: -->
     public class HousingViewModelBase : ViewModelBase
     {
         #region Properties

@@ -8,6 +8,8 @@ namespace FribergFastigheter.Client.Pages
     /// <summary>
     /// The housing details page.
     /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
     public partial class HousingDetailsPage : ComponentBase
     {
         #region Fields
