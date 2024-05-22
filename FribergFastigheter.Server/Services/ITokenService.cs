@@ -2,10 +2,12 @@
 
 namespace FribergFastigheter.Server.Services
 {
-    /// <summary>
-    /// Interface for a class that creates JWT tokens for user classes.
-    /// </summary>
-    public interface ITokenService
+	/// <summary>
+	/// Interface for a class that creates JWT tokens for user classes.
+	/// </summary>
+	/// <!-- Author: Jimmie, Marcus -->
+	/// <!-- Co Authors: -->
+	public interface ITokenService
     {
         /// <summary>
         /// Creates a JWT token for a broker.

@@ -2,7 +2,7 @@
 
 namespace FribergFastigheter.Client.Components.Statistics
 {
-	// <summary>
+	/// <summary>
 	/// A component designed to be used as a render fragment for the <see cref="AccordionStatisticsContainerFragment"/> component. 
 	/// </summary>
 	/// <!-- Author: Jimmie -->

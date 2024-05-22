@@ -36,16 +36,6 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
         /// </summary>
         private readonly IMapper _mapper;
 
-		/// <summary>
-		/// The injected brokerfirm repository.
-		/// </summary>
-		private readonly IBrokerFirmRepository _brokerFirmRepository;
-
-		/// <summary>
-		/// The injected broker repository.
-		/// </summary>
-		private readonly IBrokerRepository _brokerRepository;
-
 		#endregion
 
 		#region Constructors
@@ -131,8 +121,8 @@ namespace FribergFastigheter.Server.Controllers.HousingApi
 		/// <param name="maxLivingArea">An optional max living area filter.</param>
 		/// <param name="offsetRows">An optional number of rows to skip.</param>
 		/// <returns>A <see cref="HousingSearchResultDto"/> object containing the results.</returns>
-		/// <!-- Author: Marcus -->
-		/// <!-- Co Authors: Jimmie -->
+		/// <!-- Author: Marcus, Jimmie -->
+		/// <!-- Co Authors: -->
 		[HttpGet("housings/search")]
         [ProducesResponseType<MvcApiValueResponseDto<HousingSearchResultDto>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<HousingSearchResultDto>> SearchHousings(int? brokerId = null, int? municipalityId = null, int? housingCategoryId = null,

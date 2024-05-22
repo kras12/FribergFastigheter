@@ -2,7 +2,12 @@
 
 namespace FribergFastigheter.Shared.Dto.Image
 {
-    public class ImageDto
+	/// <summary>
+	/// DTO class for images.
+	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
+	public class ImageDto
     {
         #region Properties
 

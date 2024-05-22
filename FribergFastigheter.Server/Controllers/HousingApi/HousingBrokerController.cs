@@ -7,11 +7,14 @@ using FribergFastigheter.Shared.Dto.Broker;
 using FribergFastigheter.Server.Dto;
 using FribergFastigheter.Shared.Enums;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FribergFastigheter.Server.Controllers.HousingApi
 {
-    [Route("housing-api")]
+	/// <summary>
+	/// Controller for the brokers endpoint.
+	/// </summary>
+	/// <!-- Author: Jimmie, Marcus -->
+	/// <!-- Co Authors: -->
+	[Route("housing-api")]
 	[ApiController]
 	public class HousingBrokerController : ControllerBase
 	{
