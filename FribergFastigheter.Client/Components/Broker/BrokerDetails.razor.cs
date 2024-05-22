@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace FribergFastigheter.Client.Components.Broker
 {
+    //<!-- Author: Marcus -->
+    //   <!-- Co Authors: -->
     public partial class BrokerDetails : ComponentBase
     {
         #region Properties

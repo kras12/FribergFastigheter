@@ -10,7 +10,7 @@ namespace FribergFastigheter.Server.AutoMapper
     /// An auto mapper profile that contains mappings for converting DTO classes to entity classes.
     /// </summary>
     /// <!-- Author: Jimmie -->
-    /// <!-- Co Authors: -->
+    /// <!-- Co Authors: Marcus -->
     public class DtoToEntityAutoMapperProfile : Profile
 	{
 		/// <summary>

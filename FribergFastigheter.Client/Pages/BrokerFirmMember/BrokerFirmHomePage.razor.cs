@@ -13,7 +13,7 @@ namespace FribergFastigheter.Client.Pages.BrokerFirmMember
     /// <summary>
     /// The home page of the broker back office. 
     /// </summary>
-    /// <!-- Author: Jimmie -->
+    /// <!-- Author: Jimmie, Marcus -->
     /// <!-- Co Authors: -->
     public partial class BrokerFirmHomePage : ComponentBase
     {

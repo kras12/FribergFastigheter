@@ -8,6 +8,8 @@ namespace FribergFastigheter.Client.Services.Authentication
     /// <summary>
     /// Authentication service for brokers.
     /// </summary>
+    /// <!-- Author: Marcus -->
+    /// <!-- Co Authors: -->
     public class BrokerAuthenticationService : IBrokerAuthenticationService
     {
         #region Fields

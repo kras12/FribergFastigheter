@@ -1,4 +1,7 @@
-﻿<AuthorizeView Policy="@ApplicationPolicies.CanDeleteBroker" Resource="Broker">
+﻿@*  <!-- Author: Marcus -->
+       <!-- Co Authors: --> *@
+
+<AuthorizeView Policy="@ApplicationPolicies.CanDeleteBroker" Resource="Broker">
     @if (Broker.HousingCount != null & Broker.HousingCount <= 0)
     {
         <ConfirmButton Title="Radera" Body="Det är inte möjligt att ångra en radering av en mäklare. Vill du radera?" ButtonText="Radera" OnDialogButtonClicked="OnConfirmDeleteBrokerEventHandler"></ConfirmButton>

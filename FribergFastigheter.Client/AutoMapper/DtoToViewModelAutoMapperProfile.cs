@@ -15,7 +15,7 @@ namespace FribergFastigheter.Client.AutoMapper
     /// An auto mapper profile that contains mappings for converting DTO classes to view model classes.
     /// </summary>
     /// <!-- Author: Jimmie -->
-    /// <!-- Co Authors: -->
+    /// <!-- Co Authors: Marcus -->
     public class DtoToViewModelAutoMapperProfile : Profile
 	{
 		/// <summary>
