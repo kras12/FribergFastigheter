@@ -16,7 +16,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <summary>
     /// A service to fetch data from the Friberg Fastigheter Broker Firm API.
     /// </summary>
-    /// <!-- Author: Jimmie -->
+    /// <!-- Author: Marcus, Jimmie -->
     /// <!-- Co Authors: -->
     public class BrokerFirmApiService : ApiServiceBase, IBrokerFirmApiService
     {

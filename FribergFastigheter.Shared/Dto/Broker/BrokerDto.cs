@@ -7,7 +7,7 @@ namespace FribergFastigheter.Shared.Dto.Broker
     /// <summary>
     /// A DTO class that represents a broker.
     /// </summary>
-    /// <!-- Author: Jimmie -->
+    /// <!-- Author: Jimmie, Marcus -->
     /// <!-- Co Authors: -->
     public class BrokerDto
     {

@@ -5,7 +5,7 @@ namespace FribergFastigheter.Shared.Dto.Broker
     /// <summary>
     /// A DTO class that holds data for creating a broker. 
     /// </summary>
-    /// <!-- Author: Marcus -->
+    /// <!-- Author: Marcus, Marcus -->
     /// <!-- Co Authors: -->
     public class CreateBrokerDto : DtoValidationBase
     {

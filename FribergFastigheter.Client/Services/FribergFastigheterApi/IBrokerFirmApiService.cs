@@ -19,7 +19,7 @@ namespace FribergFastigheter.Client.Services.FribergFastigheterApi
     /// <summary>
     /// An interface for the Friberg Fastigheter Broker Firm API.
     /// </summary>
-    /// <!-- Author: Jimmie -->
+    /// <!-- Author: Marcus. Jimmie -->
     /// <!-- Co Authors: -->
     public interface IBrokerFirmApiService
     {

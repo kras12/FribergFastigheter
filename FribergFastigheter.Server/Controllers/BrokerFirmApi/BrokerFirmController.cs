@@ -17,7 +17,7 @@ namespace FribergFastigheter.Server.Controllers.BrokerApi
     /// <summary>
     /// An API controller for the broker firm image API.
     /// </summary>
-    /// <!-- Author: Jimmie -->
+    /// <!-- Author: Jimmie, Marcus -->
     /// <!-- Co Authors: -->
     [Route("broker-firm-api")]
 	[ApiController]

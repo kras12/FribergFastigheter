@@ -3,6 +3,8 @@ using static FribergFastigheter.Client.Components.ConfirmButton;
 
 namespace FribergFastigheter.Client.Components.Broker
 {
+      //<!-- Author: Marcus -->
+      // <!-- Co Authors: --> 
     public partial class CantDeleteBrokerMessage : ComponentBase
     {
         #region Properies
