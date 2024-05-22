@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace FribergFastigheter.Shared.Dto.Api
 {
-    /// <summary>
-    /// Stores a value type. Designed to be used with class <see cref="ApiResponseDto{T}"/>.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ApiResponseValueTypeDto<T> where T : struct, IFormattable
+	/// <summary>
+	/// Stores a value type. Designed to be used with class <see cref="ApiResponseDto{T}"/>.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
+	public class ApiResponseValueTypeDto<T> where T : struct, IFormattable
     {
         #region Constructors
 

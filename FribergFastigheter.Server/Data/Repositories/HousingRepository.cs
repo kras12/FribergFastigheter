@@ -7,11 +7,10 @@ using System.Linq;
 namespace FribergFastigheter.Server.Data.Repositories
 {
     /// <summary>
-	/// Repository for Housings
+	/// Repository for Housings.
 	/// </summary>
 	/// <!-- Author: Marcus -->
 	/// <!-- Co Authors: Jimmie -->
-
     public class HousingRepository : IHousingRepository
     {
         #region Fields

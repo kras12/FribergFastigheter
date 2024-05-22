@@ -3,6 +3,8 @@
 	/// <summary>
 	/// Supported image types.
 	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
 	public enum ImageTypes
 	{
 		None,

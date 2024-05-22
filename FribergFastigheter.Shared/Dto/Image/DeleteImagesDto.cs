@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace FribergFastigheter.Shared.Dto.Image
 {
-    /// <summary>
-    /// A DTO class that stores a collection of IDs for the images to delete. 
-    /// </summary>
-    public class DeleteImagesDto
+	/// <summary>
+	/// A DTO class that stores a collection of IDs for the images to delete. 
+	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
+	public class DeleteImagesDto
     {
         #region Constructors
 
