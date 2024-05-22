@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data
 {
-    public class EditBrokerAuthorizationData : IEditBrokerAuthorizationData
+	/// <summary>
+	/// Data storage class designed to be used with the <see cref="ManageBrokerAuthorizationHandler"/> to enable authorization for editing broker objects.
+	/// </summary>
+	/// <!-- Author: Jimmie, Marcus -->
+	/// <!-- Co Authors: -->
+	public class EditBrokerAuthorizationData : IEditBrokerAuthorizationData
     {
         #region Constructors
 

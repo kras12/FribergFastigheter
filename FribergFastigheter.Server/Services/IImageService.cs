@@ -2,15 +2,16 @@
 using FribergFastigheter.Shared.Dto.BrokerFirm;
 using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
-using FribergFastigheter.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.CodeAnalysis;
-using System.IO.Compression;
-using System.Text;
 
 namespace FribergFastigheter.Server.Services
 {
-    public interface IImageService
+	/// <summary>
+	/// Interface for an image service.
+	/// </summary>
+	/// <!-- Author: Jimmie, Marcus -->
+	/// <!-- Co Authors: -->
+	public interface IImageService
     {
         #region PrepareTransferMethods
 
@@ -20,7 +21,7 @@ namespace FribergFastigheter.Server.Services
         /// <param name="httpContext">The HttpContext for the request.</param>
         /// <param name="imageApiEndpoint">The API endpoint for fetching images in binary form.</param>
         /// <param name="image">The DTO object to process.</param>
-        /// /// <!-- Author: Jimmie -->
+        /// <!-- Author: Jimmie -->
         /// <!-- Co Authors: -->
         public void PrepareDto(HttpContext httpContext, string imageApiEndpoint, ImageDto image);
 
@@ -30,8 +31,8 @@ namespace FribergFastigheter.Server.Services
         /// <param name="httpContext">The HttpContext for the request.</param>
         /// <param name="imageApiEndpoint">The API endpoint for fetching images in binary form.</param>
         /// <param name="images">The DTO objects to process.</param>
-        /// /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
+        /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
         public void PrepareDto(HttpContext httpContext, string imageApiEndpoint, List<ImageDto> images);
 
         /// <summary>

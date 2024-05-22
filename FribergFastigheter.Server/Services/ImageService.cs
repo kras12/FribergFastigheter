@@ -4,24 +4,18 @@ using FribergFastigheter.Shared.Dto.Housing;
 using FribergFastigheter.Shared.Dto.Image;
 using FribergFastigheter.Shared.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.Extensions.Configuration;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.IO.Compression;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FribergFastigheter.Server.Services
 {
-    public class ImageService : IImageService
+	/// <summary>
+	/// A Service for handling Images.
+	/// </summary>
+	/// <!-- Author: Marcus, Jimmie -->
+	/// <!-- Co Authors: -->
+	public class ImageService : IImageService
     {
-        /// <summary>
-        /// A Service for handling Images.
-        /// </summary>
-        /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
-        ///
         #region Fields
 
         private readonly IConfiguration _configuration;
@@ -70,8 +64,8 @@ namespace FribergFastigheter.Server.Services
         /// <param name="httpContext">The HttpContext for the request.</param>
         /// <param name="imageApiEndpoint">The API endpoint for fetching images in binary form.</param>
         /// <param name="images">The DTO objects to process.</param>
-        /// /// <!-- Author: Marcus -->
-        /// <!-- Co Authors: Jimmie -->
+        /// /// <!-- Author: Jimmie -->
+        /// <!-- Co Authors: -->
         public void PrepareDto(HttpContext httpContext, string imageApiEndpoint, List<ImageDto> images)
         {
             foreach (ImageDto image in images)

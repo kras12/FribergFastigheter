@@ -2,7 +2,9 @@
 
 namespace FribergFastigheter.Shared.Services.AuthorizationHandlers.Broker.Data
 {
-    public interface IEditBrokerAuthorizationData
+	/// <!-- Author: Jimmie, Marcus -->
+	/// <!-- Co Authors: -->
+	public interface IEditBrokerAuthorizationData
     {
         /// <summary>
         /// The exsting broker.

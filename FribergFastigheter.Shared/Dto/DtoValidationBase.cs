@@ -1,9 +1,11 @@
 ﻿namespace FribergFastigheter.Shared.Dto
 {
-    /// <summary>
-    /// DTO base class that contains validation constants.
-    /// </summary>
-    public class DtoValidationBase
+	/// <summary>
+	/// DTO base class that contains validation constants.
+	/// </summary>
+	/// <!-- Author: Jimmie -->
+	/// <!-- Co Authors: -->
+	public class DtoValidationBase
     {
         #region ValidationExpressions
 

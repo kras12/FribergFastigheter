@@ -6,6 +6,8 @@ namespace FribergFastigheter.Client.Models.Image
     /// <summary>
     /// A view model class designed to be used with the image slideshow component <see cref="ImageSlideShow"/>.
     /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
     public class ImageSlideViewModel : ViewModelBase
     {
         #region Constructors

@@ -5,6 +5,8 @@ namespace FribergFastigheter.Client.Models
     /// <summary>
     /// ViewModel base class.
     /// </summary>
+    /// <!-- Author: Jimmie -->
+    /// <!-- Co Authors: -->
     public abstract class ViewModelBase
     {
         #region ValidationExpressions
